@@ -948,7 +948,7 @@
 		BC4342511117F51F00C9C8D7 /* bt_hinge_constraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bt_hinge_constraint.h; path = constraint/bt_hinge_constraint.h; sourceTree = "<group>"; };
 		BC4342521117F51F00C9C8D7 /* bt_constraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bt_constraint.h; path = constraint/bt_constraint.h; sourceTree = "<group>"; };
 		BC4342791117F59800C9C8D7 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
-		D2AAC0630554660B00DB518D /* BulletMayaPlugin.bundle */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BulletMayaPlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC0630554660B00DB518D /* boing.bundle */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = boing.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		F906D3351941031D0054663E /* bSolverNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = bSolverNode.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F906D3361941031D0054663E /* bSolverNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bSolverNode.h; sourceTree = "<group>"; };
 		F906D3371941031D0054663E /* bSolverCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bSolverCmd.h; sourceTree = "<group>"; };
@@ -992,9 +992,6 @@
 		08FB7794FE84155DC02AAC07 /* BulletMayaPlugin */ = {
 			isa = PBXGroup;
 			children = (
-				BC241BD4113DD50A0021293C /* bt_rigid_body.cpp */,
-				BC241BD5113DD50A0021293C /* colladaExport.cpp */,
-				BC241BD6113DD50A0021293C /* colladaExport.h */,
 				BC433EAF1117F3C600C9C8D7 /* BulletSource */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				8A7F063208688F460064D097 /* Mel */,
@@ -1008,6 +1005,9 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				BC241BD5113DD50A0021293C /* colladaExport.cpp */,
+				BC241BD6113DD50A0021293C /* colladaExport.h */,
+				BC241BD4113DD50A0021293C /* bt_rigid_body.cpp */,
 				F9C54CB81948B9D0009537FE /* README */,
 				BC4342371117F51F00C9C8D7 /* sliderConstraintNode.h */,
 				F906D3351941031D0054663E /* bSolverNode.cpp */,
@@ -1106,7 +1106,7 @@
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC0630554660B00DB518D /* BulletMayaPlugin.bundle */,
+				D2AAC0630554660B00DB518D /* boing.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2041,9 +2041,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		D2AAC0620554660B00DB518D /* BulletMayaPlugin */ = {
+		D2AAC0620554660B00DB518D /* boing */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8A7F05ED086863A70064D097 /* Build configuration list for PBXNativeTarget "BulletMayaPlugin" */;
+			buildConfigurationList = 8A7F05ED086863A70064D097 /* Build configuration list for PBXNativeTarget "boing" */;
 			buildPhases = (
 				D2AAC0600554660B00DB518D /* Headers */,
 				D2AAC0610554660B00DB518D /* Sources */,
@@ -2053,9 +2053,9 @@
 			);
 			dependencies = (
 			);
-			name = BulletMayaPlugin;
+			name = boing;
 			productName = BulletMayaPluginn;
-			productReference = D2AAC0630554660B00DB518D /* BulletMayaPlugin.bundle */;
+			productReference = D2AAC0630554660B00DB518D /* boing.bundle */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -2076,7 +2076,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D2AAC0620554660B00DB518D /* BulletMayaPlugin */,
+				D2AAC0620554660B00DB518D /* boing */,
 			);
 		};
 /* End PBXProject section */
@@ -2291,8 +2291,9 @@
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = BUNDLE;
 				MACH_O_TYPE = mh_bundle;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
 				PREBINDING = NO;
-				PRODUCT_NAME = BulletMayaPlugin;
+				PRODUCT_NAME = boing;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -2313,8 +2314,9 @@
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = BUNDLE;
 				MACH_O_TYPE = mh_bundle;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
 				PREBINDING = NO;
-				PRODUCT_NAME = BulletMayaPlugin;
+				PRODUCT_NAME = boing;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2333,8 +2335,9 @@
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = BUNDLE;
 				MACH_O_TYPE = mh_bundle;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
 				PREBINDING = NO;
-				PRODUCT_NAME = BulletMayaPlugin;
+				PRODUCT_NAME = boing;
 			};
 			name = Default;
 		};
@@ -2351,7 +2354,7 @@
 				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
 				LIBRARY_STYLE = BUNDLE;
-				MAYA_DIRECTORY = /Applications/Autodesk/maya2010;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
 				OTHER_LDFLAGS = (
 					"-lOpenMaya",
 					"-lFoundation",
@@ -2378,7 +2381,7 @@
 				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
 				LIBRARY_STYLE = BUNDLE;
-				MAYA_DIRECTORY = /Applications/Autodesk/maya2010;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
 				OTHER_LDFLAGS = (
 					"-lOpenMaya",
 					"-lFoundation",
@@ -2404,7 +2407,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
-				MAYA_DIRECTORY = /Applications/Autodesk/maya2010;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
 				OTHER_LDFLAGS = (
 					"-lOpenMaya",
 					"-lFoundation",
@@ -2421,7 +2424,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8A7F05ED086863A70064D097 /* Build configuration list for PBXNativeTarget "BulletMayaPlugin" */ = {
+		8A7F05ED086863A70064D097 /* Build configuration list for PBXNativeTarget "boing" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8A7F05EE086863A70064D097 /* Debug */,
