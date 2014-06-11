@@ -1,0 +1,2 @@
+/usr/bin/ar cr libBlenderSerialize.a  CMakeFiles/BlenderSerialize.dir/dna249.o CMakeFiles/BlenderSerialize.dir/dna249-64bit.o CMakeFiles/BlenderSerialize.dir/bBlenderFile.o CMakeFiles/BlenderSerialize.dir/bMain.o
+/usr/bin/ranlib libBlenderSerialize.a

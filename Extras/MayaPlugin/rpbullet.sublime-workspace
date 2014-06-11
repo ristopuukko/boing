@@ -1,0 +1,516 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"kS",
+				"kSuccess"
+			],
+			[
+				"solver",
+				"solver_t"
+			],
+			[
+				"n",
+				"name"
+			],
+			[
+				"co",
+				"collision_shape"
+			],
+			[
+				"m_",
+				"m_rigid_body"
+			],
+			[
+				"name",
+				"nameToNode"
+			],
+			[
+				"cre",
+				"createCollisionShape"
+			],
+			[
+				"collision_sha",
+				"collision_shape_t"
+			],
+			[
+				"cols",
+				"collisionShapeNode"
+			],
+			[
+				"MS",
+				"MStringArray"
+			],
+			[
+				"pare",
+				"parseArguments"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "boingRBNode.h",
+			"settings":
+			{
+				"buffer_size": 5336,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "collisionShapeNode.h",
+			"settings":
+			{
+				"buffer_size": 2619,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "",
+			"file": "boingRBNode.cpp",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Makefile_boing_2014.mac",
+			"settings":
+			{
+				"buffer_size": 23042,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "collisionShapeNode.cpp",
+			"settings":
+			{
+				"buffer_size": 19094,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "boingRBCmd.h",
+			"settings":
+			{
+				"buffer_size": 1668,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "boingRBCmd.cpp",
+			"settings":
+			{
+				"buffer_size": 5889,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/Makefile_main",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/dynamicaRbCmd.cpp",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/dRigidBodyCmd.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/dRigidBodyCmd.cpp",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/main.cpp",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/Makefile_boing_2014.mac",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/bt_collision_shape.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/bt_solver.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/solver.cpp",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/bt_solver.cpp",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/solver.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/Makefile.mac",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/Makefile_2014.mac",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/collision_shape_impl.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/solver_impl.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/bt_composite_shape.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/dSolverNode.cpp",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/rigidBodyNode.cpp",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/rigidBodyArrayNode.cpp",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/dynamicaRbCmd.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/src/BulletDynamics/Dynamics/btRigidBody.cpp",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/src/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/src/BulletDynamics/Dynamics/btSimpleDynamicsWorld.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/src/BulletDynamics/Dynamics/btSimpleDynamicsWorld.cpp",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/src/Bullet-C-Api.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/src/btBulletDynamicsCommon.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/pluginMain.cpp",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/bt_rigid_body.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/bt_rigid_body.cpp",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/dCallBackNode.h",
+		"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/Extras/MayaPlugin/rpbullet.sublime-project",
+		"/Users/ristopuukko/Documents/dev/voxelizerNode/pluginMain.cpp",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/dynamicaRbCmd.h",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/dynamicaRbCmd.cpp",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/rigidBodyNode.h",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/bt_solver.cpp",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/dSolverNode.cpp",
+		"/Users/ristopuukko/Documents/dev/rpDynTargetDevice/pluginMain.cpp",
+		"/Users/ristopuukko/Documents/dev/delaunay_cpp/pluginMain.cpp",
+		"/Users/Shared/Autodesk/maya/plug-ins/Voxelizer1.0.py",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/collisionShapeNode.h",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/collisionShapeNode.cpp",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/solver.cpp",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/rpbullet.sublime-project",
+		"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin/scripts/dynamicaUI.mel"
+	],
+	"find":
+	{
+		"height": 37.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"<open folders>",
+			"/Volumes/ristopuukko/Documents/maya_development/dynamica-sourcecode-rev163/src",
+			"<open folders>",
+			"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin,<open folders>",
+			"/Users/ristopuukko/Documents/dev/dynamica-sourcecode-rev163/Extras/MayaPlugin"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"computeWorldMatrix",
+			"worldMatrix",
+			"collisionShapeNode",
+			"getTypeName",
+			"m_rigid_body",
+			"ca_rigidBody",
+			"solver_t",
+			"getBulletCollisionShape",
+			"m_nameMap",
+			"serial",
+			"destroyRigidBody",
+			"createWorld",
+			"findNameForPointer",
+			"serialize",
+			"add_rigid_body",
+			"m_rigid_bodies",
+			"add_rigid_body",
+			"bt_solver_t",
+			"findNameForPointer\n",
+			"m_nameMap",
+			"register_name",
+			"m_impl",
+			"rigid_body_t::pointer",
+			"isCompound",
+			"m_collision_shape ",
+			"createCollisionShape",
+			"dCollisionShape",
+			"isCompound",
+			"createCompositeShape",
+			"UPDATE_SHAPE",
+			"computeRigidBody"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"isCompound"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "boingRBNode.h",
+					"settings":
+					{
+						"buffer_size": 5336,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1321.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "collisionShapeNode.h",
+					"settings":
+					{
+						"buffer_size": 2619,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 455.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "boingRBNode.cpp",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 13622.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Makefile_boing_2014.mac",
+					"settings":
+					{
+						"buffer_size": 23042,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "collisionShapeNode.cpp",
+					"settings":
+					{
+						"buffer_size": 19094,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3106.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "boingRBCmd.h",
+					"settings":
+					{
+						"buffer_size": 1668,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "boingRBCmd.cpp",
+					"settings":
+					{
+						"buffer_size": 5889,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 100.0
+	},
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 326.0,
+	"status_bar_visible": true
+}

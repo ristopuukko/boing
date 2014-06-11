@@ -1,0 +1,18 @@
+{
+	"folders":
+	[
+		{
+			"path": "./",
+			"name" : "rpBullet source",
+			"file_exclude_patterns" : ["*.*-project"],
+			"file_exclude_patterns" : ["*.*-workspace"]
+
+
+		},
+		{
+			"path": "../../src",
+			"name": "Bullet source",
+			"file_exclude_patterns" : ["*.???~"]
+ 		}
+	]
+}

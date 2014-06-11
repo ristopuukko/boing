@@ -1,0 +1,128 @@
+/*
+Written by: Risto Puukko <risto.puukko@gmail.com>
+*/
+
+//AEdCallBackTemplate.mel
+
+global string $dCallBackTemplateTextField;
+
+global proc AESaveScriptdCallBackScript( string $nodeName ) {
+    global string $dCallBackTemplateTextField;
+
+    string $script = `scrollField -q -tx $dCallBackTemplateTextField`;
+    setAttr -type "string" $nodeName $script;
+}
+
+
+global proc AESaveScriptButtonNew( string $nodeName ) {
+    print("AESaveScriptButtonNew : " + $nodeName + "\n");
+    
+	rowColumnLayout
+        -numberOfColumns 1
+        -columnWidth 1 98
+        -columnAlign 1 "center"
+        -columnAttach 1 "both" 0
+        -rowAttach 1 "top" 2;
+
+        button
+            -label "Save script"
+            -command ("AESaveScriptdCallBackScript(\"" + $nodeName + "\");")
+            -annotation "Save the script to the node."
+            -width 98
+            "AEdCallBackSaveScriptButton";
+    
+	setParent ..;
+
+}
+
+global proc AESaveScriptButtonRefresh( string $nodeName ) {
+    print("AESaveScriptButtonRefresh : " + $nodeName + "\n");
+    button
+        -e -command ("AESaveScriptdCallBackScript(\"" + $nodeName + "\");")
+        "AEdCallBackSaveScriptButton";
+
+    
+}
+
+
+global proc AEdCallBackTemplateNew( string $nodeName ) {
+
+    print("AEdCallBackTemplateNew : " + $nodeName + "\n");
+
+    global string $dCallBackTemplateTextField;
+    
+	$dCallBackTemplateTextField = `scrollField -w 220 -h 200`;// -l "Callback script"`;
+    string $callbackscript = getAttr($nodeName);
+    if ($callbackscript == "") $callbackscript = "//Your script here!";
+	scrollField -e -ann $nodeName -tx $callbackscript $dCallBackTemplateTextField;
+    AESaveScriptdCallBackScript($nodeName);
+    setParent ..;
+    print( $dCallBackTemplateTextField + "\n");
+	// connect the control
+	connectControl $dCallBackTemplateTextField $nodeName;
+    
+}
+
+
+global proc AEdCallBackTemplateRefresh(string $nodeName) {
+
+    print("AEdCallBackTemplateRefresh : " + $nodeName + "\n");
+    global string $dCallBackTemplateTextField;
+    string $callbackscript = getAttr($nodeName);
+	scrollField -e -tx $callbackscript $dCallBackTemplateTextField ;
+	scrollField -e -ann $nodeName $dCallBackTemplateTextField ;
+    setParent ..;
+    print( $dCallBackTemplateTextField + "\n");
+	// connect the control
+	connectControl $dCallBackTemplateTextField $nodeName;
+}
+
+
+global proc AEdCallBackTemplate(string $nodeName ) {
+    
+    //print($nodeName + "\n");
+    
+    editorTemplate -beginScrollLayout;
+
+        editorTemplate -addControl Enable;
+        editorTemplate -addControl callbacktype;
+    
+        editorTemplate -callCustom "AEdCallBackTemplateNew" "AEdCallBackTemplateRefresh" "callbackscript";
+        editorTemplate -callCustom "AESaveScriptButtonNew" "AESaveScriptButtonRefresh" "callbackscript";
+
+     //editorTemplate -beginLayout (uiRes("m_AElocatorTemplate.kLocatorAttributes")) -collapse 1;
+     //AElocatorCommon $nodeName;
+     //editorTemplate -endLayout;
+     
+    {
+        editorTemplate -suppress "visibility";
+        editorTemplate -suppress "template";
+        editorTemplate -suppress "lodVisibility";
+        editorTemplate -suppress "ghostingControl";
+        editorTemplate -suppress "ghosting";
+        editorTemplate -suppress "selectionChildHighlighting";
+        editorTemplate -suppress "motionBlur";
+        editorTemplate -suppress "visibleInReflections";
+        editorTemplate -suppress "visibleInRefractions";
+        editorTemplate -suppress "maxVisibilitySamplesOverride";
+        editorTemplate -suppress "maxVisibilitySamples";
+        editorTemplate -suppress "geometryAntialiasingOverride";
+        editorTemplate -suppress "antialiasingLevel";
+        editorTemplate -suppress "shadingSamplesOverride";
+        editorTemplate -suppress "shadingSamples";
+        editorTemplate -suppress "maxShadingSamples";
+        editorTemplate -suppress "volumeSamplesOverride";
+        editorTemplate -suppress "volumeSamples";
+        editorTemplate -suppress "depthJitter";
+        editorTemplate -suppress "ignoreSelfShadowing";
+        editorTemplate -suppress "primaryVisibility";
+        editorTemplate -suppress "compInstObjGroups";
+    }
+
+    //AEshapeTemplate $nodeName;
+    //AEtransformMain $nodeName;
+    //AEtransformNoScroll $nodeName;
+
+    editorTemplate -addExtraControls;
+    editorTemplate -endScrollLayout;
+}

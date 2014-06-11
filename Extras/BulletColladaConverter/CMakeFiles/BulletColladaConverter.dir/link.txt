@@ -1,0 +1,2 @@
+/usr/bin/ar cr libBulletColladaConverter.a  CMakeFiles/BulletColladaConverter.dir/ColladaConverter.o
+/usr/bin/ranlib libBulletColladaConverter.a
