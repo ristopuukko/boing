@@ -832,7 +832,6 @@
 		BC4340201117F3C600C9C8D7 /* btSparseSDF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btSparseSDF.h; sourceTree = "<group>"; };
 		BC4340211117F3C600C9C8D7 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		BC4340221117F3C600C9C8D7 /* Jamfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.jam; path = Jamfile; sourceTree = "<group>"; };
-		BC4340231117F3C600C9C8D7 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		BC4340251117F3C600C9C8D7 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		BC4340261117F3C600C9C8D7 /* Jamfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.jam; path = Jamfile; sourceTree = "<group>"; };
 		BC4340281117F3C600C9C8D7 /* btAabbUtil2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btAabbUtil2.h; sourceTree = "<group>"; };
@@ -960,6 +959,7 @@
 		F986F648193F2A970040A399 /* boingRBNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boingRBNode.h; sourceTree = "<group>"; };
 		F986F64B193F2E080040A399 /* boingRBCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = boingRBCmd.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F986F64C193F2E080040A399 /* boingRBCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boingRBCmd.h; sourceTree = "<group>"; };
+		F9C54CB81948B9D0009537FE /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		F9C7F0CD18A29E5A00BAF5D5 /* dynamicaUI.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = dynamicaUI.mel; path = scripts/dynamicaUI.mel; sourceTree = "<group>"; };
 		F9C7F0CE18A29E5A00BAF5D5 /* AEdSolverTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = AEdSolverTemplate.mel; path = scripts/AEdSolverTemplate.mel; sourceTree = "<group>"; };
 		F9C7F0CF18A29E5A00BAF5D5 /* mbUtils.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = mbUtils.mel; path = scripts/mbUtils.mel; sourceTree = "<group>"; };
@@ -1008,6 +1008,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				F9C54CB81948B9D0009537FE /* README */,
 				BC4342371117F51F00C9C8D7 /* sliderConstraintNode.h */,
 				F906D3351941031D0054663E /* bSolverNode.cpp */,
 				F906D3361941031D0054663E /* bSolverNode.h */,
@@ -1147,7 +1148,6 @@
 				BC433F8E1117F3C600C9C8D7 /* BulletDynamics */,
 				BC433FC71117F3C600C9C8D7 /* BulletMultiThreaded */,
 				BC4340101117F3C600C9C8D7 /* BulletSoftBody */,
-				BC4340231117F3C600C9C8D7 /* CMakeLists.txt */,
 				BC4340241117F3C600C9C8D7 /* ibmsdk */,
 				BC4340261117F3C600C9C8D7 /* Jamfile */,
 				BC4340271117F3C600C9C8D7 /* LinearMath */,
@@ -2063,6 +2063,8 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 8A7F05F1086863A70064D097 /* Build configuration list for PBXProject "BulletMayaPlugin" */;
 			compatibilityVersion = "Xcode 2.4";
 			developmentRegion = English;

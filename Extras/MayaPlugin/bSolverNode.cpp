@@ -28,6 +28,9 @@
  Modified by Dongsoo Han <dongsoo.han@amd.com>
  04/11/2012 : Added contactData attribute and contact information code to enable/disable updating contactCount, contactName and
  contactPosition attributes in boingRBNode.
+ 
+ Modified by Risto Puukko <risto.puukko@gmail.com>
+ 
  */
 
 //bSolverNode.cpp
