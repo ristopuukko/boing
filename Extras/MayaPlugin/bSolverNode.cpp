@@ -196,8 +196,8 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
             //remove the scale, since it's already included in the node transform
             vec3f scale;
             rb->collision_shape()->get_scale(scale);
-            std::cout << "rigidBodyNode::draw : " << (*it)->name() << std::endl;
-            cout<<" rb->collision_shape()->get_scale(scale) : "<<scale[0]<<" "<<scale[1]<<" "<<scale[2]<<" "<<endl;
+            //std::cout << "rigidBodyNode::draw : " << (*it)->name() << std::endl;
+            //cout<<" rb->collision_shape()->get_scale(scale) : "<<scale[0]<<" "<<scale[1]<<" "<<scale[2]<<" "<<endl;
             
             glPushMatrix();
             glScalef(1/scale[0], 1/scale[1], 1/scale[2]);
@@ -206,7 +206,7 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
                 glEnable(GL_LIGHTING);
                 //MPlug plug(rbNode, rigidBodyNode::ia_mass);
                 float mass = rb->get_mass();
-                cout<<"rb->get_mass() : "<<mass<<endl;
+                //cout<<"rb->get_mass() : "<<mass<<endl;
                 //plug.getValue(mass);
                 if (mass) {
                     float material[] = { 0.2f, 1.0f, 0.2f, 1.0f };
@@ -440,16 +440,16 @@ void bSolverNode::traverseCallBacks() {
                 //cout<<"callbacktype : "<<callbacktype<<endl;
                 if (enable) {
                     switch (callbacktype) {
-                        case dCallBackNode::FRAME_START:
+                        case bCallBackNode::FRAME_START:
                             fScallBackNodes.append(obj);
                             break;
-                        case dCallBackNode::FRAME_END:
+                        case bCallBackNode::FRAME_END:
                             fEcallBackNodes.append(obj);
                             break;
-                        case dCallBackNode::SUBSTEP_START:
+                        case bCallBackNode::SUBSTEP_START:
                             sScallBackNodes.append(obj);
                             break;
-                        case dCallBackNode::SUBSTEP_END:
+                        case bCallBackNode::SUBSTEP_END:
                             sEcallBackNodes.append(obj);
                             break;
                         default:

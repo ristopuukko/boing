@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D2AAC0620554660B00DB518D"
-               BuildableName = "BulletMayaPlugin.bundle"
-               BlueprintName = "BulletMayaPlugin"
+               BuildableName = "boing.bundle"
+               BlueprintName = "boing"
                ReferencedContainer = "container:BulletMayaPlugin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

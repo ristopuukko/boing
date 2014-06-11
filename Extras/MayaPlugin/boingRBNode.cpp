@@ -45,6 +45,7 @@ Modified by Risto Puukko <risto.puukko@gmail.com>
 #include <maya/MEulerRotation.h>
 #include <maya/MVector.h>
 #include <maya/MFnTypedAttribute.h>
+#include <maya/MFnUnitAttribute.h>
 #include <maya/MFnStringArrayData.h>
 #include <maya/MStringArray.h>
 #include <maya/MFnVectorArrayData.h>
@@ -84,6 +85,9 @@ MObject     boingRBNode::ia_initialSpin;
 
 MObject     boingRBNode::ia_position;
 MObject     boingRBNode::ia_rotation;
+MObject     boingRBNode::ia_rotationX;
+MObject     boingRBNode::ia_rotationY;
+MObject     boingRBNode::ia_rotationZ;
 
 MObject     boingRBNode::ia_velocity;
 MObject     boingRBNode::ia_angularvelocity;
@@ -118,6 +122,7 @@ MStatus boingRBNode::initialize()
     MFnMatrixAttribute fnMatrixAttr;
 	MFnTypedAttribute typedAttr;
 	MFnEnumAttribute fnEnumAttr;
+    MFnUnitAttribute fnUnitAttr;
     
     ia_collisionShape = fnMsgAttr.create("inCollisionShape", "incs", &status);
     MCHECKSTATUS(status, "creating inCollisionShape attribute")
@@ -191,7 +196,12 @@ MStatus boingRBNode::initialize()
     status = addAttribute(ia_position);
     MCHECKSTATUS(status, "adding position attribute")
     
-    ia_rotation = fnNumericAttr.createPoint("rotation", "rot", &status);
+    
+    ia_rotationX = fnUnitAttr.create("rotateX", "rotx", MFnUnitAttribute::kAngle, 0.0, &status);
+    ia_rotationY = fnUnitAttr.create("rotateY", "roty", MFnUnitAttribute::kAngle, 0.0, &status);
+    ia_rotationZ = fnUnitAttr.create("rotateZ", "rotz", MFnUnitAttribute::kAngle, 0.0, &status);
+    ia_rotation = fnNumericAttr.create("rotate", "rot", ia_rotationX, ia_rotationY, ia_rotationZ, &status);
+
     MCHECKSTATUS(status, "creating rotation attribute")
     status = addAttribute(ia_rotation);
     MCHECKSTATUS(status, "adding rotation attribute")
@@ -859,7 +869,7 @@ void boingRBNode::computeCollisionShapeParam(const MPlug& plug, MDataBlock& data
 	if (m_collision_shape)
 		m_collision_shape->set_scale(vec3f(scale[0], scale[1], scale[2]));
 
-    MFnDependencyNode fnNode(thisObject);
+    //MFnDependencyNode fnNode(thisObject);
     //cout<< fnNode.name().asChar()<<" -> m_collision_shape : "<<m_collision_shape<<endl;
     
 	data.setClean(plug);
@@ -1205,9 +1215,6 @@ void boingRBNode::computeWorldMatrix(const MPlug& plug, MDataBlock& data)
     //fnParentTransform.getScale(mscale);
 	m_rigid_body->get_transform(pos, rot);
 	
-    MPlug plgPos(thisObject, boingRBNode::ia_position);
-    MPlug plgRot(thisObject, boingRBNode::ia_rotation);
-
 	if(bSolverNode::isStartTime)
 	{ // allow to edit ptranslation and rotation
 		//MVector mtranslation = fnParentTransform.getTranslation(MSpace::kTransform, &status);
@@ -1254,17 +1261,19 @@ void boingRBNode::computeWorldMatrix(const MPlug& plug, MDataBlock& data)
 		MPlug(thisObject, boingRBNode::ia_mass).getValue(mass);
         if(mass > 0.f) 
 		{
+            MPlug plgPos(thisObject, ia_position);
+            MPlug plgRot(thisObject, ia_rotation);
 			//fnParentTransform.setTranslation(MVector(pos[0], pos[1], pos[2]), MSpace::kTransform);
 			//fnParentTransform.setRotation(MQuaternion(rot[1], rot[2], rot[3], rot[0]));
-            //plgPos.child[0].setValue(pos[0]);
-            //plgPos.child[1].setValue(pos[1]);
-            //plgPos.child[2].setValue(pos[2]);
+            plgPos.child(0).setValue(pos[0]);
+            plgPos.child(1).setValue(pos[1]);
+            plgPos.child(2).setValue(pos[2]);
             
-            //MVector r = (MQuaternion(rot[1], rot[2], rot[3], rot[0]).asEulerRotation()).asVector();
+            MVector r = (MQuaternion(rot[1], rot[2], rot[3], rot[0]).asEulerRotation()).asVector();
             
-            //plgRot.child[0].setValue(r[0]);
-            //plgRot.child[1].setValue(r[1]);
-            //plgRot.child[2].setValue(r[2]);
+            plgRot.child(0).setValue(r[0]);
+            plgRot.child(1).setValue(r[1]);
+            plgRot.child(2).setValue(r[2]);
 		}
 	}
 

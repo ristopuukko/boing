@@ -4,7 +4,7 @@
  
  */
 
-//dCallBackNode.h
+//bCallBackNode.h
 
 #ifndef DYN_DCALLBACKNODE_H
 #define DYN_DCALLBACKNODE_H
@@ -16,12 +16,12 @@
 #include <maya/MPxTransform.h>
 
 
-class dCallBackNode : public MPxTransform
+class bCallBackNode : public MPxTransform
 {
 public:
-    dCallBackNode();
-    dCallBackNode(MPxTransformationMatrix *);
-    virtual ~dCallBackNode();
+    bCallBackNode();
+    bCallBackNode(MPxTransformationMatrix *);
+    virtual ~bCallBackNode();
     static  void *      creator();
     static  MStatus     initialize();
 	//virtual void postConstructor();

@@ -104,6 +104,9 @@ public:
     
     static  MObject     ia_position;
     static  MObject     ia_rotation;
+    static  MObject     ia_rotationX;
+    static  MObject     ia_rotationY;
+    static  MObject     ia_rotationZ;
 
     static  MObject     ca_rigidBody;
     static  MObject     ca_rigidBodyParam;

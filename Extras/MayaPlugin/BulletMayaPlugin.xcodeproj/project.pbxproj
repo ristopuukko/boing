@@ -407,8 +407,6 @@
 		BC4342131117F4CF00C9C8D7 /* mesh_shape_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341E11117F4CF00C9C8D7 /* mesh_shape_impl.h */; };
 		BC4342141117F4CF00C9C8D7 /* mayaUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341E21117F4CF00C9C8D7 /* mayaUtils.h */; };
 		BC4342151117F4CF00C9C8D7 /* mathUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341E31117F4CF00C9C8D7 /* mathUtils.h */; };
-		BC4342161117F4CF00C9C8D7 /* dSolverNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341E41117F4CF00C9C8D7 /* dSolverNode.h */; };
-		BC4342171117F4CF00C9C8D7 /* dSolverNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4341E51117F4CF00C9C8D7 /* dSolverNode.cpp */; };
 		BC4342181117F4CF00C9C8D7 /* dSolverCmd.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341E61117F4CF00C9C8D7 /* dSolverCmd.h */; };
 		BC4342191117F4CF00C9C8D7 /* dSolverCmd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4341E71117F4CF00C9C8D7 /* dSolverCmd.cpp */; };
 		BC43421A1117F4CF00C9C8D7 /* dRigidBodyCmd.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341E81117F4CF00C9C8D7 /* dRigidBodyCmd.h */; };
@@ -475,8 +473,8 @@
 		F986F64D193F2E080040A399 /* boingRBCmd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F986F64B193F2E080040A399 /* boingRBCmd.cpp */; };
 		F986F64E193F2E080040A399 /* boingRBCmd.h in Headers */ = {isa = PBXBuildFile; fileRef = F986F64C193F2E080040A399 /* boingRBCmd.h */; };
 		F9C7F0DC18A2A83D00BAF5D5 /* dynamicaRbCmd.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C7F0DB18A2A83D00BAF5D5 /* dynamicaRbCmd.h */; };
-		F9EA839E18D7A6440058D1C3 /* dCallBackNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9EA839C18D7A6440058D1C3 /* dCallBackNode.cpp */; };
-		F9EA839F18D7A6440058D1C3 /* dCallBackNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F9EA839D18D7A6440058D1C3 /* dCallBackNode.h */; };
+		F9EA839E18D7A6440058D1C3 /* bCallBackNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9EA839C18D7A6440058D1C3 /* bCallBackNode.cpp */; };
+		F9EA839F18D7A6440058D1C3 /* bCallBackNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F9EA839D18D7A6440058D1C3 /* bCallBackNode.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -890,8 +888,6 @@
 		BC4341E11117F4CF00C9C8D7 /* mesh_shape_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh_shape_impl.h; sourceTree = "<group>"; };
 		BC4341E21117F4CF00C9C8D7 /* mayaUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mayaUtils.h; sourceTree = "<group>"; };
 		BC4341E31117F4CF00C9C8D7 /* mathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mathUtils.h; sourceTree = "<group>"; };
-		BC4341E41117F4CF00C9C8D7 /* dSolverNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = dSolverNode.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		BC4341E51117F4CF00C9C8D7 /* dSolverNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = dSolverNode.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		BC4341E61117F4CF00C9C8D7 /* dSolverCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dSolverCmd.h; sourceTree = "<group>"; };
 		BC4341E71117F4CF00C9C8D7 /* dSolverCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = dSolverCmd.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		BC4341E81117F4CF00C9C8D7 /* dRigidBodyCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dRigidBodyCmd.h; sourceTree = "<group>"; };
@@ -950,7 +946,7 @@
 		BC4342791117F59800C9C8D7 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		D2AAC0630554660B00DB518D /* boing.bundle */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = boing.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		F906D3351941031D0054663E /* bSolverNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = bSolverNode.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		F906D3361941031D0054663E /* bSolverNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bSolverNode.h; sourceTree = "<group>"; };
+		F906D3361941031D0054663E /* bSolverNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = bSolverNode.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F906D3371941031D0054663E /* bSolverCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bSolverCmd.h; sourceTree = "<group>"; };
 		F906D3381941031D0054663E /* bSolverCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bSolverCmd.cpp; sourceTree = "<group>"; };
 		F91E78DC18D8806900526A5C /* AEdCallBackTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; name = AEdCallBackTemplate.mel; path = scripts/AEdCallBackTemplate.mel; sourceTree = "<group>"; };
@@ -959,6 +955,8 @@
 		F986F648193F2A970040A399 /* boingRBNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boingRBNode.h; sourceTree = "<group>"; };
 		F986F64B193F2E080040A399 /* boingRBCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = boingRBCmd.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F986F64C193F2E080040A399 /* boingRBCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boingRBCmd.h; sourceTree = "<group>"; };
+		F9AB38551948DA330072EB3C /* Makefile_boing_2013.mac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile_boing_2013.mac; sourceTree = "<group>"; };
+		F9AB38561948DA330072EB3C /* Makefile_boing_2014.mac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile_boing_2014.mac; sourceTree = "<group>"; };
 		F9C54CB81948B9D0009537FE /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		F9C7F0CD18A29E5A00BAF5D5 /* dynamicaUI.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = dynamicaUI.mel; path = scripts/dynamicaUI.mel; sourceTree = "<group>"; };
 		F9C7F0CE18A29E5A00BAF5D5 /* AEdSolverTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = AEdSolverTemplate.mel; path = scripts/AEdSolverTemplate.mel; sourceTree = "<group>"; };
@@ -973,8 +971,8 @@
 		F9C7F0D718A29E5A00BAF5D5 /* AEdRigidBodyArrayTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = AEdRigidBodyArrayTemplate.mel; path = scripts/AEdRigidBodyArrayTemplate.mel; sourceTree = "<group>"; };
 		F9C7F0D818A29E5A00BAF5D5 /* dynamica.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = dynamica.mel; path = scripts/dynamica.mel; sourceTree = "<group>"; };
 		F9C7F0DB18A2A83D00BAF5D5 /* dynamicaRbCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dynamicaRbCmd.h; sourceTree = "<group>"; };
-		F9EA839C18D7A6440058D1C3 /* dCallBackNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = dCallBackNode.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		F9EA839D18D7A6440058D1C3 /* dCallBackNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dCallBackNode.h; sourceTree = "<group>"; };
+		F9EA839C18D7A6440058D1C3 /* bCallBackNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = bCallBackNode.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		F9EA839D18D7A6440058D1C3 /* bCallBackNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = bCallBackNode.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1005,6 +1003,8 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				F9AB38551948DA330072EB3C /* Makefile_boing_2013.mac */,
+				F9AB38561948DA330072EB3C /* Makefile_boing_2014.mac */,
 				BC241BD5113DD50A0021293C /* colladaExport.cpp */,
 				BC241BD6113DD50A0021293C /* colladaExport.h */,
 				BC241BD4113DD50A0021293C /* bt_rigid_body.cpp */,
@@ -1066,10 +1066,8 @@
 				BC4341E11117F4CF00C9C8D7 /* mesh_shape_impl.h */,
 				BC4341E21117F4CF00C9C8D7 /* mayaUtils.h */,
 				BC4341E31117F4CF00C9C8D7 /* mathUtils.h */,
-				BC4341E41117F4CF00C9C8D7 /* dSolverNode.h */,
-				BC4341E51117F4CF00C9C8D7 /* dSolverNode.cpp */,
-				F9EA839C18D7A6440058D1C3 /* dCallBackNode.cpp */,
-				F9EA839D18D7A6440058D1C3 /* dCallBackNode.h */,
+				F9EA839C18D7A6440058D1C3 /* bCallBackNode.cpp */,
+				F9EA839D18D7A6440058D1C3 /* bCallBackNode.h */,
 				BC4341E61117F4CF00C9C8D7 /* dSolverCmd.h */,
 				BC4341E71117F4CF00C9C8D7 /* dSolverCmd.cpp */,
 				BC4341E81117F4CF00C9C8D7 /* dRigidBodyCmd.h */,
@@ -1991,7 +1989,6 @@
 				BC4342131117F4CF00C9C8D7 /* mesh_shape_impl.h in Headers */,
 				BC4342141117F4CF00C9C8D7 /* mayaUtils.h in Headers */,
 				BC4342151117F4CF00C9C8D7 /* mathUtils.h in Headers */,
-				BC4342161117F4CF00C9C8D7 /* dSolverNode.h in Headers */,
 				BC4342181117F4CF00C9C8D7 /* dSolverCmd.h in Headers */,
 				BC43421A1117F4CF00C9C8D7 /* dRigidBodyCmd.h in Headers */,
 				BC43421C1117F4CF00C9C8D7 /* dRigidBodyArrayCmd.h in Headers */,
@@ -2034,7 +2031,7 @@
 				BC43426E1117F51F00C9C8D7 /* bt_constraint.h in Headers */,
 				BC241BD9113DD50A0021293C /* colladaExport.h in Headers */,
 				F9C7F0DC18A2A83D00BAF5D5 /* dynamicaRbCmd.h in Headers */,
-				F9EA839F18D7A6440058D1C3 /* dCallBackNode.h in Headers */,
+				F9EA839F18D7A6440058D1C3 /* bCallBackNode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2247,7 +2244,6 @@
 				BC43420D1117F4CF00C9C8D7 /* pluginMain.cpp in Sources */,
 				BC4342111117F4CF00C9C8D7 /* pdbIO.cpp in Sources */,
 				F906D3391941031D0054663E /* bSolverNode.cpp in Sources */,
-				BC4342171117F4CF00C9C8D7 /* dSolverNode.cpp in Sources */,
 				BC4342191117F4CF00C9C8D7 /* dSolverCmd.cpp in Sources */,
 				BC43421B1117F4CF00C9C8D7 /* dRigidBodyCmd.cpp in Sources */,
 				BC43421D1117F4CF00C9C8D7 /* dRigidBodyArrayCmd.cpp in Sources */,
@@ -2265,7 +2261,7 @@
 				BC4342671117F51F00C9C8D7 /* dHingeConstraintCmd.cpp in Sources */,
 				BC241BD7113DD50A0021293C /* bt_rigid_body.cpp in Sources */,
 				BC241BD8113DD50A0021293C /* colladaExport.cpp in Sources */,
-				F9EA839E18D7A6440058D1C3 /* dCallBackNode.cpp in Sources */,
+				F9EA839E18D7A6440058D1C3 /* bCallBackNode.cpp in Sources */,
 				F94A488818DDC5BC007CFA3F /* dynamicaRbCmd.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

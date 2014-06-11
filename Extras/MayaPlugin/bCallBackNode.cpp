@@ -4,10 +4,10 @@ Written by: Risto Puukko <risto.puukko@gmail.com>
 
 */
 
-//dCallBackNode.cpp
+//bCallBackNode.cpp
 
 
-#include "dCallBackNode.h"
+#include "bCallBackNode.h"
 #include <maya/MString.h>
 #include <maya/MObject.h>
 #include <maya/MFnNumericAttribute.h>
@@ -17,14 +17,14 @@ Written by: Risto Puukko <risto.puukko@gmail.com>
 #include "mayaUtils.h"
 
 
-MTypeId dCallBackNode::typeId(0x100329);
-MString dCallBackNode::typeName("dCallBack");
+MTypeId bCallBackNode::typeId(0x100329);
+MString bCallBackNode::typeName("dCallBack");
 
-MObject dCallBackNode::ia_enabled;
-MObject dCallBackNode::ia_script;
-MObject dCallBackNode::ia_callbacktype;
+MObject bCallBackNode::ia_enabled;
+MObject bCallBackNode::ia_script;
+MObject bCallBackNode::ia_callbacktype;
 
-MStatus dCallBackNode::initialize()
+MStatus bCallBackNode::initialize()
 {
     MStatus                 status;
     MFnEnumAttribute        fnEnumAttr;
@@ -75,15 +75,15 @@ MStatus dCallBackNode::initialize()
     return MS::kSuccess;
 }
 
-dCallBackNode::dCallBackNode() {}
-dCallBackNode::~dCallBackNode() {}
+bCallBackNode::bCallBackNode() {}
+bCallBackNode::~bCallBackNode() {}
 
 
-void* dCallBackNode::creator() { return new dCallBackNode(); }
+void* bCallBackNode::creator() { return new bCallBackNode(); }
 
 
 /*
-MStatus dCallBackNode::compute(const MPlug& plug, MDataBlock& data)
+MStatus bCallBackNode::compute(const MPlug& plug, MDataBlock& data)
 {
 //  std::cout << "Calling bSolverNode::compute \n";
 //	std::cout << "Plug: " << plug.name().asChar() << std::

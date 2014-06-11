@@ -53,7 +53,7 @@ Nov 2011 - Dec 2011 : Added logic for soft bodies
 #include "boingRBCmd.h"
 #include "dRigidBodyArrayCmd.h"
 #include "dynamicaRbCmd.h"
-#include "dCallBackNode.h"
+#include "bCallBackNode.h"
 #include "constraint/dNailConstraintCmd.h"
 #include "constraint/dHingeConstraintCmd.h" 
 #include "constraint/dSliderConstraintCmd.h" 
@@ -230,16 +230,16 @@ MStatus initializePlugin( MObject obj )
     MCHECKSTATUS(status, "registering dynamicaRbCmd")
     
     const MString classification = "drawdb/geometry/transform";
-    status = plugin.registerTransform( dCallBackNode::typeName,
-                                 dCallBackNode::typeId,
-                                 dCallBackNode::creator,
-                                 dCallBackNode::initialize,
+    status = plugin.registerTransform( bCallBackNode::typeName,
+                                 bCallBackNode::typeId,
+                                 bCallBackNode::creator,
+                                 bCallBackNode::initialize,
                                       MPxTransformationMatrix::creator,
                                       MPxTransformationMatrix::baseTransformationMatrixId,
                                  &classification);
     //                             MPxNode::kLocatorNode );
 
-    MCHECKSTATUS(status, "registering dCallBackNode")
+    MCHECKSTATUS(status, "registering bCallBackNode")
     
 //</rp 2014>
     status = plugin.registerCommand( dRigidBodyArrayCmd::typeName,
@@ -320,8 +320,8 @@ MStatus uninitializePlugin( MObject obj )
     status = plugin.deregisterCommand( dynamicaRbCmd::typeName );
     MCHECKSTATUS(status, "deregistering dynamicaRbCmd")
 
-    status = plugin.deregisterNode(dCallBackNode::typeId);
-    MCHECKSTATUS(status, "deregistering dCallBackNode")
+    status = plugin.deregisterNode(bCallBackNode::typeId);
+    MCHECKSTATUS(status, "deregistering bCallBackNode")
 
     status = plugin.deregisterCommand(bSolverCmd::typeName);
     MCHECKSTATUS(status, "deregistering bSolverCmd")
