@@ -392,8 +392,6 @@
 		BC4342041117F4CF00C9C8D7 /* solver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4341D21117F4CF00C9C8D7 /* solver.cpp */; };
 		BC4342051117F4CF00C9C8D7 /* solver_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341D31117F4CF00C9C8D7 /* solver_impl.h */; };
 		BC4342061117F4CF00C9C8D7 /* shared_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341D41117F4CF00C9C8D7 /* shared_ptr.h */; };
-		BC4342071117F4CF00C9C8D7 /* rigidBodyNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341D51117F4CF00C9C8D7 /* rigidBodyNode.h */; };
-		BC4342081117F4CF00C9C8D7 /* rigidBodyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4341D61117F4CF00C9C8D7 /* rigidBodyNode.cpp */; };
 		BC4342091117F4CF00C9C8D7 /* rigidBodyArrayNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341D71117F4CF00C9C8D7 /* rigidBodyArrayNode.h */; };
 		BC43420A1117F4CF00C9C8D7 /* rigidBodyArrayNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4341D81117F4CF00C9C8D7 /* rigidBodyArrayNode.cpp */; };
 		BC43420B1117F4CF00C9C8D7 /* rigid_body.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341D91117F4CF00C9C8D7 /* rigid_body.h */; };
@@ -407,18 +405,12 @@
 		BC4342131117F4CF00C9C8D7 /* mesh_shape_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341E11117F4CF00C9C8D7 /* mesh_shape_impl.h */; };
 		BC4342141117F4CF00C9C8D7 /* mayaUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341E21117F4CF00C9C8D7 /* mayaUtils.h */; };
 		BC4342151117F4CF00C9C8D7 /* mathUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341E31117F4CF00C9C8D7 /* mathUtils.h */; };
-		BC4342181117F4CF00C9C8D7 /* dSolverCmd.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341E61117F4CF00C9C8D7 /* dSolverCmd.h */; };
-		BC4342191117F4CF00C9C8D7 /* dSolverCmd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4341E71117F4CF00C9C8D7 /* dSolverCmd.cpp */; };
-		BC43421A1117F4CF00C9C8D7 /* dRigidBodyCmd.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341E81117F4CF00C9C8D7 /* dRigidBodyCmd.h */; };
-		BC43421B1117F4CF00C9C8D7 /* dRigidBodyCmd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4341E91117F4CF00C9C8D7 /* dRigidBodyCmd.cpp */; };
 		BC43421C1117F4CF00C9C8D7 /* dRigidBodyArrayCmd.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341EA1117F4CF00C9C8D7 /* dRigidBodyArrayCmd.h */; };
 		BC43421D1117F4CF00C9C8D7 /* dRigidBodyArrayCmd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4341EB1117F4CF00C9C8D7 /* dRigidBodyArrayCmd.cpp */; };
 		BC43421E1117F4CF00C9C8D7 /* drawUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341EC1117F4CF00C9C8D7 /* drawUtils.h */; };
 		BC43421F1117F4CF00C9C8D7 /* drawUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4341ED1117F4CF00C9C8D7 /* drawUtils.cpp */; };
 		BC4342201117F4CF00C9C8D7 /* convex_hull_shape.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341EE1117F4CF00C9C8D7 /* convex_hull_shape.h */; };
 		BC4342211117F4CF00C9C8D7 /* convex_hull_shape_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341EF1117F4CF00C9C8D7 /* convex_hull_shape_impl.h */; };
-		BC4342221117F4CF00C9C8D7 /* collisionShapeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341F01117F4CF00C9C8D7 /* collisionShapeNode.h */; };
-		BC4342231117F4CF00C9C8D7 /* collisionShapeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4341F11117F4CF00C9C8D7 /* collisionShapeNode.cpp */; };
 		BC4342241117F4CF00C9C8D7 /* collision_shape.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341F21117F4CF00C9C8D7 /* collision_shape.h */; };
 		BC4342251117F4CF00C9C8D7 /* collision_shape_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341F31117F4CF00C9C8D7 /* collision_shape_impl.h */; };
 		BC4342261117F4CF00C9C8D7 /* bulletExport.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4341F41117F4CF00C9C8D7 /* bulletExport.h */; };
@@ -873,8 +865,6 @@
 		BC4341D21117F4CF00C9C8D7 /* solver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = solver.cpp; sourceTree = "<group>"; };
 		BC4341D31117F4CF00C9C8D7 /* solver_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = solver_impl.h; sourceTree = "<group>"; };
 		BC4341D41117F4CF00C9C8D7 /* shared_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shared_ptr.h; sourceTree = "<group>"; };
-		BC4341D51117F4CF00C9C8D7 /* rigidBodyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rigidBodyNode.h; sourceTree = "<group>"; };
-		BC4341D61117F4CF00C9C8D7 /* rigidBodyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = rigidBodyNode.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		BC4341D71117F4CF00C9C8D7 /* rigidBodyArrayNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rigidBodyArrayNode.h; sourceTree = "<group>"; };
 		BC4341D81117F4CF00C9C8D7 /* rigidBodyArrayNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rigidBodyArrayNode.cpp; sourceTree = "<group>"; };
 		BC4341D91117F4CF00C9C8D7 /* rigid_body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rigid_body.h; sourceTree = "<group>"; };
@@ -888,18 +878,12 @@
 		BC4341E11117F4CF00C9C8D7 /* mesh_shape_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh_shape_impl.h; sourceTree = "<group>"; };
 		BC4341E21117F4CF00C9C8D7 /* mayaUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mayaUtils.h; sourceTree = "<group>"; };
 		BC4341E31117F4CF00C9C8D7 /* mathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mathUtils.h; sourceTree = "<group>"; };
-		BC4341E61117F4CF00C9C8D7 /* dSolverCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dSolverCmd.h; sourceTree = "<group>"; };
-		BC4341E71117F4CF00C9C8D7 /* dSolverCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = dSolverCmd.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		BC4341E81117F4CF00C9C8D7 /* dRigidBodyCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dRigidBodyCmd.h; sourceTree = "<group>"; };
-		BC4341E91117F4CF00C9C8D7 /* dRigidBodyCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dRigidBodyCmd.cpp; sourceTree = "<group>"; };
 		BC4341EA1117F4CF00C9C8D7 /* dRigidBodyArrayCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dRigidBodyArrayCmd.h; sourceTree = "<group>"; };
 		BC4341EB1117F4CF00C9C8D7 /* dRigidBodyArrayCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dRigidBodyArrayCmd.cpp; sourceTree = "<group>"; };
 		BC4341EC1117F4CF00C9C8D7 /* drawUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = drawUtils.h; sourceTree = "<group>"; };
 		BC4341ED1117F4CF00C9C8D7 /* drawUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = drawUtils.cpp; sourceTree = "<group>"; };
 		BC4341EE1117F4CF00C9C8D7 /* convex_hull_shape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convex_hull_shape.h; sourceTree = "<group>"; };
 		BC4341EF1117F4CF00C9C8D7 /* convex_hull_shape_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convex_hull_shape_impl.h; sourceTree = "<group>"; };
-		BC4341F01117F4CF00C9C8D7 /* collisionShapeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = collisionShapeNode.h; sourceTree = "<group>"; };
-		BC4341F11117F4CF00C9C8D7 /* collisionShapeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = collisionShapeNode.cpp; sourceTree = "<group>"; };
 		BC4341F21117F4CF00C9C8D7 /* collision_shape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = collision_shape.h; sourceTree = "<group>"; };
 		BC4341F31117F4CF00C9C8D7 /* collision_shape_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = collision_shape_impl.h; sourceTree = "<group>"; };
 		BC4341F41117F4CF00C9C8D7 /* bulletExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bulletExport.h; sourceTree = "<group>"; };
@@ -1047,8 +1031,6 @@
 				BC4341D21117F4CF00C9C8D7 /* solver.cpp */,
 				BC4341D31117F4CF00C9C8D7 /* solver_impl.h */,
 				BC4341D41117F4CF00C9C8D7 /* shared_ptr.h */,
-				BC4341D51117F4CF00C9C8D7 /* rigidBodyNode.h */,
-				BC4341D61117F4CF00C9C8D7 /* rigidBodyNode.cpp */,
 				F986F647193F2A970040A399 /* boingRBNode.cpp */,
 				F986F648193F2A970040A399 /* boingRBNode.h */,
 				F986F64B193F2E080040A399 /* boingRBCmd.cpp */,
@@ -1068,10 +1050,6 @@
 				BC4341E31117F4CF00C9C8D7 /* mathUtils.h */,
 				F9EA839C18D7A6440058D1C3 /* bCallBackNode.cpp */,
 				F9EA839D18D7A6440058D1C3 /* bCallBackNode.h */,
-				BC4341E61117F4CF00C9C8D7 /* dSolverCmd.h */,
-				BC4341E71117F4CF00C9C8D7 /* dSolverCmd.cpp */,
-				BC4341E81117F4CF00C9C8D7 /* dRigidBodyCmd.h */,
-				BC4341E91117F4CF00C9C8D7 /* dRigidBodyCmd.cpp */,
 				F9C7F0DB18A2A83D00BAF5D5 /* dynamicaRbCmd.h */,
 				F94A488718DDC5BC007CFA3F /* dynamicaRbCmd.cpp */,
 				BC4341EA1117F4CF00C9C8D7 /* dRigidBodyArrayCmd.h */,
@@ -1080,8 +1058,6 @@
 				BC4341EE1117F4CF00C9C8D7 /* convex_hull_shape.h */,
 				BC4341EF1117F4CF00C9C8D7 /* convex_hull_shape_impl.h */,
 				BC4341EC1117F4CF00C9C8D7 /* drawUtils.h */,
-				BC4341F01117F4CF00C9C8D7 /* collisionShapeNode.h */,
-				BC4341F11117F4CF00C9C8D7 /* collisionShapeNode.cpp */,
 				BC4341F21117F4CF00C9C8D7 /* collision_shape.h */,
 				BC4341F31117F4CF00C9C8D7 /* collision_shape_impl.h */,
 				BC4341F41117F4CF00C9C8D7 /* bulletExport.h */,
@@ -1978,7 +1954,6 @@
 				BC4342031117F4CF00C9C8D7 /* solver.h in Headers */,
 				BC4342051117F4CF00C9C8D7 /* solver_impl.h in Headers */,
 				BC4342061117F4CF00C9C8D7 /* shared_ptr.h in Headers */,
-				BC4342071117F4CF00C9C8D7 /* rigidBodyNode.h in Headers */,
 				BC4342091117F4CF00C9C8D7 /* rigidBodyArrayNode.h in Headers */,
 				BC43420B1117F4CF00C9C8D7 /* rigid_body.h in Headers */,
 				BC43420C1117F4CF00C9C8D7 /* rigid_body_impl.h in Headers */,
@@ -1989,13 +1964,10 @@
 				BC4342131117F4CF00C9C8D7 /* mesh_shape_impl.h in Headers */,
 				BC4342141117F4CF00C9C8D7 /* mayaUtils.h in Headers */,
 				BC4342151117F4CF00C9C8D7 /* mathUtils.h in Headers */,
-				BC4342181117F4CF00C9C8D7 /* dSolverCmd.h in Headers */,
-				BC43421A1117F4CF00C9C8D7 /* dRigidBodyCmd.h in Headers */,
 				BC43421C1117F4CF00C9C8D7 /* dRigidBodyArrayCmd.h in Headers */,
 				BC43421E1117F4CF00C9C8D7 /* drawUtils.h in Headers */,
 				BC4342201117F4CF00C9C8D7 /* convex_hull_shape.h in Headers */,
 				BC4342211117F4CF00C9C8D7 /* convex_hull_shape_impl.h in Headers */,
-				BC4342221117F4CF00C9C8D7 /* collisionShapeNode.h in Headers */,
 				BC4342241117F4CF00C9C8D7 /* collision_shape.h in Headers */,
 				BC4342251117F4CF00C9C8D7 /* collision_shape_impl.h in Headers */,
 				BC4342261117F4CF00C9C8D7 /* bulletExport.h in Headers */,
@@ -2239,16 +2211,12 @@
 				BC4341C01117F3C600C9C8D7 /* Makefile in Sources */,
 				BC4341C11117F3C600C9C8D7 /* Jamfile in Sources */,
 				BC4342041117F4CF00C9C8D7 /* solver.cpp in Sources */,
-				BC4342081117F4CF00C9C8D7 /* rigidBodyNode.cpp in Sources */,
 				BC43420A1117F4CF00C9C8D7 /* rigidBodyArrayNode.cpp in Sources */,
 				BC43420D1117F4CF00C9C8D7 /* pluginMain.cpp in Sources */,
 				BC4342111117F4CF00C9C8D7 /* pdbIO.cpp in Sources */,
 				F906D3391941031D0054663E /* bSolverNode.cpp in Sources */,
-				BC4342191117F4CF00C9C8D7 /* dSolverCmd.cpp in Sources */,
-				BC43421B1117F4CF00C9C8D7 /* dRigidBodyCmd.cpp in Sources */,
 				BC43421D1117F4CF00C9C8D7 /* dRigidBodyArrayCmd.cpp in Sources */,
 				BC43421F1117F4CF00C9C8D7 /* drawUtils.cpp in Sources */,
-				BC4342231117F4CF00C9C8D7 /* collisionShapeNode.cpp in Sources */,
 				BC4342271117F4CF00C9C8D7 /* bulletExport.cpp in Sources */,
 				BC43422A1117F4CF00C9C8D7 /* bt_solver.cpp in Sources */,
 				BC4342541117F51F00C9C8D7 /* sliderConstraintNode.cpp in Sources */,
