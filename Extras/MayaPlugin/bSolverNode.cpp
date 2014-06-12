@@ -158,56 +158,42 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
                          M3dView::DisplayStyle style,
                          M3dView::DisplayStatus status )
 {
-    //MFnDependencyNode fnNode(node);
     MStringArray rbs;
     std::set<boingRBNode *>nodes;
-    //cout << "start getRigidBodies()" <<endl;
 	MObject thisObject(thisMObject());
     getRigidBodies(thisObject, rbs, nodes);
-    //cout << "end getRigidBodies()" <<endl;
-    //cout<<"rbs : "<<rbs<<endl;
-    //cout<<"nodes.length() : "<<nodes.size()<<endl;
     std::set<boingRBNode*>::iterator it;
-    /*
-    for (it=nodes.begin(); it != nodes.end(); ++it) {
-        cout<<(*it)->name()<<endl;
-    }*/
-    //solver_t *solver_t;
-    //std::set<rigid_body_t::pointer>rbs = solver_t->get_rigid_bodies();
 
-    //std::set<rigid_body_t::pointer> rbs = solver_t::get_rigid_bodies();
-    /*
-    boingRBNode *rbNode = static_cast<boingRBNode*>(fnNode.userNode());
     
-	if (m_reInitialize)
-		rbNode->computeRigidBody(plug,data);
     
-	rigid_body_t::pointer rb = rbNode->rigid_body();
-     */
-    
-    //update();
-    
-    view.beginGL();
-    glPushAttrib( GL_ALL_ATTRIB_BITS );
+    //view.beginGL();
+    //glPushAttrib( GL_ALL_ATTRIB_BITS );
     //std::set<boingRBNode *>::iterator it;
     for(it=nodes.begin(); it!=nodes.end(); ++it) {
         rigid_body_t::pointer rb = (*it)->rigid_body();
+        (*it)->update();
         if(rb) {
             //remove the scale, since it's already included in the node transform
             vec3f scale;
             rb->collision_shape()->get_scale(scale);
-            //std::cout << "rigidBodyNode::draw : " << (*it)->name() << std::endl;
-            //cout<<" rb->collision_shape()->get_scale(scale) : "<<scale[0]<<" "<<scale[1]<<" "<<scale[2]<<" "<<endl;
             
             glPushMatrix();
             glScalef(1/scale[0], 1/scale[1], 1/scale[2]);
+            vec3f pos;
+            quatf rot;
+            rb->get_transform(pos, rot);
+            MQuaternion q(rot[1], rot[2], rot[3], rot[0]);
+            MVector axis;
+            double angle;
+            q.getAxisAngle(axis, angle);
+            
+            glTranslatef(pos[0], pos[1], pos[2]);
+            angle *= 180.0 / SIMD_PI;
+            glRotated( angle, axis.x, axis.y, axis.z);
             
             if(style == M3dView::kFlatShaded || style == M3dView::kGouraudShaded) {
                 glEnable(GL_LIGHTING);
-                //MPlug plug(rbNode, rigidBodyNode::ia_mass);
                 float mass = rb->get_mass();
-                //cout<<"rb->get_mass() : "<<mass<<endl;
-                //plug.getValue(mass);
                 if (mass) {
                     float material[] = { 0.2f, 1.0f, 0.2f, 1.0f };
                     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, material);
@@ -219,7 +205,6 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
                 rb->collision_shape()->gl_draw(collision_shape_t::kDSSolid);
             }
             
-            
             if( status == M3dView::kActive ||
                status == M3dView::kLead ||
                status == M3dView::kHilite ||
@@ -229,11 +214,12 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
                 rb->collision_shape()->gl_draw(collision_shape_t::kDSWireframe);
                 
             }
+            
             glPopMatrix();
         }
     }
-    glPopAttrib();
-    view.endGL();
+    //glPopAttrib();
+    //view.endGL();
 }
 
 void bSolverNode::getRigidBodies(MObject &node, MStringArray& rbds, std::set<boingRBNode*>&nodes) {
@@ -478,11 +464,11 @@ void	bSolverNode::draw(	M3dView & view, const MDagPath & path,
     
     //cout<<"bSolver Draw()"<<endl;
     
-    drawBoingRb(view,path,style,status);
     view.beginGL();
+    
     glPushAttrib( GL_ALL_ATTRIB_BITS );
     
-    glDisable(GL_LIGHTING);
+    /*glDisable(GL_LIGHTING);
     
     if( !(status == M3dView::kActive ||
           status == M3dView::kLead ||
@@ -490,16 +476,22 @@ void	bSolverNode::draw(	M3dView & view, const MDagPath & path,
           ( style != M3dView::kGouraudShaded && style != M3dView::kFlatShaded )) ) {
         glColor3f(1.0, 1.0, 0.0);
     }
+    */
+
     
+    /*
+    glBegin(GL_LINES);
+
+    glColor3f(1.0, 0.5, 0.5);
+    glVertex3f(0.0, 0.0, 0.0);
+    glColor3f(0.5, 0.5, 1.0);
+    glVertex3f(1.f, 1.f, 1.f);
+
+    glEnd();
+    */
     
-     glBegin(GL_LINES);
-     
-     glColor3f(1.0, 0.5, 0.5);
-     glVertex3f(0.0, 0.0, 0.0);
-     glColor3f(0.5, 0.5, 1.0);
-     glVertex3f(1.f, 1.f, 1.f);
-     
-     glEnd();
+    drawBoingRb(view,path,style,status);
+
     
     
 	MObject thisObject = thisMObject();
@@ -530,6 +522,7 @@ void	bSolverNode::draw(	M3dView & view, const MDagPath & path,
 	solver_t::debug_draw(dbgMode);
     
     glPopAttrib();
+    
     view.endGL();
     
 }
@@ -907,8 +900,8 @@ bool bSolverNode::setInternalValueInContext( const  MPlug & plug, const  MDataHa
 
 MStatus bSolverNode::compute(const MPlug& plug, MDataBlock& data)
 {
-    std::cout << "Calling bSolverNode::compute \n";
-	std::cout << "Plug: " << plug.name().asChar() << std::endl;
+    //std::cout << "Calling bSolverNode::compute \n";
+	//std::cout << "Plug: " << plug.name().asChar() << std::endl;
     
 	if(plug == oa_rigidBodies) {
         computeRigidBodies(plug, data);
@@ -1716,7 +1709,7 @@ void bSolverNode::updateActiveRigidBodies(MPlugArray &rbConnections)
 		MObject node = rbConnections[i].node();
         //MFnDagNode fnDagNode(node);
         MFnDependencyNode fnNode(node);
-        std::cout << "(bSolverNode::updateActiveRigidBodies) | current connection: " <<  fnNode.name().asChar() << std::endl;
+        //std::cout << "(bSolverNode::updateActiveRigidBodies) | current connection: " <<  fnNode.name().asChar() << std::endl;
 		if(fnNode.typeId() == boingRBNode::typeId) {
             boingRBNode *rbNode = static_cast<boingRBNode*>(fnNode.userNode());
             rigid_body_t::pointer rb = rbNode->rigid_body();
@@ -1755,10 +1748,13 @@ void bSolverNode::updateActiveRigidBodies(MPlugArray &rbConnections)
                     plgPosition.child(0).setValue((double)pos[0]);
                     plgPosition.child(1).setValue((double)pos[1]);
                     plgPosition.child(2).setValue((double)pos[2]);
+                    MQuaternion Q(rot[1], rot[2], rot[3], rot[0]);
+                    MEulerRotation E(Q.asEulerRotation());
+                    MVector R(E.asVector());
                     MPlug plgRotation(node, boingRBNode::ia_rotation);
-                    plgRotation.child(0).setValue((double)rot[0]);
-                    plgRotation.child(1).setValue((double)rot[1]);
-                    plgRotation.child(2).setValue((double)rot[2]);
+                    plgRotation.child(0).setValue(R.x);
+                    plgRotation.child(1).setValue(R.y);
+                    plgRotation.child(2).setValue(R.z);
 					//fnTransform.setRotation(MQuaternion(rot[1], rot[2], rot[3], rot[0]));
 					//fnTransform.setTranslation(MVector(pos[0], pos[1], pos[2]), MSpace::kTransform);
 				}
