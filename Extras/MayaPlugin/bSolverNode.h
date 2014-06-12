@@ -64,13 +64,13 @@ public:
 
 
 	virtual bool            isBounded() const { 
-		return true;
+		return false;
 	}
 virtual MBoundingBox boundingBox() const
 {
     MObject node = thisMObject();
-    MPoint corner1(-100, -100, -100);
-    MPoint corner2(100, 100, 100);
+    MPoint corner1(-1, -1, -1);
+    MPoint corner2(1, 1, 1);
     return MBoundingBox(corner1, corner2);
 }
 
@@ -87,7 +87,7 @@ virtual MBoundingBox boundingBox() const
     virtual bool setInternalValueInContext ( const  MPlug & plug, const  MDataHandle & dataHandle,  MDGContext & ctx );
 
 	void initConstraint(const MPlug& plug, MObject& bodyNode, MDataBlock& data); 
-	void initRigidBodyArray(const MPlug& plug, MObject &node, MDataBlock& data);
+	//void initRigidBodyArray(const MPlug& plug, MObject &node, MDataBlock& data);
 	void initRigidBody(const MPlug& plug, MObject& node, MDataBlock& data);
     
     //<rp 2014>
@@ -96,7 +96,7 @@ virtual MBoundingBox boundingBox() const
                                   M3dView::DisplayStatus status);
     void traverseCallBacks();
     void runCallBacks(MObjectArray);
-    virtual MObject     getConnectedTransform(MObject& node);
+    void getConnectedTransform(MObject& node, MObject &retNode);
     //</rp 2014>
 
     virtual MStatus     compute( const MPlug& plug, MDataBlock& data );
@@ -169,7 +169,7 @@ protected:
     void computeRigidBodies(const MPlug& plug, MDataBlock& data);
 	void computeSoftBodies(const MPlug& plug, MDataBlock& data);
 	void initSoftBody(const MPlug& plug, MObject& node, MDataBlock& data);
-    void dumpRigidBodyArray(MObject &node);
+    //void dumpRigidBodyArray(MObject &node);
     bool expandFileExpression(std::string const& expr, std::string &base_name, std::string &extension);
 
     void initRigidBodies(const MPlug& plug, MPlugArray &rbConnections, MDataBlock& data);

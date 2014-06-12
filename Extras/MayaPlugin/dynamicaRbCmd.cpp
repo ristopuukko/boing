@@ -38,7 +38,6 @@ Written by: Risto Puukko <risto.puukko@gmail.com>
 #include <iostream>
 #include "boingRBNode.h"
 #include "dynamicaRbCmd.h"
-#include "collisionShapeNode.h"
 #include "bt_solver.h"
 #include "shared_ptr.h"
 #include "bt_rigid_body.h"
