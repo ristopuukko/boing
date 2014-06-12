@@ -55,8 +55,8 @@ GL_LIB=-framework OpenGL
 MAYA_INCLUDE=-I$(MAYA_SDK)/include
 MAYA_LIB=-L$(MAYA_LOCATION)/Maya.app/Contents/MacOS -lOpenMaya -lFoundation -Wl,-executable_path,$(MAYA_LOCATION)/Maya.app/Contents/MacOS  -lOpenMayaUI -lOpenMayaFX -lOpenMaya -lFoundation
 
-SOURCES = bt_solver.cpp pluginMain.cpp bulletExport.cpp  boingRBNode.cpp bCallBackNode.cpp rigidBodyArrayNode.cpp collisionShapeNode.cpp \
-	  convex_decomposition_hacd.cpp solver.cpp bt_rigid_body.cpp bSolverNode.cpp bSolverCmd.cpp boingRBCmd.cpp dRigidBodyArrayCmd.cpp dynamicaRbCmd.cpp \
+SOURCES = bt_solver.cpp pluginMain.cpp bulletExport.cpp  boingRBNode.cpp bCallBackNode.cpp \
+	  convex_decomposition_hacd.cpp solver.cpp bt_rigid_body.cpp bSolverNode.cpp bSolverCmd.cpp boingRBCmd.cpp dynamicaRbCmd.cpp \
 	  pdbIO.cpp drawUtils.cpp dSoftBodyCmd.cpp softBodyNode.cpp soft_body_impl_t.cpp soft_body_t.cpp bt_soft_body.cpp constraint/dHingeConstraintCmd.cpp	constraint/dSliderConstraintCmd.cpp \
 	constraint/hingeConstraintNode.cpp	constraint/sixdofConstraintNode.cpp constraint/dNailConstraintCmd.cpp \
 	constraint/dsixdofConstraintCmd.cpp	constraint/nailConstraintNode.cpp	constraint/sliderConstraintNode.cpp \
@@ -194,11 +194,11 @@ SOURCES = bt_solver.cpp pluginMain.cpp bulletExport.cpp  boingRBNode.cpp bCallBa
 HEADERS = box_shape.h             bt_sphere_shape.h         bSolverNode.h         rigid_body_impl.h \
 	box_shape_impl.h        collision_shape.h         mathUtils.h           boingRBNode.h \
 	bt_box_shape.h          collision_shape_impl.h    mayaUtils.h           solver.h \
-	bt_collision_shape.h    collisionShapeNode.h      mesh_shape.h          solver_impl.h \
+	bt_collision_shape.h    mesh_shape.h          solver_impl.h \
 	bt_convex_hull_shape.h  convex_hull_shape.h       mesh_shape_impl.h     sphere_shape.h \
 	bt_mesh_shape.h         convex_hull_shape_impl.h  plane_shape.h         sphere_shape_impl.h \
-	bt_plane_shape.h        dRigidBodyArrayCmd.h      plane_shape_impl.h \
-	bt_rigid_body.h         boingRBCmd.h           dynamicaRbCmd.h rigidBodyArrayNode.h \
+	bt_plane_shape.h        plane_shape_impl.h \
+	bt_rigid_body.h         boingRBCmd.h           dynamicaRbCmd.h \
 	dSoftBodyCmd.h bCallBackNode.h \
 	softBodyNode.h			soft_body_impl_t.h		  soft_body_t.h bt_soft_body.h \
 	bt_solver.h             bSolverCmd.h              rigid_body.h 		pdbIO.h \

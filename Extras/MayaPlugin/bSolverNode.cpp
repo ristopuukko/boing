@@ -76,7 +76,6 @@
 #include "mayaUtils.h"
 #include "bSolverNode.h"
 #include "solver.h"
-#include "rigidBodyArrayNode.h"
 #include "constraint/nailConstraintNode.h"
 #include "constraint/hingeConstraintNode.h"
 #include "constraint/sliderConstraintNode.h"
@@ -1006,9 +1005,11 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
         plgPosition.child(1).setValue((double)pos[1]);
         plgPosition.child(2).setValue((double)pos[2]);
         MPlug plgRotation(node, boingRBNode::ia_rotation);
-        plgRotation.child(0).setValue((double)rot[0]);
-        plgRotation.child(1).setValue((double)rot[1]);
-        plgRotation.child(2).setValue((double)rot[2]);
+        cout<<"setting rotation : "<<rot<<endl;
+        MVector r(meuler.asVector());
+        plgRotation.child(0).setValue(r.x);
+        plgRotation.child(1).setValue(r.y);
+        plgRotation.child(2).setValue(r.z);
         
         
 		//rbNode->updateShape(plug, data, bSolverNode::collisionMarginOffset); //mb
@@ -1249,7 +1250,7 @@ void bSolverNode::initConstraint(const MPlug& plug, MObject& bodyNode, MDataBloc
 		}
 	}
 }
-
+/*
 void destroyRigidBodyArray(const MPlug& plug, MObject &node, MDataBlock& data)
 {
     MFnDagNode fnDagNode(node);
@@ -1258,7 +1259,9 @@ void destroyRigidBodyArray(const MPlug& plug, MObject &node, MDataBlock& data)
     std::vector<rigid_body_t::pointer>& rbs = rbNode->rigid_bodies();
 	rbNode->destroyRigidBodies();
 }
+ */
 
+/*
 void bSolverNode::initRigidBodyArray(const MPlug& plug, MObject &node, MDataBlock& data)
 {
     MFnDagNode fnDagNode(node);
@@ -1366,6 +1369,7 @@ void bSolverNode::initRigidBodyArray(const MPlug& plug, MObject &node, MDataBloc
         }
     }
 }
+*/
 
 void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections, MDataBlock& data)
 {
@@ -1378,9 +1382,9 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
         if(fnNode.typeId() == boingRBNode::typeId) {
 			destroyConstraint(plug,node,data);
 			destroyRigidBody(plug, node, data);
-        } else if(fnNode.typeId() == rigidBodyArrayNode::typeId) {
+        } /*else if(fnNode.typeId() == rigidBodyArrayNode::typeId) {
             destroyRigidBodyArray(plug,node,data);
-        }
+        }*/
 		else if(fnNode.typeId() == SoftBodyNode::typeId)
 		{
 			destroySoftBody(plug, node, data);
@@ -1403,9 +1407,9 @@ void bSolverNode::initRigidBodies(const MPlug& plug, MPlugArray &rbConnections, 
         MFnDependencyNode fnNode(node);
         if(fnNode.typeId() == boingRBNode::typeId) {
             initRigidBody(plug, node, data);
-        } else if(fnNode.typeId() == rigidBodyArrayNode::typeId) {
+        } /*else if(fnNode.typeId() == rigidBodyArrayNode::typeId) {
             initRigidBodyArray(plug,node,data);
-        }
+        }*/
 		else if(fnNode.typeId() == SoftBodyNode::typeId)
 		{
 			initSoftBody(plug, node, data);
@@ -1453,17 +1457,12 @@ void bSolverNode::gatherPassiveTransforms(MPlugArray &rbConnections, std::vector
     
     for(size_t i = 0; i < rbConnections.length(); ++i) {
         MObject node = rbConnections[i].node();
-        MFnDagNode fnDagNode(node);
-        if(fnDagNode.typeId() == boingRBNode::typeId) {
-            boingRBNode *rbNode = static_cast<boingRBNode*>(fnDagNode.userNode());
+        MFnDependencyNode fnNode(node);
+        if(fnNode.typeId() == boingRBNode::typeId) {
+            boingRBNode *rbNode = static_cast<boingRBNode*>(fnNode.userNode());
             rigid_body_t::pointer rb = rbNode->rigid_body();
-            
-            if(fnDagNode.parentCount() == 0) {
-                std::cout << "No transform found!" << std::endl;
-                continue;
-            }
-            
-            MFnTransform fnTransform(fnDagNode.parent(0));
+            MFnTransform fnTransform(getConnectedTransform(node));
+            //MFnDagNode fnDagNode = fnTransform.dagNode();
             
             MPlug plgMass(node, boingRBNode::ia_mass);
             float mass = 0.f;
@@ -1479,7 +1478,7 @@ void bSolverNode::gatherPassiveTransforms(MPlugArray &rbConnections, std::vector
                 xform.m_q1 = quatf((float)mquat.w, (float)mquat.x, (float)mquat.y, (float)mquat.z);
                 xforms.push_back(xform);
             }
-        } else if(fnDagNode.typeId() == rigidBodyArrayNode::typeId) {
+        } /*else if(fnDagNode.typeId() == rigidBodyArrayNode::typeId) {
             rigidBodyArrayNode *rbNode = static_cast<rigidBodyArrayNode*>(fnDagNode.userNode());
             std::vector<rigid_body_t::pointer>& rbs = rbNode->rigid_bodies();
             
@@ -1517,7 +1516,7 @@ void bSolverNode::gatherPassiveTransforms(MPlugArray &rbConnections, std::vector
                     xforms.push_back(xform);
                 }
             }
-        }
+        }*/
     }
 }
 
@@ -1552,7 +1551,7 @@ void bSolverNode::updatePassiveRigidBodies(MPlugArray &rbConnections, std::vecto
                 rb->set_transform(xforms[pb].m_x1, xforms[pb].m_q1);
                 ++pb;
             }
-        } else if(fnDagNode.typeId() == rigidBodyArrayNode::typeId) {
+        } /*else if(fnDagNode.typeId() == rigidBodyArrayNode::typeId) {
             rigidBodyArrayNode *rbNode = static_cast<rigidBodyArrayNode*>(fnDagNode.userNode());
             std::vector<rigid_body_t::pointer>& rbs = rbNode->rigid_bodies();
             
@@ -1572,7 +1571,7 @@ void bSolverNode::updatePassiveRigidBodies(MPlugArray &rbConnections, std::vecto
                     ++pb;
                 }
             }
-        }
+        }*/
     }
 }
 
@@ -1760,7 +1759,7 @@ void bSolverNode::updateActiveRigidBodies(MPlugArray &rbConnections)
 				}
 			}
 			updateConstraint(node);
-        } else if(fnNode.typeId() == rigidBodyArrayNode::typeId) {
+        } /*else if(fnNode.typeId() == rigidBodyArrayNode::typeId) {
             rigidBodyArrayNode *rbNode = static_cast<rigidBodyArrayNode*>(fnNode.userNode());
             std::vector<rigid_body_t::pointer>& rbs = rbNode->rigid_bodies();
             
@@ -1801,7 +1800,7 @@ void bSolverNode::updateActiveRigidBodies(MPlugArray &rbConnections)
             if(doIO) {
                 dumpRigidBodyArray(node);
             }
-        }
+        }*/
     }
 }
 //apply fields in the scene from the rigid body
@@ -1831,7 +1830,7 @@ void bSolverNode::applyFields(MPlugArray &rbConnections, float dt)
             if(active) {
                 rigid_bodies.push_back(rb.get());
             }
-        } else if(fnNode.typeId() == rigidBodyArrayNode::typeId) {
+        } /*else if(fnNode.typeId() == rigidBodyArrayNode::typeId) {
             rigidBodyArrayNode *rbNode = static_cast<rigidBodyArrayNode*>(fnNode.userNode());
             std::vector<rigid_body_t::pointer>& rbs = rbNode->rigid_bodies();
             
@@ -1844,7 +1843,7 @@ void bSolverNode::applyFields(MPlugArray &rbConnections, float dt)
                     rigid_bodies.push_back(rbs[j].get());
                 }
             }
-		} else if(fnNode.typeId() == SoftBodyNode::typeId) {
+		}*/ else if(fnNode.typeId() == SoftBodyNode::typeId) {
 			// soft body node
 			SoftBodyNode *sbNode = static_cast<SoftBodyNode*>(fnNode.userNode());
 			soft_bodies.push_back(sbNode->soft_body());
@@ -2195,7 +2194,7 @@ bool bSolverNode::expandFileExpression(std::string const& expr, std::string &bas
     
     return true;
 }
-
+/*
 void bSolverNode::dumpRigidBodyArray(MObject &node)
 {
     // std::cout << "bSolverNode::dumpRigidBodyArray" << std::endl;
@@ -2267,6 +2266,7 @@ void bSolverNode::dumpRigidBodyArray(MObject &node)
     std::ofstream out(file_name.c_str());
     pdb_io.write(out);
 }
+*/
 
 void bSolverNode::clearContactRelatedAttributes(MPlugArray &rbConnections)
 {
@@ -2284,3 +2284,4 @@ void bSolverNode::clearContactRelatedAttributes(MPlugArray &rbConnections)
 		}
 	}
 }
+

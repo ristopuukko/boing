@@ -37,21 +37,14 @@ Nov 2011 - Dec 2011 : Added logic for soft bodies
 #include <maya/MPxTransformationMatrix.h>
 
 #include "mayaUtils.h"
-//#include "rigidBodyNode.h"
 #include "boingRBNode.h"
-#include "rigidBodyArrayNode.h"
-//#include "collisionShapeNode.h"
 #include "constraint/nailConstraintNode.h"
 #include "constraint/hingeConstraintNode.h"
 #include "constraint/sliderConstraintNode.h"
 #include "constraint/sixdofConstraintNode.h"
-//#include "dSolverNode.h"
-//#include "dSolverCmd.h"
-//#include "dRigidBodyCmd.h"
 #include "bSolverNode.h"
 #include "bSolverCmd.h"
 #include "boingRBCmd.h"
-#include "dRigidBodyArrayCmd.h"
 #include "dynamicaRbCmd.h"
 #include "bCallBackNode.h"
 #include "constraint/dNailConstraintCmd.h"
@@ -137,14 +130,14 @@ MStatus initializePlugin( MObject obj )
     MCHECKSTATUS(status, "registering boingRBNode")
     MDGMessage::addNodeRemovedCallback(boingRBNode::nodeRemoved, boingRBNode::typeName);
 
-    //
+    /*
     status = plugin.registerNode( rigidBodyArrayNode::typeName, rigidBodyArrayNode::typeId,
                                   rigidBodyArrayNode::creator,
                                   rigidBodyArrayNode::initialize,
                                   MPxNode::kLocatorNode );
     MCHECKSTATUS(status, "registering rigidBodyArrayNode")
     MDGMessage::addNodeRemovedCallback(rigidBodyArrayNode::nodeRemoved, rigidBodyArrayNode::typeName);
-
+/*
 
     //
     /*
@@ -242,11 +235,12 @@ MStatus initializePlugin( MObject obj )
     MCHECKSTATUS(status, "registering bCallBackNode")
     
 //</rp 2014>
+    /*
     status = plugin.registerCommand( dRigidBodyArrayCmd::typeName,
                                      dRigidBodyArrayCmd::creator,
                                      dRigidBodyArrayCmd::syntax);
     MCHECKSTATUS(status, "registering dRigidBodyArrayCmd")
-
+*/
     status = plugin.registerCommand( dNailConstraintCmd::typeName,
                                      dNailConstraintCmd::creator,
                                      dNailConstraintCmd::syntax);
@@ -306,9 +300,10 @@ MStatus uninitializePlugin( MObject obj )
     status = plugin.deregisterCommand(dSixdofConstraintCmd::typeName);
     MCHECKSTATUS(status, "deregistering dSixdofConstraintCmd")
 
-
+/*
 	status = plugin.deregisterCommand(dRigidBodyArrayCmd::typeName);
     MCHECKSTATUS(status, "deregistering dRigidBodyArrayCmd")
+ */
 /*
     status = plugin.deregisterCommand(dRigidBodyCmd::typeName);
     MCHECKSTATUS(status, "deregistering dRigidBodyCmd")
@@ -356,8 +351,10 @@ MStatus uninitializePlugin( MObject obj )
 	status = plugin.deregisterNode(collisionShapeNode::typeId);
     MCHECKSTATUS(status, "deregistering collisionShapeNode")
 */
+    /*
     status = plugin.deregisterNode(rigidBodyArrayNode::typeId);
     MCHECKSTATUS(status, "deregistering rigidBodyArrayNode")
+     */
 /*
     status = plugin.deregisterNode(rigidBodyNode::typeId);
     MCHECKSTATUS(status, "deregistering rigidBodyNode")
