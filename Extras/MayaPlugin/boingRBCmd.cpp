@@ -21,15 +21,15 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 */
 
 //boingRBCmd.cpp
+#include "boingRBCmd.h"
+#include "boingRBNode.h"
 #include "BulletSoftBody/btSoftBody.h"
 #include <maya/MGlobal.h>
 #include <maya/MItDependencyNodes.h>
 #include <maya/MSyntax.h>
-
+#include <maya/MFnDependencyNode.h>
 #include <iostream>
 
-#include "boingRBNode.h"
-#include "boingRBCmd.h"
 
 
 MString boingRBCmd::typeName("boingRb");
@@ -118,136 +118,24 @@ boingRBCmd::redoIt()
 
     m_dagModifier = new MDagModifier;
 
-    
-    MStringArray commandResult;
+    //MStringArray commandResult;
     MStatus status;
-    MGlobal::executeCommand("polyCube", commandResult, &status);
-    cout<<"commandResult : "<<commandResult<<endl;
     
-    
-    
-    // create maya cube !!JUST FOR THE TESTING!!!
-    // transform for the mesh
-    /*MObject parentObj = m_dagModifier->createNode("transform", MObject::kNullObj);
-    m_dagModifier->renameNode(parentObj, "pCube#");
-    m_dagModifier->doIt();*/
-    // mesh
-    
-    
-    /*MObject meshObj = m_dagModifier->createNode(MString("mesh"), parentObj);
-    std::string meshObjName = MFnDependencyNode(parentObj).name().asChar();
-    std::string::size_type meshPos = meshObjName.find_last_not_of("0123456789");
-    meshObjName.insert(meshPos + 1, "Shape");
-    m_dagModifier->renameNode(meshObj, meshObjName.c_str());
-    cout<<"meshObjName : "<<meshObjName<<endl;
-    m_dagModifier->doIt();*/
-    
-
-    //creator
-    
-    /*MObject createObj = m_dagModifier->createNode(MString("polyCube"), MObject::kNullObj);
-    std::string createObjName = MFnDependencyNode(parentObj).name().asChar();
-    //std::string::size_type createPos = createObjName.find_last_not_of("0123456789");
-    //createObjName.insert(createPos + 1, );
-    //m_dagModifier->renameNode(createObj, createObjName.c_str());
-    cout<<"createObjName : "<<createObjName<<endl;
-    m_dagModifier->doIt();*/
-    
-    
-    // done with the mesh
-    
-    //connect the polyCube-node to mesh
-    // worldMesh -> collisionShape
-    /*MPlug plgPolyCubeOutput = MFnDependencyNode(createObj).findPlug("output", false);
-    cout<<plgPolyCubeOutput.name().asChar()<<endl;
-    MPlug plgMeshInShape = MFnDependencyNode(meshObj).findPlug("inMesh", false);
-    cout<<plgMeshInShape.name().asChar()<<endl;
-    m_dagModifier->connect(plgPolyCubeOutput, plgMeshInShape);
-    m_dagModifier->doIt();
-    */
-    // done connecting polyCube
-
-    
-    MObject boingRbObj = m_dagModifier->createNode(boingRBNode::typeId);
-    std::string boingRbName = name.asChar();
-    //std::string::size_type pos = boingRbName.find_last_not_of("0123456789");
-    //cout<<"pos : "<<pos<<endl;
-    //boingRbName.insert(pos + 1);
-    m_dagModifier->renameNode(boingRbObj, "boingRb#" ) ;//boingRbName.c_str());
-    cout<<"boingRbName : "<<boingRbName<<endl;
-    m_dagModifier->doIt();
-
-    
-    //connect the mesh to the boingRb and vice versa
-    // worldMesh -> collisionShape
-    MPlug plgCollisionShape(boingRbObj, boingRBNode::ia_shape);
-    cout<<"plgCollisionShape.name() :"<<plgCollisionShape.name().asChar()<<endl;
-    //MPlug plgMeshShape = MFnDependencyNode(meshObj).findPlug("worldMesh", false);
-    //MPlug plgMeshShape = MFnDependencyNode(nameToNode(commandResult[1])).findPlug("worldMesh", false);
-    MPlug plgMeshShape = nameToNodePlug("worldMesh", nameToNode(commandResult[1]));
-    cout<<"plgMeshShape.name() : "<<plgMeshShape.name().asChar()<<endl;
-    m_dagModifier->connect(plgMeshShape, plgCollisionShape);
-    m_dagModifier->doIt();
-
-    // translate -> ia_initialPosition
-/*
-    MPlug plgInitPos(boingRbObj, boingRBNode::ia_initialPosition);
-    cout<<"plgInitPos.name() :"<<plgInitPos.name().asChar()<<endl;
-    //MPlug plgTranslation = MFnDependencyNode(parentObj).findPlug("translate", false);
-    MPlug plgTranslation = MFnDependencyNode(nameToNode(commandResult[0])).findPlug("translate", false);
-    cout<<"plgTranslation.name() : "<<plgTranslation.name().asChar()<<endl;
-    m_dagModifier->connect(plgTranslation, plgInitPos);
-    m_dagModifier->doIt();
-
-    
-    // rotation -> ia_initialRotation
-    
-    MPlug plgInitRot(boingRbObj, boingRBNode::ia_initialRotation);
-    cout<<"plgInitRot.name() :"<<plgInitRot.name().asChar()<<endl;
-    //MPlug plgRotation = MFnDependencyNode(parentObj).findPlug("rotate", false);
-    MPlug plgRotation = MFnDependencyNode(nameToNode(commandResult[0])).findPlug("rotate", false);
-    cout<<"plgRotation.name() :"<<plgRotation.name().asChar()<<endl;
-    m_dagModifier->connect(plgRotation, plgInitRot);
-    m_dagModifier->doIt();
-*/
-    // ia_position -> translate
-    
-    MPlug plgPos(boingRbObj, boingRBNode::ia_position);
-    cout<<"plgPos.name() :"<<plgPos.name().asChar()<<endl;
-    MPlug plgTranslation = MFnDependencyNode(nameToNode(commandResult[0])).findPlug("translate", false);
-    m_dagModifier->connect(plgPos, plgTranslation);
-    m_dagModifier->doIt();
-    
-    
-    // ia_rotation -> rotation
-    
-    MPlug plgRot(boingRbObj, boingRBNode::ia_rotation);
-    cout<<"plgRot.name() :"<<plgRot.name().asChar()<<endl;
-    MPlug plgRotation = MFnDependencyNode(nameToNode(commandResult[0])).findPlug("rotate", false);
-    m_dagModifier->connect(plgRot, plgRotation);
-    m_dagModifier->doIt();
-    
-    // connect the solver attribute
-    MPlug plgSolver(boingRbObj, boingRBNode::ia_solver);
-    MSelectionList slist;
-    slist.add("bSolver");
-    MObject solverObj;
-    if(slist.length() != 0) {
-        slist.getDependNode(0, solverObj);
-		MPlug boingRbs = MFnDependencyNode(solverObj).findPlug("rigidBodies", false);		
-		m_dagModifier->connect(boingRbs, plgSolver);
-		m_dagModifier->doIt();
-    } else {
-        cerr<<"Cannot find bSolver"<<endl;
+    MObject boingRbObj = m_dagModifier->createNode(boingRBNode::typeId, MObject::kNullObj, &status);
+    if (status !=MS::kSuccess) {
+        cerr<<"error creating boingRb!"<<endl;
+        if (status == MS::kInvalidParameter) cerr<<"MS::kInvalidParameter"<<endl;
     }
-
-  //  MGlobal::select(parentObj, MGlobal::kReplaceList);
+    //m_dagModifier->renameNode(boingRbObj, name);
+    m_dagModifier->doIt();
 
     setResult(MFnDependencyNode(boingRbObj).name());
 
     return MS::kSuccess;
 }
 
+
+/*
 
 MObject boingRBCmd::nameToNode( MString name ) {
     MSelectionList selList;
@@ -263,3 +151,4 @@ MPlug boingRBCmd::nameToNodePlug( MString attrName, MObject nodeObject ) {
     MPlug plug( nodeObject, attrObject );
     return plug;
 }
+*/

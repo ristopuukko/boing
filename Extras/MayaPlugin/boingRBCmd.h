@@ -28,7 +28,6 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 #include <maya/MArgDatabase.h>
 #include <maya/MDagModifier.h>
 #include <maya/MSelectionList.h>
-
 #include <maya/MPxCommand.h>
 
 class boingRBCmd : public MPxCommand
@@ -40,19 +39,20 @@ public:
     static void *creator();
     static MSyntax syntax();
 
+    static MString typeName;
+
     MStatus doIt(const MArgList &i_mArgList);
     MStatus redoIt();
     MStatus undoIt();
     bool isUndoable() const { return true; }
     bool hasSyntax() const { return true; }
 
-    static MString typeName;
 
 protected:
     MArgDatabase *m_argDatabase;
     MDagModifier *m_dagModifier;
-    MObject nameToNode( MString name ) ;
-    MPlug nameToNodePlug( MString attrName, MObject nodeObject );
+    //MObject nameToNode( MString name ) ;
+    //MPlug nameToNodePlug( MString attrName, MObject nodeObject );
     MSelectionList m_undoSelectionList; 
 };
 
