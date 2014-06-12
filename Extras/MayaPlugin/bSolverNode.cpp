@@ -927,17 +927,20 @@ void destroyRigidBody(const MPlug& plug, MObject& node, MDataBlock& data)
   	rbNode->destroyRigidBody();
 }
 
-MObject bSolverNode::getConnectedTransform(MObject& node) {
+void bSolverNode::getConnectedTransform(MObject& node, MObject & retNode) {
     
     MFnDependencyNode fnNode(node);
-    MPlug plgT(node, boingRBNode::ia_position);
-    if (!plgT.isConnected()) {
-        std::cout << "No connection to "<<fnNode.name()<<".position!"<< std::endl;
-    }
+    MPlug plgShape(node, boingRBNode::ia_shape);
     MPlugArray mplugs;
-    plgT.connectedTo(mplugs, false, true);
-    MObject transform = mplugs[0].node();
-    return (transform);
+    plgShape.connectedTo(mplugs, true, false);
+    MObject shape = mplugs[0].node();
+    MFnDagNode shapeNode(shape);
+    if ( shapeNode.parentCount() < 1 ) {
+        cerr<<shapeNode.name().asChar()<<" has no transform!"<<endl;
+        retNode = MObject::kNullObj;
+    } else {
+        retNode = shapeNode.parent(0);
+    }
 }
 
 
@@ -954,7 +957,10 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
 		rbNode->computeRigidBody(plug,data);
 	
 	rigid_body_t::pointer rb = rbNode->rigid_body();
-    MFnTransform fnTransform(getConnectedTransform(node));
+    MObject transNode;
+    getConnectedTransform(node, transNode);
+    if (transNode.isNull()) return;
+    MFnTransform fnTransform(transNode);
     
     MPlug plgMass(node, boingRBNode::ia_mass);
     float mass = 0.f;
@@ -1461,7 +1467,10 @@ void bSolverNode::gatherPassiveTransforms(MPlugArray &rbConnections, std::vector
         if(fnNode.typeId() == boingRBNode::typeId) {
             boingRBNode *rbNode = static_cast<boingRBNode*>(fnNode.userNode());
             rigid_body_t::pointer rb = rbNode->rigid_body();
-            MFnTransform fnTransform(getConnectedTransform(node));
+            MObject transNode;
+            getConnectedTransform(node, transNode);
+            if (transNode.isNull()) return;
+            MFnTransform fnTransform(transNode);
             //MFnDagNode fnDagNode = fnTransform.dagNode();
             
             MPlug plgMass(node, boingRBNode::ia_mass);
@@ -1473,10 +1482,10 @@ void bSolverNode::gatherPassiveTransforms(MPlugArray &rbConnections, std::vector
                 fnTransform.getRotation(mquat);
                 MVector mpos(fnTransform.getTranslation(MSpace::kTransform));
                 rb->get_transform(xform.m_x0, xform.m_q0);
-                
                 xform.m_x1 = vec3f((float)mpos.x, (float)mpos.y, (float)mpos.z);
                 xform.m_q1 = quatf((float)mquat.w, (float)mquat.x, (float)mquat.y, (float)mquat.z);
                 xforms.push_back(xform);
+                cout<<"gatherPassiveTransforms : "<<fnTransform.name().asChar()<< " translation = "<<mpos<< " and rotation = "<<mquat<<endl;
             }
         } /*else if(fnDagNode.typeId() == rigidBodyArrayNode::typeId) {
             rigidBodyArrayNode *rbNode = static_cast<rigidBodyArrayNode*>(fnDagNode.userNode());
@@ -1526,15 +1535,17 @@ void bSolverNode::updatePassiveRigidBodies(MPlugArray &rbConnections, std::vecto
     size_t pb = 0;
     for(size_t i = 0; i < rbConnections.length(); ++i) {
         MObject node = rbConnections[i].node();
-        MFnDagNode fnDagNode(node);
-        if(fnDagNode.typeId() == boingRBNode::typeId) {
-            boingRBNode *rbNode = static_cast<boingRBNode*>(fnDagNode.userNode());
+        MFnDependencyNode fnNode(node);
+        if(fnNode.typeId() == boingRBNode::typeId) {
+            boingRBNode *rbNode = static_cast<boingRBNode*>(fnNode.userNode());
             rigid_body_t::pointer rb = rbNode->rigid_body();
             
+            /*
             if(fnDagNode.parentCount() == 0) {
                 std::cout << "No transform found!" << std::endl;
                 continue;
             }
+            */
             
             MPlug plgMass(node, boingRBNode::ia_mass);
             float mass = 0.f;

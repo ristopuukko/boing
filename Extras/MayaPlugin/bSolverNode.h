@@ -96,7 +96,7 @@ virtual MBoundingBox boundingBox() const
                                   M3dView::DisplayStatus status);
     void traverseCallBacks();
     void runCallBacks(MObjectArray);
-    virtual MObject     getConnectedTransform(MObject& node);
+    void getConnectedTransform(MObject& node, MObject &retNode);
     //</rp 2014>
 
     virtual MStatus     compute( const MPlug& plug, MDataBlock& data );
