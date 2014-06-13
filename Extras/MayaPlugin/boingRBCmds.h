@@ -27,6 +27,7 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 
 #include <maya/MArgDatabase.h>
 #include <maya/MDagModifier.h>
+#include <maya/MDGModifier.h>
 #include <maya/MSelectionList.h>
 #include <maya/MPxCommand.h>
 #include <maya/MFnMesh.h>
@@ -59,7 +60,7 @@ public:
 
 protected:
     MArgDatabase *m_argDatabase;
-    MDagModifier *m_dagModifier;
+    MDGModifier *m_dgModifier;
     //MObject nameToNode( MString name ) ;
     //MPlug nameToNodePlug( MString attrName, MObject nodeObject );
     MSelectionList m_undoSelectionList; 

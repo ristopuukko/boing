@@ -34,7 +34,6 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 #include <maya/MPlugArray.h>
 #include <maya/MDoubleArray.h>
 #include <maya/MStringArray.h>
-#include <maya/MDagModifier.h>
 
 #include <iostream>
 #include "bt_solver.h"
@@ -44,11 +43,11 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 #include "LinearMath/btSerializer.h"
 
 
-MString createBoingRBCmd::typeName("boingRb");
+MString createBoingRBCmd::typeName("createBoingRb");
 
 createBoingRBCmd::createBoingRBCmd()
   : m_argDatabase(0),
-    m_dagModifier(0)
+    m_dgModifier(0)
 {
 }
 
@@ -59,8 +58,8 @@ createBoingRBCmd::~createBoingRBCmd()
     delete m_argDatabase;
   }
 
-  if (m_dagModifier) {
-    delete m_dagModifier;
+  if (m_dgModifier) {
+    delete m_dgModifier;
   }
 }
 
@@ -105,10 +104,10 @@ createBoingRBCmd::undoIt()
 {
   MGlobal::setActiveSelectionList(m_undoSelectionList);
 
-  if (m_dagModifier) {
-      m_dagModifier->undoIt();
-      delete m_dagModifier;
-      m_dagModifier = 0;
+  if (m_dgModifier) {
+      m_dgModifier->undoIt();
+      delete m_dgModifier;
+      m_dgModifier = 0;
   }
 
   return MS::kSuccess;
@@ -128,18 +127,18 @@ createBoingRBCmd::redoIt()
 	name = "boingRb";
     }
 
-    m_dagModifier = new MDagModifier;
+    m_dgModifier = new MDagModifier;
 
     //MStringArray commandResult;
     MStatus status;
     
-    MObject boingRbObj = m_dagModifier->createNode(boingRBNode::typeId, MObject::kNullObj, &status);
+    MObject boingRbObj = m_dgModifier->createNode(boingRBNode::typeId, &status);
     if (status !=MS::kSuccess) {
         cerr<<"error creating boingRb!"<<endl;
         if (status == MS::kInvalidParameter) cerr<<"MS::kInvalidParameter"<<endl;
     }
-    //m_dagModifier->renameNode(boingRbObj, name);
-    m_dagModifier->doIt();
+    m_dgModifier->renameNode(boingRbObj, name);
+    m_dgModifier->doIt();
 
     setResult(MFnDependencyNode(boingRbObj).name());
 
@@ -159,8 +158,8 @@ boingRbCmd::~boingRbCmd()
         delete argParser;
     }
     
-    //if (m_dagModifier) {
-    //  delete m_dagModifier;
+    //if (m_dgModifier) {
+    //  delete m_dgModifier;
     //}
 }
 
@@ -208,10 +207,10 @@ boingRbCmd::doIt(const MArgList &args)
  {
  //MGlobal::setActiveSelectionList(m_undoSelectionList);
  
- if (m_dagModifier) {
- m_dagModifier->undoIt();
- delete m_dagModifier;
- m_dagModifier = 0;
+ if (m_dgModifier) {
+ m_dgModifier->undoIt();
+ delete m_dgModifier;
+ m_dgModifier = 0;
  
  return MS::kSuccess;
  }*/
