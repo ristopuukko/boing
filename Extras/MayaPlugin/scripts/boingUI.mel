@@ -25,173 +25,173 @@ Modified by Roman Ponomarev <rponom@gmail.com>
 Modified by Michael Baker <michael@mBakr.com>
 */
 //init
-global proc dynamicaUI_initialize() //this proc is called from the plugin
+global proc boingUI_initialize() //this proc is called from the plugin
 {	
 	print("Loading boing plugin...\n");
 	
-	global float $dynamicaUI_startFrame;
-	global float $dynamicaUI_captureStartFrame;
-	global float $dynamicaUI_captureEndFrame;
+	global float $boingUI_startFrame;
+	global float $boingUI_captureStartFrame;
+	global float $boingUI_captureEndFrame;
 	
 	source "mbUtils";
 
-	//add Dynamica menu to the main window
+	//add boing menu to the main window
 	global string $gMainWindow;
-	string $dynamicaMainMenu = `menu -l "Dynamica" -to 1 -p $gMainWindow`;
-	menuItem -l "Dynamica Window" -ann "Open the main Dynamica window" -c "dynamicaUI_createWindow()" -fi "dynamicaWindow.xpm" $dynamicaMainMenu;
-	menuItem -d 1 $dynamicaMainMenu;
-	menuItem -l "Help" -ann "View the wiki online" -c "system(\"load http://code.google.com/p/dynamica/wiki/DynamicaIntroduction\")" $dynamicaMainMenu;
+	string $boingMainMenu = `menu -l "boing" -to 1 -p $gMainWindow`;
+	menuItem -l "boing Window" -ann "Open the main boing window" -c "boingUI_createWindow()" -fi "boingWindow.xpm" $boingMainMenu;
+	menuItem -d 1 $boingMainMenu;
+	menuItem -l "Help" -ann "View the wiki online" -c "system(\"load http://code.google.com/p/boingUI/wiki/boingUIIntroduction\")" $boingMainMenu;
 
 	//initial settings
-	$dynamicaUI_startFrame = `playbackOptions -q -min`; //init start frame
-	dynamicaUI_onPluginLoad(); //init script jobs
+	$boingUI_startFrame = `playbackOptions -q -min`; //init start frame
+	boingUI_onPluginLoad(); //init script jobs
 	playbackOptions -e -playbackSpeed 0 -maxPlaybackSpeed 1; //set playback options
-	$dynamicaUI_captureStartFrame = `playbackOptions -q -min`;
-	$dynamicaUI_captureEndFrame = `playbackOptions -q -max`;
-	dynamicaUI_createShelf();
+	$boingUI_captureStartFrame = `playbackOptions -q -min`;
+	$boingUI_captureEndFrame = `playbackOptions -q -max`;
+	boingUI_createShelf();
 	
 	print("Loading boing plugin...complete.\n");
 }
     
 //shelf
-global proc dynamicaUI_createShelf()
+global proc boingUI_createShelf()
 {
 	global string $gShelfTopLevel;
-	string $shelf = "Dynamica";
-	string $dynamicaShelf;
+	string $shelf = "boing";
+	string $boingShelf;
 	
 	if ( `shelfLayout -ex $shelf` )
 	{
-		$dynamicaShelf = $shelf;
+		$boingShelf = $shelf;
 		string $shelfButtons[] = `shelfLayout -q -ca $shelf`;
 		for ( $b in $shelfButtons ) deleteUI $b;
 	} 
 	else 
 	{
 		// Create the shelf under the global shelf parent.
-		$dynamicaShelf = `shelfLayout -p $gShelfTopLevel $shelf`;
+		$boingShelf = `shelfLayout -p $gShelfTopLevel $shelf`;
 	}
 	
-	shelfButton -i "dynamicaWindow.xpm" -c "dynamicaUI_createWindow" -ann "Open Main Dynamica Window" -p $dynamicaShelf;
-	shelfButton -i "dynamicaRelink.xpm" -c "dynamicaUI_relinkRigidBodies" -ann "Relink bodies to solver after copy and paste" -p $dynamicaShelf;
+	shelfButton -i "boingWindow.xpm" -c "boingUI_createWindow" -ann "Open Main boing Window" -p $boingShelf;
+	shelfButton -i "boingRelink.xpm" -c "boingUI_relinkRigidBodies" -ann "Relink bodies to solver after copy and paste" -p $boingShelf;
 	
-	shelfButton -i "dynamicaCreateActiveSphere.xpm" 
-		-c "dynamicaUI_createActiveSphere" -ann "Create an active sphere rigid body" -p $dynamicaShelf;
-	shelfButton -i "dynamicaCreateActiveBox.xpm" 
-		-c "dynamicaUI_createActiveBox" -ann "Create an active box rigid body" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaCreateActiveCylinder.xpm" 
-		// -c "dynamicaUI_createRigidBody(true, 5)" -ann "Create an active cylinder rigid body" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaCreateActiveCapsule.xpm" 
-		// -c "dynamicaUI_createRigidBody(true, 4)" -ann "Create an active capsule rigid body" -p $dynamicaShelf;
-	shelfButton -i "dynamicaCreateActiveHull.xpm" 
-		-c "dynamicaUI_createActiveHull" -ann "Create active hull rigid bodies" -p $dynamicaShelf;
-	shelfButton -i "dynamicaCreateActiveMesh.xpm"
-		-c "dynamicaUI_createActiveMesh" -ann "Create active mesh rigid bodies" -p $dynamicaShelf;
-	shelfButton -i "dynamicaCreateActiveMesh.xpm"
-		-c "dynamicaUI_createRigidBody(true, 8)" -ann "Create HACD rigid bodies" -p $dynamicaShelf;
+	shelfButton -i "boingCreateActiveSphere.xpm" 
+		-c "boingUI_createActiveSphere" -ann "Create an active sphere rigid body" -p $boingShelf;
+	shelfButton -i "boingCreateActiveBox.xpm" 
+		-c "boingUI_createActiveBox" -ann "Create an active box rigid body" -p $boingShelf;
+	// shelfButton -i "boingCreateActiveCylinder.xpm" 
+		// -c "boingUI_createRigidBody(true, 5)" -ann "Create an active cylinder rigid body" -p $boingShelf;
+	// shelfButton -i "boingCreateActiveCapsule.xpm" 
+		// -c "boingUI_createRigidBody(true, 4)" -ann "Create an active capsule rigid body" -p $boingShelf;
+	shelfButton -i "boingCreateActiveHull.xpm" 
+		-c "boingUI_createActiveHull" -ann "Create active hull rigid bodies" -p $boingShelf;
+	shelfButton -i "boingCreateActiveMesh.xpm"
+		-c "boingUI_createActiveMesh" -ann "Create active mesh rigid bodies" -p $boingShelf;
+	shelfButton -i "boingCreateActiveMesh.xpm"
+		-c "boingUI_createRigidBody(true, 8)" -ann "Create HACD rigid bodies" -p $boingShelf;
 		
-	shelfButton -i "dynamicaCreatePassiveSphere.xpm" 
-		-c "dynamicaUI_createPassiveSphere" -ann "Create passive sphere rigid body" -p $dynamicaShelf;
-	shelfButton -i "dynamicaCreatePassiveBox.xpm" 
-		-c "dynamicaUI_createPassiveBox" -ann "Create passive box rigid body" -p $dynamicaShelf;
-	shelfButton -i "dynamicaCreatePassiveHull.xpm" 
-		-c "dynamicaUI_createPassiveHull" -ann "Create passive hull rigid bodies" -p $dynamicaShelf;
-	shelfButton -i "dynamicaCreatePassiveMesh.xpm" 
-		-c "dynamicaUI_createPassiveMesh" -ann "Create passive mesh rigid bodies" -p $dynamicaShelf;
-	shelfButton -i "dynamicaCreatePassivePlane.xpm" 
-		-c "dynamicaUI_createPassivePlane" -ann "Create passive plane rigid body" -p $dynamicaShelf;
+	shelfButton -i "boingCreatePassiveSphere.xpm" 
+		-c "boingUI_createPassiveSphere" -ann "Create passive sphere rigid body" -p $boingShelf;
+	shelfButton -i "boingCreatePassiveBox.xpm" 
+		-c "boingUI_createPassiveBox" -ann "Create passive box rigid body" -p $boingShelf;
+	shelfButton -i "boingCreatePassiveHull.xpm" 
+		-c "boingUI_createPassiveHull" -ann "Create passive hull rigid bodies" -p $boingShelf;
+	shelfButton -i "boingCreatePassiveMesh.xpm" 
+		-c "boingUI_createPassiveMesh" -ann "Create passive mesh rigid bodies" -p $boingShelf;
+	shelfButton -i "boingCreatePassivePlane.xpm" 
+		-c "boingUI_createPassivePlane" -ann "Create passive plane rigid body" -p $boingShelf;
 
-	shelfButton -i "dynamicaCreateActiveMesh.xpm"
-		-c "dynamicaUI_createPassiveHACD(true, 8)" -ann "Create passive HACD rigid body" -p $dynamicaShelf;
+	shelfButton -i "boingCreateActiveMesh.xpm"
+		-c "boingUI_createPassiveHACD(true, 8)" -ann "Create passive HACD rigid body" -p $boingShelf;
 	
 	
 	
-	shelfButton -i "dynamicaCreateNailConstraint.xpm" 
-		-c "dynamicaUI_createNail" -ann "Create a breakable nail constraint" -p $dynamicaShelf;
-	shelfButton -i "dynamicaCreateHingeConstraint.xpm" 
-		-c "dynamicaUI_createHinge" -ann "Create a breakable hinge constraint" -p $dynamicaShelf;
-	shelfButton -i "dynamicaCreateSliderConstraint.xpm" 
-		-c "dynamicaUI_createSlider" -ann "Create a breakable slider constraint" -p $dynamicaShelf;
-	shelfButton -i "dynamicaCreate6dofConstraint.xpm" 
-		-c "dynamicaUI_create6Dof" -ann "Create a breakable 6dof constraint" -p $dynamicaShelf;
+	shelfButton -i "boingCreateNailConstraint.xpm" 
+		-c "boingUI_createNail" -ann "Create a breakable nail constraint" -p $boingShelf;
+	shelfButton -i "boingCreateHingeConstraint.xpm" 
+		-c "boingUI_createHinge" -ann "Create a breakable hinge constraint" -p $boingShelf;
+	shelfButton -i "boingCreateSliderConstraint.xpm" 
+		-c "boingUI_createSlider" -ann "Create a breakable slider constraint" -p $boingShelf;
+	shelfButton -i "boingCreate6dofConstraint.xpm" 
+		-c "boingUI_create6Dof" -ann "Create a breakable 6dof constraint" -p $boingShelf;
 		
-	shelfButton -i "dynamicaSoftMesh.xpm"
-		-c "dynamicaUI_createSoftBody()" -ann "Create a softbody" -p $dynamicaShelf;
+	shelfButton -i "boingSoftMesh.xpm"
+		-c "boingUI_createSoftBody()" -ann "Create a softbody" -p $boingShelf;
 		
-	// shelfButton -i "dynamicaCreateConetwistConstraint.xpm" 
-		// -c "dynamicaUI_createConstraint(3)" -ann "Create a breakable cone twist constraint" -p $dynamicaShelf;
+	// shelfButton -i "boingCreateConetwistConstraint.xpm" 
+		// -c "boingUI_createConstraint(3)" -ann "Create a breakable cone twist constraint" -p $boingShelf;
 		
-	// shelfButton -i "dynamicaActivateX.xpm" 
-		// -c "dynamicaUI_activateAxis(0)" -ann "Activate selected rigid bodies along the +X axis" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaActivate-X.xpm" 
-		// -c "dynamicaUI_activateAxis(1)" -ann "Activate selected rigid bodies along the -X axis" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaActivateY.xpm" 
-		// -c "dynamicaUI_activateAxis(2)" -ann "Activate selected rigid bodies along the +Y axis" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaActivate-Y.xpm" 
-		// -c "dynamicaUI_activateAxis(3)" -ann "Activate selected rigid bodies along the -Y axis" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaActivateZ.xpm" 
-		// -c "dynamicaUI_activateAxis(4)" -ann "Activate selected rigid bodies along the +Z axis" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaActivate-Z.xpm" 
-		// -c "dynamicaUI_activateAxis(5)" -ann "Activate selected rigid bodies along the -Z axis" -p $dynamicaShelf;
+	// shelfButton -i "boingActivateX.xpm" 
+		// -c "boingUI_activateAxis(0)" -ann "Activate selected rigid bodies along the +X axis" -p $boingShelf;
+	// shelfButton -i "boingActivate-X.xpm" 
+		// -c "boingUI_activateAxis(1)" -ann "Activate selected rigid bodies along the -X axis" -p $boingShelf;
+	// shelfButton -i "boingActivateY.xpm" 
+		// -c "boingUI_activateAxis(2)" -ann "Activate selected rigid bodies along the +Y axis" -p $boingShelf;
+	// shelfButton -i "boingActivate-Y.xpm" 
+		// -c "boingUI_activateAxis(3)" -ann "Activate selected rigid bodies along the -Y axis" -p $boingShelf;
+	// shelfButton -i "boingActivateZ.xpm" 
+		// -c "boingUI_activateAxis(4)" -ann "Activate selected rigid bodies along the +Z axis" -p $boingShelf;
+	// shelfButton -i "boingActivate-Z.xpm" 
+		// -c "boingUI_activateAxis(5)" -ann "Activate selected rigid bodies along the -Z axis" -p $boingShelf;
 		
-	// shelfButton -i "dynamicaActivateRadial.xpm" 
-		// -c "dynamicaUI_activateAxis(6)" -ann "Activate selected rigid bodies outwards" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaActivateRadialIn.xpm" 
-		// -c "dynamicaUI_activateAxis(7)" -ann "Activate selected rigid bodies inwards" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaActivateChain.xpm" 
-		// -c "dynamicaUI_activateAxis(8)" -ann "Chain activate selected rigid bodies" -p $dynamicaShelf;
+	// shelfButton -i "boingActivateRadial.xpm" 
+		// -c "boingUI_activateAxis(6)" -ann "Activate selected rigid bodies outwards" -p $boingShelf;
+	// shelfButton -i "boingActivateRadialIn.xpm" 
+		// -c "boingUI_activateAxis(7)" -ann "Activate selected rigid bodies inwards" -p $boingShelf;
+	// shelfButton -i "boingActivateChain.xpm" 
+		// -c "boingUI_activateAxis(8)" -ann "Chain activate selected rigid bodies" -p $boingShelf;
 		
-	// shelfButton -i "dynamicaUnactivate.xpm" 
-		// -c "dynamicaUI_deactivateRigidBodies(0)" -ann "Make selected rigid bodies active (restores default behavior)" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaMakePassive.xpm" 
-		// -c "dynamicaUI_deactivateRigidBodies(0)" -ann "Make selected rigid bodies passive" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaSetInitialState.xpm" 
-		// -c "dynamicaUI_setInitialState(0)" -ann "Set current state to initial state" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaClearInitialState.xpm" 
-		// -c "dynamicaUI_setInitialState(1)" -ann "Restore original initial state" -p $dynamicaShelf;
+	// shelfButton -i "boingUnactivate.xpm" 
+		// -c "boingUI_deactivateRigidBodies(0)" -ann "Make selected rigid bodies active (restores default behavior)" -p $boingShelf;
+	// shelfButton -i "boingMakePassive.xpm" 
+		// -c "boingUI_deactivateRigidBodies(0)" -ann "Make selected rigid bodies passive" -p $boingShelf;
+	// shelfButton -i "boingSetInitialState.xpm" 
+		// -c "boingUI_setInitialState(0)" -ann "Set current state to initial state" -p $boingShelf;
+	// shelfButton -i "boingClearInitialState.xpm" 
+		// -c "boingUI_setInitialState(1)" -ann "Restore original initial state" -p $boingShelf;
 		
-	// shelfButton -i "dynamicaBakeSelected.xpm" 
-		// -c "$dynamicaUI_captureAll = 0; dynamicaUI_bakeRigidBodies()" -ann "Bake Selected Rigid Bodies" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaBakeAll.xpm" 
-		// -c "$dynamicaUI_captureAll = 1; dynamicaUI_bakeRigidBodies()" -ann "Bake All Rigid Bodies" -p $dynamicaShelf;
+	// shelfButton -i "boingBakeSelected.xpm" 
+		// -c "$boingUI_captureAll = 0; boingUI_bakeRigidBodies()" -ann "Bake Selected Rigid Bodies" -p $boingShelf;
+	// shelfButton -i "boingBakeAll.xpm" 
+		// -c "$boingUI_captureAll = 1; boingUI_bakeRigidBodies()" -ann "Bake All Rigid Bodies" -p $boingShelf;
 	
-	shelfButton -i "dynamicaHelp.xpm" -c "system(\"load http://code.google.com/p/dynamica/wiki/DynamicaIntroduction\")" 
-		-ann "View Online Documentation" -p $dynamicaShelf;
-	// shelfButton -i "dynamicaTools.xpm" -c "dynamicaUI_tools()" -ann "Open Main Dynamica Window" -p $dynamicaShelf;
+	shelfButton -i "boingUIHelp.xpm" -c "system(\"load http://code.google.com/p/boingUI/wiki/boingUIIntroduction\")" 
+		-ann "View Online Documentation" -p $boingUIShelf;
+	// shelfButton -i "boingUITools.xpm" -c "boingUIUI_tools()" -ann "Open Main boingUI Window" -p $boingUIShelf;
 }
 
 //UI
-global proc dynamicaUI_createWindow()
+global proc boingUIUI_createWindow()
 {
-	global string $dynamicaUI_window;
-	global string $dynamicaUI_tabs;
-	global string $dynamicaUI_helpLine;
+	global string $boingUIUI_window;
+	global string $boingUIUI_tabs;
+	global string $boingUIUI_helpLine;
 
-	if ( `window -ex $dynamicaUI_window` )
+	if ( `window -ex $boingUIUI_window` )
 	{
-		showWindow $dynamicaUI_window; 
+		showWindow $boingUIUI_window; 
 		return;
 	}
 	
 	dSolver; //create dSolver node if necessary
 
-	$dynamicaUI_window = `window -s 1 -t "boing - powered by Bullet" -in "Dynamica"`;
+	$boingUIUI_window = `window -s 1 -t "boing - powered by Bullet" -in "boingUI"`;
 	string $mainForm = `formLayout`;
-	$dynamicaUI_tabs = `tabLayout -imw 5 -imh 5 -scr 0`;
+	$boingUIUI_tabs = `tabLayout -imw 5 -imh 5 -scr 0`;
 	
 	formLayout -e 
-		-af $dynamicaUI_tabs "top" 0 -af $dynamicaUI_tabs "left" 0 
-		-af $dynamicaUI_tabs "bottom" 0 -af $dynamicaUI_tabs "right" 0 
+		-af $boingUIUI_tabs "top" 0 -af $boingUIUI_tabs "left" 0 
+		-af $boingUIUI_tabs "bottom" 0 -af $boingUIUI_tabs "right" 0 
 	$mainForm;
 	
-	string $mainTab = dynamicaUI_createMainTab();
-	string $controlTab = dynamicaUI_createControlTab();
-	string $bakeTab = dynamicaUI_createCaptureTab();
-	string $solverTab = dynamicaUI_createOptionsTab();
+	string $mainTab = boingUIUI_createMainTab();
+	string $controlTab = boingUIUI_createControlTab();
+	string $bakeTab = boingUIUI_createCaptureTab();
+	string $solverTab = boingUIUI_createOptionsTab();
     //<rp 2014>
-	string $callbackTab = dynamicaUI_createCallBacksTab();
+	string $callbackTab = boingUIUI_createCallBacksTab();
     //</rp 2014>
-	string $helpTab = dynamicaUI_createHelpTab();
+	string $helpTab = boingUIUI_createHelpTab();
 
 	tabLayout -e 
 		-tl $mainTab "Create" 
@@ -200,11 +200,11 @@ global proc dynamicaUI_createWindow()
 		-tl $solverTab "Options"
         -tl $callbackTab "Callbacks"
         -tl $helpTab "Help"
-	$dynamicaUI_tabs;
+	$boingUIUI_tabs;
 	
 	setParent ..;
 	string $frame = `frameLayout -lv 0`;
-	$dynamicaUI_helpLine = `textField -ed 0 -bgc 0.8 0.9 0.8 -tx "boing main window loaded"`;
+	$boingUIUI_helpLine = `textField -ed 0 -bgc 0.8 0.9 0.8 -tx "boing main window loaded"`;
 	
 	formLayout -e
 		-an $frame  "top"
@@ -213,136 +213,136 @@ global proc dynamicaUI_createWindow()
 		-af $frame  "right"  0
 	$mainForm;
 
-	showWindow $dynamicaUI_window;
-	window -e -wh 500 480 $dynamicaUI_window;
+	showWindow $boingUIUI_window;
+	window -e -wh 500 480 $boingUIUI_window;
 }
 
-global proc dynamicaUI_tools()
+global proc boingUIUI_tools()
 {
-	source "dynamicaUITools";
-	dynamicaUI_addTools();
+	source "boingUIUITools";
+	boingUIUI_addTools();
 }
 
-global proc string dynamicaUI_createMainTab()
+global proc string boingUIUI_createMainTab()
 {
-	global float $dynamicaUI_crackWidth = 0;
+	global float $boingUIUI_crackWidth = 0;
 	//collision shape types: 0 = Hull, 1 = Mesh, 2 = Cylinder, 3 = Capsule, 4 = Box, 5 = Sphere, 6 = Plane, 7 = Bvh
 	
 	string $mainForm = `columnLayout -adj 1`;
 	
 		
-		dynamicaUI_createFrame("Active Rigid Bodies", "Active rigid bodies are controlled by the simulation solver and react to gravity, collisions, and fields.", 0, 0);
+		boingUIUI_createFrame("Active Rigid Bodies", "Active rigid bodies are controlled by the simulation solver and react to gravity, collisions, and fields.", 0, 0);
 			rowLayout -nc 6;
-				iconTextButton -st "iconAndTextVertical" -l "Sphere" -w 75 -i "dynamicaCreateActiveSphere.xpm" 
-					-c "dynamicaUI_createActiveSphere" -ann "Create an active sphere rigid body";
+				iconTextButton -st "iconAndTextVertical" -l "Sphere" -w 75 -i "boingUICreateActiveSphere.xpm" 
+					-c "boingUIUI_createActiveSphere" -ann "Create an active sphere rigid body";
 
-				iconTextButton -st "iconAndTextVertical" -l "Box" -w 75 -i "dynamicaCreateActiveBox.xpm" 
-					-c "dynamicaUI_createActiveBox" -ann "Create an active box rigid body";
+				iconTextButton -st "iconAndTextVertical" -l "Box" -w 75 -i "boingUICreateActiveBox.xpm" 
+					-c "boingUIUI_createActiveBox" -ann "Create an active box rigid body";
 
-				// iconTextButton -st "iconAndTextVertical" -l "Cylinder" -w 75 -i "dynamicaCreateActiveCylinder.xpm"
-					// -c "dynamicaUI_createRigidBody(true, 1)" -ann "Create an active cylinder rigid body";
+				// iconTextButton -st "iconAndTextVertical" -l "Cylinder" -w 75 -i "boingUICreateActiveCylinder.xpm"
+					// -c "boingUIUI_createRigidBody(true, 1)" -ann "Create an active cylinder rigid body";
 					
-				// iconTextButton -st "iconAndTextVertical" -l "Capsule" -w 75 -i "dynamicaCreateActiveCapsule.xpm"
-					// -c "dynamicaUI_createRigidBody(true, 1)" -ann "Create an active capsule rigid body";
+				// iconTextButton -st "iconAndTextVertical" -l "Capsule" -w 75 -i "boingUICreateActiveCapsule.xpm"
+					// -c "boingUIUI_createRigidBody(true, 1)" -ann "Create an active capsule rigid body";
 					
-				iconTextButton -st "iconAndTextVertical" -l "Hull" -w 75 -i "dynamicaCreateActiveHull.xpm" 
-					-c "dynamicaUI_createActiveHull" -ann "Create active hull rigid bodies from selection";
+				iconTextButton -st "iconAndTextVertical" -l "Hull" -w 75 -i "boingUICreateActiveHull.xpm" 
+					-c "boingUIUI_createActiveHull" -ann "Create active hull rigid bodies from selection";
 
-				iconTextButton -st "iconAndTextVertical" -l "Mesh" -w 75 -i "dynamicaCreateActiveMesh.xpm"
-					-c "dynamicaUI_createActiveMesh" -ann "Create active mesh rigid bodies from selection";
+				iconTextButton -st "iconAndTextVertical" -l "Mesh" -w 75 -i "boingUICreateActiveMesh.xpm"
+					-c "boingUIUI_createActiveMesh" -ann "Create active mesh rigid bodies from selection";
 				
-				iconTextButton -st "iconAndTextVertical" -l "HACD" -w 75 -i "dynamicaCreateActiveMesh.xpm"
-					-c "dynamicaUI_createRigidBody(true, 8)" -ann "Create HACD rigid bodies from selection";
+				iconTextButton -st "iconAndTextVertical" -l "HACD" -w 75 -i "boingUICreateActiveMesh.xpm"
+					-c "boingUIUI_createRigidBody(true, 8)" -ann "Create HACD rigid bodies from selection";
 			setParent ..;
 		setParent ..;
 
-		dynamicaUI_createFrame("Passive Rigid Bodies", "Passive rigid bodies do not react to gravity or fields, but are included in collisions.\nIf passive rigid bodies are keyed and moving, they are considered kinematic - active bodies will collide and react accordingly.", 0, 0);
+		boingUIUI_createFrame("Passive Rigid Bodies", "Passive rigid bodies do not react to gravity or fields, but are included in collisions.\nIf passive rigid bodies are keyed and moving, they are considered kinematic - active bodies will collide and react accordingly.", 0, 0);
 			rowLayout -nc 7;
-				iconTextButton -st "iconAndTextVertical" -l "Sphere" -w 75 -i "dynamicaCreatePassiveSphere.xpm" 
-					-c "dynamicaUI_createPassiveSphere" -ann "Create a passive sphere rigid body";
+				iconTextButton -st "iconAndTextVertical" -l "Sphere" -w 75 -i "boingUICreatePassiveSphere.xpm" 
+					-c "boingUIUI_createPassiveSphere" -ann "Create a passive sphere rigid body";
 
-				iconTextButton -st "iconAndTextVertical" -l "Box" -w 75 -i "dynamicaCreatePassiveBox.xpm" 
-					-c "dynamicaUI_createPassiveBox" -ann "Create a passive box rigid body";
+				iconTextButton -st "iconAndTextVertical" -l "Box" -w 75 -i "boingUICreatePassiveBox.xpm" 
+					-c "boingUIUI_createPassiveBox" -ann "Create a passive box rigid body";
 
-				iconTextButton -st "iconAndTextVertical" -l "Hull" -w 75 -i "dynamicaCreatePassiveHull.xpm" 
-					-c "dynamicaUI_createPassiveHull" -ann "Create passive hull rigid bodies from selection";
+				iconTextButton -st "iconAndTextVertical" -l "Hull" -w 75 -i "boingUICreatePassiveHull.xpm" 
+					-c "boingUIUI_createPassiveHull" -ann "Create passive hull rigid bodies from selection";
 
-				iconTextButton -st "iconAndTextVertical" -l "Mesh" -w 75 -i "dynamicaCreatePassiveMesh.xpm" 
-					-c "dynamicaUI_createPassiveMesh" -ann "Create passive mesh rigid bodies from selection";
+				iconTextButton -st "iconAndTextVertical" -l "Mesh" -w 75 -i "boingUICreatePassiveMesh.xpm" 
+					-c "boingUIUI_createPassiveMesh" -ann "Create passive mesh rigid bodies from selection";
 
-				 iconTextButton -st "iconAndTextVertical" -l "BvhMesh" -w 75 -i "dynamicaCreatePassiveBvhMesh.xpm" 
-					 -c "dynamicaUI_createRigidBody(false, 7)" -ann "Create passive Bvh mesh rigid bodies from selection";
+				 iconTextButton -st "iconAndTextVertical" -l "BvhMesh" -w 75 -i "boingUICreatePassiveBvhMesh.xpm" 
+					 -c "boingUIUI_createRigidBody(false, 7)" -ann "Create passive Bvh mesh rigid bodies from selection";
 
-				iconTextButton -st "iconAndTextVertical" -l "Plane" -w 75 -i "dynamicaCreatePassivePlane.xpm" 
-					-c "dynamicaUI_createPassivePlane" -ann "Create a passive plane rigid body";
+				iconTextButton -st "iconAndTextVertical" -l "Plane" -w 75 -i "boingUICreatePassivePlane.xpm" 
+					-c "boingUIUI_createPassivePlane" -ann "Create a passive plane rigid body";
 					
-				iconTextButton -st "iconAndTextVertical" -l "HACD" -w 75 -i "dynamicaCreateActiveMesh.xpm"
-					-c "dynamicaUI_createRigidBody(false, 8)" -ann "Create passive HACD rigid bodies from selection";
+				iconTextButton -st "iconAndTextVertical" -l "HACD" -w 75 -i "boingUICreateActiveMesh.xpm"
+					-c "boingUIUI_createRigidBody(false, 8)" -ann "Create passive HACD rigid bodies from selection";
 					
 			setParent ..;
 		setParent ..;
 
-		dynamicaUI_createFrame("Active Rigid Body Arrays", "Active rigid body arrays are collections of like-shaped active rigid bodies.", 0, 0);
+		boingUIUI_createFrame("Active Rigid Body Arrays", "Active rigid body arrays are collections of like-shaped active rigid bodies.", 0, 0);
 			rowLayout -nc 5;
-				iconTextButton -st "iconAndTextVertical" -l "Sphere" -w 75 -i "dynamicaCreateActiveSphereArray.xpm"
-					-c "dynamicaUI_createRigidBodyArray(true, 5)" -ann "Create an active sphere rigid body array";
+				iconTextButton -st "iconAndTextVertical" -l "Sphere" -w 75 -i "boingUICreateActiveSphereArray.xpm"
+					-c "boingUIUI_createRigidBodyArray(true, 5)" -ann "Create an active sphere rigid body array";
 
-				iconTextButton -st "iconAndTextVertical" -l "Box" -w 75 -i "dynamicaCreateActiveBoxArray.xpm" 
-					-c "dynamicaUI_createRigidBodyArray(true, 4)" -ann "Create an active box rigid body array";
+				iconTextButton -st "iconAndTextVertical" -l "Box" -w 75 -i "boingUICreateActiveBoxArray.xpm" 
+					-c "boingUIUI_createRigidBodyArray(true, 4)" -ann "Create an active box rigid body array";
 
-				iconTextButton -st "iconAndTextVertical" -l "Hull" -w 75 -i "dynamicaCreateActiveHullArray.xpm" 
-					-c "dynamicaUI_createRigidBodyArray(true, 0)" -ann "Create an active hull rigid body array from selection";
+				iconTextButton -st "iconAndTextVertical" -l "Hull" -w 75 -i "boingUICreateActiveHullArray.xpm" 
+					-c "boingUIUI_createRigidBodyArray(true, 0)" -ann "Create an active hull rigid body array from selection";
 
-				iconTextButton -style "iconAndTextVertical" -label "Mesh" -w 75 -i "dynamicaCreateActiveMeshArray.xpm" 
-					-c "dynamicaUI_createRigidBodyArray(true, 1)" -ann "Create an active mesh rigid body array from selection";
+				iconTextButton -style "iconAndTextVertical" -label "Mesh" -w 75 -i "boingUICreateActiveMeshArray.xpm" 
+					-c "boingUIUI_createRigidBodyArray(true, 1)" -ann "Create an active mesh rigid body array from selection";
 			setParent ..;
 		setParent ..;
 
-		// dynamicaUI_createFrame("Passive Rigid Body Arrays", "Passive rigid body arrays are collections of like-shaped passive rigid bodies.", 0, 0);
+		// boingUIUI_createFrame("Passive Rigid Body Arrays", "Passive rigid body arrays are collections of like-shaped passive rigid bodies.", 0, 0);
 			// rowLayout -nc 6;
-				// iconTextButton -st "iconAndTextVertical" -l "Sphere" -w 75 -i "dynamicaCreatePassiveSphereArray.xpm" 
-					// -c "dynamicaUI_createRigidBodyArray(false, 5)" -ann "Create an passive sphere rigid body array";
+				// iconTextButton -st "iconAndTextVertical" -l "Sphere" -w 75 -i "boingUICreatePassiveSphereArray.xpm" 
+					// -c "boingUIUI_createRigidBodyArray(false, 5)" -ann "Create an passive sphere rigid body array";
 
-				// iconTextButton -st "iconAndTextVertical" -l "Box" -w 75 -i "dynamicaCreatePassiveBoxArray.xpm" 
-					// -c "dynamicaUI_createRigidBodyArray(false, 4)" -ann "Create an passive box rigid body array";
+				// iconTextButton -st "iconAndTextVertical" -l "Box" -w 75 -i "boingUICreatePassiveBoxArray.xpm" 
+					// -c "boingUIUI_createRigidBodyArray(false, 4)" -ann "Create an passive box rigid body array";
 
-				// iconTextButton -st "iconAndTextVertical" -l "Hull" -w 75 -i "dynamicaCreatePassiveHullArray.xpm" 
-					// -c "dynamicaUI_createRigidBodyArray(false, 0)" -ann "Create an passive hull rigid body array";
+				// iconTextButton -st "iconAndTextVertical" -l "Hull" -w 75 -i "boingUICreatePassiveHullArray.xpm" 
+					// -c "boingUIUI_createRigidBodyArray(false, 0)" -ann "Create an passive hull rigid body array";
 
-				// iconTextButton -st "iconAndTextVertical" -l "Mesh" -w 75 -i "dynamicaCreatePassiveMeshArray.xpm" 
-					// -c "dynamicaUI_createRigidBodyArray(false, 1)" -ann "Create an passive mesh rigid body array from selection";
+				// iconTextButton -st "iconAndTextVertical" -l "Mesh" -w 75 -i "boingUICreatePassiveMeshArray.xpm" 
+					// -c "boingUIUI_createRigidBodyArray(false, 1)" -ann "Create an passive mesh rigid body array from selection";
 
-				// iconTextButton -style "iconAndTextVertical" -l "BvhMesh" -w 75 -i "dynamicaCreatePassiveBvhMeshArray.xpm" 
-					// -c "dynamicaUI_createRigidBodyArray(false, 1)" -ann "Create an passive Bvh mesh rigid body array from selection";
+				// iconTextButton -style "iconAndTextVertical" -l "BvhMesh" -w 75 -i "boingUICreatePassiveBvhMeshArray.xpm" 
+					// -c "boingUIUI_createRigidBodyArray(false, 1)" -ann "Create an passive Bvh mesh rigid body array from selection";
 
-				// iconTextButton -style "iconAndTextVertical" -l "Plane" -w 75 -i "dynamicaCreatePassivePlaneArray.xpm" 
-					// -c "dynamicaUI_createRigidBodyArray(false, 6)" -ann "Create an passive plane rigid body array";
+				// iconTextButton -style "iconAndTextVertical" -l "Plane" -w 75 -i "boingUICreatePassivePlaneArray.xpm" 
+					// -c "boingUIUI_createRigidBodyArray(false, 6)" -ann "Create an passive plane rigid body array";
 			// setParent ..;
 		// setParent ..;
 
-		dynamicaUI_createFrame("Constraints", "Constraints inhibit the natural (unconstrained) behavior of an active rigid body.\nConstraints require at least one rigid body to be selected. Rigid bodies can be influenced by multiple constraints.", 0, 0);
+		boingUIUI_createFrame("Constraints", "Constraints inhibit the natural (unconstrained) behavior of an active rigid body.\nConstraints require at least one rigid body to be selected. Rigid bodies can be influenced by multiple constraints.", 0, 0);
 			rowLayout -nc 5;
-				iconTextButton -st "iconAndTextVertical" -l "Nail" -w 75 -i "dynamicaCreateNailConstraint.xpm" 
-					-c "dynamicaUI_createNail" -ann "Create a breakable nail constraint";
+				iconTextButton -st "iconAndTextVertical" -l "Nail" -w 75 -i "boingUICreateNailConstraint.xpm" 
+					-c "boingUIUI_createNail" -ann "Create a breakable nail constraint";
 				
-				iconTextButton -st "iconAndTextVertical" -l "Hinge" -w 75 -i "dynamicaCreateHingeConstraint.xpm" 
-					-c "dynamicaUI_createHinge" -ann "Create a breakable hinge constraint";
+				iconTextButton -st "iconAndTextVertical" -l "Hinge" -w 75 -i "boingUICreateHingeConstraint.xpm" 
+					-c "boingUIUI_createHinge" -ann "Create a breakable hinge constraint";
 				
-				iconTextButton -st "iconAndTextVertical" -l "Slider" -w 75  -i "dynamicaCreateSliderConstraint.xpm" 
-					-c "dynamicaUI_createSlider" -ann "Create a breakable slider constraint";
+				iconTextButton -st "iconAndTextVertical" -l "Slider" -w 75  -i "boingUICreateSliderConstraint.xpm" 
+					-c "boingUIUI_createSlider" -ann "Create a breakable slider constraint";
 				
-				iconTextButton -st "iconAndTextVertical" -l "6Dof" -w 75 -i "dynamicaCreate6dofConstraint.xpm" 
-					-c "dynamicaUI_create6Dof" -ann "Create a breakable 6dof constraint";
+				iconTextButton -st "iconAndTextVertical" -l "6Dof" -w 75 -i "boingUICreate6dofConstraint.xpm" 
+					-c "boingUIUI_create6Dof" -ann "Create a breakable 6dof constraint";
 	
-				// iconTextButton -st "iconAndTextVertical" -l "ConeTwist" -w 75 -i "dynamicaCreateConeTwistConstraint.xpm" 
-					// -c "dynamicaUI_createConeTwistConstraint" -ann "Create a cone twist constraint";
+				// iconTextButton -st "iconAndTextVertical" -l "ConeTwist" -w 75 -i "boingUICreateConeTwistConstraint.xpm" 
+					// -c "boingUIUI_createConeTwistConstraint" -ann "Create a cone twist constraint";
 			setParent ..;
 		setParent ..;
 	
-		dynamicaUI_createFrame("Soft Bodies (experimental)", "Soft bodies include cloth and ropes .", 0, 0);
+		boingUIUI_createFrame("Soft Bodies (experimental)", "Soft bodies include cloth and ropes .", 0, 0);
 			rowLayout -nc 1;
-				iconTextButton -st "iconAndTextVertical" -l "Soft Mesh" -w 75 -i "dynamicaSoftMesh.xpm"
-					-c "dynamicaUI_createSoftBody()" -ann "Convert mesh to soft body";
+				iconTextButton -st "iconAndTextVertical" -l "Soft Mesh" -w 75 -i "boingUISoftMesh.xpm"
+					-c "boingUIUI_createSoftBody()" -ann "Convert mesh to soft body";
 				
 			setParent ..;
 		setParent ..;
@@ -351,61 +351,61 @@ global proc string dynamicaUI_createMainTab()
 	return $mainForm;
 }
 
-global proc string dynamicaUI_createControlTab() 
+global proc string boingUIUI_createControlTab() 
 {
-	global float $dynamicaUI_activeStartFrame = 24;
-	global float $dynamicaUI_activeEndFrame = 48;
-	global int $dynamicaUI_activateAxis = 0; //0 = +X, 1 = -X, 2 = +Y, 3 = -Y, 4 = +Z, 5 = -Z, 6 = radial out, 7 = radial in, 8 = daisy chain
+	global float $boingUIUI_activeStartFrame = 24;
+	global float $boingUIUI_activeEndFrame = 48;
+	global int $boingUIUI_activateAxis = 0; //0 = +X, 1 = -X, 2 = +Y, 3 = -Y, 4 = +Z, 5 = -Z, 6 = radial out, 7 = radial in, 8 = daisy chain
 
 	string $mainForm = `columnLayout -adj 1`;
 
-		dynamicaUI_createFrame("Frame Range For Rigid Body Control", "Selected rigid bodies will become active during this range", 0, 0);
+		boingUIUI_createFrame("Frame Range For Rigid Body Control", "Selected rigid bodies will become active during this range", 0, 0);
 			rowLayout -nc 2;
-				floatField -pre 3 -w 60 -v $dynamicaUI_activeStartFrame -ann "Activation range start frame"
-					-cc "$dynamicaUI_activeStartFrame = `floatField -q -v activateStart`" activateStart;
-				floatField -pre 3 -w 60 -v $dynamicaUI_activeEndFrame -ann "Activation range end frame"
-					-cc "$dynamicaUI_activeEndFrame = `floatField -q -v activateEnd`" activateEnd;
+				floatField -pre 3 -w 60 -v $boingUIUI_activeStartFrame -ann "Activation range start frame"
+					-cc "$boingUIUI_activeStartFrame = `floatField -q -v activateStart`" activateStart;
+				floatField -pre 3 -w 60 -v $boingUIUI_activeEndFrame -ann "Activation range end frame"
+					-cc "$boingUIUI_activeEndFrame = `floatField -q -v activateEnd`" activateEnd;
 			setParent ..;
 		setParent ..;
 
-		dynamicaUI_createFrame("Make Rigid Bodies Active Along The X, Y, or Z Axis", "Make selected rigid bodies active along a world axis.", 0, 0);
+		boingUIUI_createFrame("Make Rigid Bodies Active Along The X, Y, or Z Axis", "Make selected rigid bodies active along a world axis.", 0, 0);
 			rowLayout -nc 6;
-				iconTextButton -st "iconAndTextVertical" -l "+X Axis" -w 75 -i "dynamicaActivateX.xpm" 
-					-c "dynamicaUI_activateAxis(0)" -ann "Activate selected rigid bodies along the +X axis";
-				iconTextButton -st "iconAndTextVertical" -l "-X Axis" -w 75 -i "dynamicaActivate-X.xpm" 
-					-c "dynamicaUI_activateAxis(1)" -ann "Activate selected rigid bodies along the -X axis";
-				iconTextButton -st "iconAndTextVertical" -l "+Y Axis" -w 75 -i "dynamicaActivateY.xpm" 
-					-c "dynamicaUI_activateAxis(2)" -ann "Activate selected rigid bodies along the +Y axis";
-				iconTextButton -st "iconAndTextVertical" -l "-Y Axis" -w 75 -i "dynamicaActivate-Y.xpm" 
-					-c "dynamicaUI_activateAxis(3)" -ann "Activate selected rigid bodies along the -Y axis";
-				iconTextButton -st "iconAndTextVertical" -l "+Z Axis" -w 75 -i "dynamicaActivateZ.xpm" 
-					-c "dynamicaUI_activateAxis(4)" -ann "Activate selected rigid bodies along the +Z axis";
-				iconTextButton -st "iconAndTextVertical" -l "-Z Axis" -w 75 -i "dynamicaActivate-Z.xpm" 
-					-c "dynamicaUI_activateAxis(5)" -ann "Activate selected rigid bodies along the -Z axis";
+				iconTextButton -st "iconAndTextVertical" -l "+X Axis" -w 75 -i "boingUIActivateX.xpm" 
+					-c "boingUIUI_activateAxis(0)" -ann "Activate selected rigid bodies along the +X axis";
+				iconTextButton -st "iconAndTextVertical" -l "-X Axis" -w 75 -i "boingUIActivate-X.xpm" 
+					-c "boingUIUI_activateAxis(1)" -ann "Activate selected rigid bodies along the -X axis";
+				iconTextButton -st "iconAndTextVertical" -l "+Y Axis" -w 75 -i "boingUIActivateY.xpm" 
+					-c "boingUIUI_activateAxis(2)" -ann "Activate selected rigid bodies along the +Y axis";
+				iconTextButton -st "iconAndTextVertical" -l "-Y Axis" -w 75 -i "boingUIActivate-Y.xpm" 
+					-c "boingUIUI_activateAxis(3)" -ann "Activate selected rigid bodies along the -Y axis";
+				iconTextButton -st "iconAndTextVertical" -l "+Z Axis" -w 75 -i "boingUIActivateZ.xpm" 
+					-c "boingUIUI_activateAxis(4)" -ann "Activate selected rigid bodies along the +Z axis";
+				iconTextButton -st "iconAndTextVertical" -l "-Z Axis" -w 75 -i "boingUIActivate-Z.xpm" 
+					-c "boingUIUI_activateAxis(5)" -ann "Activate selected rigid bodies along the -Z axis";
 			setParent ..;
 		setParent ..;
 		
-		dynamicaUI_createFrame("Make Rigid Bodies Active In A Radial Or Chain Pattern", "Make selected rigid bodies active in a radial or chain pattern, starting with the active object in the selection.", 0, 0);
+		boingUIUI_createFrame("Make Rigid Bodies Active In A Radial Or Chain Pattern", "Make selected rigid bodies active in a radial or chain pattern, starting with the active object in the selection.", 0, 0);
 			rowLayout -nc 3;
-				iconTextButton -st "iconAndTextVertical" -l "Outward" -w 75 -i "dynamicaActivateRadial.xpm" 
-					-c "dynamicaUI_activateAxis(6)" -ann "Radially activate selected rigid bodies outwards";
-				iconTextButton -st "iconAndTextVertical" -l "Inward" -w 75 -i "dynamicaActivateRadialIn.xpm" 
-					-c "dynamicaUI_activateAxis(7)" -ann "Radially activate selected rigid bodies inwards";
-				iconTextButton -st "iconAndTextVertical" -l "Daisy Chain" -w 75 -i "dynamicaActivateChain.xpm" 
-					-c "dynamicaUI_activateAxis(8)" -ann "Chain activate selected rigid bodies";
+				iconTextButton -st "iconAndTextVertical" -l "Outward" -w 75 -i "boingUIActivateRadial.xpm" 
+					-c "boingUIUI_activateAxis(6)" -ann "Radially activate selected rigid bodies outwards";
+				iconTextButton -st "iconAndTextVertical" -l "Inward" -w 75 -i "boingUIActivateRadialIn.xpm" 
+					-c "boingUIUI_activateAxis(7)" -ann "Radially activate selected rigid bodies inwards";
+				iconTextButton -st "iconAndTextVertical" -l "Daisy Chain" -w 75 -i "boingUIActivateChain.xpm" 
+					-c "boingUIUI_activateAxis(8)" -ann "Chain activate selected rigid bodies";
 			setParent ..;
 		setParent ..;
 		
-		dynamicaUI_createFrame("Configure & Modify Rigid Bodies (frame range ignored)", "Restore default active behavior, convert to passive, or set the initial state of selected rigid bodies.", 0, 0);
+		boingUIUI_createFrame("Configure & Modify Rigid Bodies (frame range ignored)", "Restore default active behavior, convert to passive, or set the initial state of selected rigid bodies.", 0, 0);
 			rowLayout -nc 4;
-				iconTextButton -st "iconAndTextVertical" -l "Make Active" -w 75 -i "dynamicaUnactivate.xpm" 
-					-c "dynamicaUI_deactivateRigidBodies(0)" -ann "Make selected rigid bodies active (restores default behavior)";
-				iconTextButton -st "iconAndTextVertical" -l "Make Passive" -w 75 -i "dynamicaMakePassive.xpm" 
-					-c "dynamicaUI_deactivateRigidBodies(1)" -ann "Make selected rigid bodies passive";
-				iconTextButton -st "iconAndTextVertical" -l "Set Initial State" -w 85 -i "dynamicaSetInitialState.xpm" 
-					-c "dynamicaUI_setInitialState(0)" -ann "Set current state to initial state";
-				iconTextButton -st "iconAndTextVertical" -l "Clear Initial State" -w 85 -i "dynamicaClearInitialState.xpm" 
-					-c "dynamicaUI_setInitialState(1)" -ann "Restore original initial state";
+				iconTextButton -st "iconAndTextVertical" -l "Make Active" -w 75 -i "boingUIUnactivate.xpm" 
+					-c "boingUIUI_deactivateRigidBodies(0)" -ann "Make selected rigid bodies active (restores default behavior)";
+				iconTextButton -st "iconAndTextVertical" -l "Make Passive" -w 75 -i "boingUIMakePassive.xpm" 
+					-c "boingUIUI_deactivateRigidBodies(1)" -ann "Make selected rigid bodies passive";
+				iconTextButton -st "iconAndTextVertical" -l "Set Initial State" -w 85 -i "boingUISetInitialState.xpm" 
+					-c "boingUIUI_setInitialState(0)" -ann "Set current state to initial state";
+				iconTextButton -st "iconAndTextVertical" -l "Clear Initial State" -w 85 -i "boingUIClearInitialState.xpm" 
+					-c "boingUIUI_setInitialState(1)" -ann "Restore original initial state";
 			setParent ..;
 		setParent ..;
 	setParent ..;
@@ -413,48 +413,48 @@ global proc string dynamicaUI_createControlTab()
 	return $mainForm;
 }
 
-global proc string dynamicaUI_createCaptureTab() 
+global proc string boingUIUI_createCaptureTab() 
 {
-	global int $dynamicaUI_deleteEmptyNodes = 1;
-	global int $dynamicaUI_deleteBakeHistory = 1;
-	global int $dynamicaUI_deleteStaticChannels = 1;
-	global int $dynamicaUI_optimizeChannels = 1;
-	global int $dynamicaUI_captureAll = 1;
-	global float $dynamicaUI_captureStartFrame;
-	global float $dynamicaUI_captureEndFrame;
+	global int $boingUIUI_deleteEmptyNodes = 1;
+	global int $boingUIUI_deleteBakeHistory = 1;
+	global int $boingUIUI_deleteStaticChannels = 1;
+	global int $boingUIUI_optimizeChannels = 1;
+	global int $boingUIUI_captureAll = 1;
+	global float $boingUIUI_captureStartFrame;
+	global float $boingUIUI_captureEndFrame;
 	
 	float $start = `playbackOptions -q -min`;
 	float $end = `playbackOptions -q -max`;
 
 	string $mainForm = `columnLayout -adj 1`;
-		dynamicaUI_createFrame("Frame Range To Bake", "Set the starting and ending frames for baking.", 0, 0);
+		boingUIUI_createFrame("Frame Range To Bake", "Set the starting and ending frames for baking.", 0, 0);
 			rowLayout -nc 2;
 				floatField -pre 3 -w 60 -v $start
-					-cc "if (`floatField -q -v bakeStart` > `floatField -q -v bakeEnd`) floatField -e -v (`floatField -q -v bakeStart`) bakeEnd;$dynamicaUI_captureStartFrame = `floatField -q -v bakeStart`" bakeStart;
+					-cc "if (`floatField -q -v bakeStart` > `floatField -q -v bakeEnd`) floatField -e -v (`floatField -q -v bakeStart`) bakeEnd;$boingUIUI_captureStartFrame = `floatField -q -v bakeStart`" bakeStart;
 				floatField -pre 3 -w 60 -v $end
-					-cc "if (`floatField -q -v bakeStart` > `floatField -q -v bakeEnd`) floatField -e -v (`floatField -q -v bakeEnd`) bakeStart;$dynamicaUI_captureEndFrame = `floatField -q -v bakeEnd`" bakeEnd;
-				$dynamicaUI_captureStartFrame = `floatField -q -v bakeStart`;
-				$dynamicaUI_captureEndFrame = `floatField -q -v bakeEnd`;
+					-cc "if (`floatField -q -v bakeStart` > `floatField -q -v bakeEnd`) floatField -e -v (`floatField -q -v bakeEnd`) bakeStart;$boingUIUI_captureEndFrame = `floatField -q -v bakeEnd`" bakeEnd;
+				$boingUIUI_captureStartFrame = `floatField -q -v bakeStart`;
+				$boingUIUI_captureEndFrame = `floatField -q -v bakeEnd`;
 			setParent ..;
 		setParent ..;
 		
-		dynamicaUI_createFrame("Bake Selected Or All Rigid Bodies", "Bake keyframe data for selected or all rigid bodies in the scene.", 0, 0);
+		boingUIUI_createFrame("Bake Selected Or All Rigid Bodies", "Bake keyframe data for selected or all rigid bodies in the scene.", 0, 0);
 			rowLayout -nc 2;
-				iconTextButton -st "iconAndTextVertical" -l "Bake Selected" -w 85 -i "dynamicaBakeSelected.xpm" 
-					-c "$dynamicaUI_captureAll = 0; dynamicaUI_bakeRigidBodies()" -ann "Bake Selected Rigid Bodies";
-				iconTextButton -st "iconAndTextVertical" -l "Bake All" -w 75 -i "dynamicaBakeAll.xpm" 
-					-c "$dynamicaUI_captureAll = 1; dynamicaUI_bakeRigidBodies()" -ann "Bake All Rigid Bodies";
+				iconTextButton -st "iconAndTextVertical" -l "Bake Selected" -w 85 -i "boingUIBakeSelected.xpm" 
+					-c "$boingUIUI_captureAll = 0; boingUIUI_bakeRigidBodies()" -ann "Bake Selected Rigid Bodies";
+				iconTextButton -st "iconAndTextVertical" -l "Bake All" -w 75 -i "boingUIBakeAll.xpm" 
+					-c "$boingUIUI_captureAll = 1; boingUIUI_bakeRigidBodies()" -ann "Bake All Rigid Bodies";
 			setParent ..;
 		setParent ..;
 		
-		dynamicaUI_createFrame("Bake Options", "Enabling these options can dramatically reduce scene size and overhead.", 1, 1);
+		boingUIUI_createFrame("Bake Options", "Enabling these options can dramatically reduce scene size and overhead.", 1, 1);
 			columnLayout;
-				checkBox -l "Optimize Channels (Recommended)" -v $dynamicaUI_optimizeChannels -ann "Remove unneccassary keyframes (significantly reduces data and file size)" 
-					-cc "$dynamicaUI_optimizeChannels  = `checkBox -q -v bakeOptimize`" bakeOptimize;
-				checkBox -l "Delete History (Recommended)" -v $dynamicaUI_deleteBakeHistory -ann "Delete history on all baked objects" 
-					-cc "$dynamicaUI_deleteBakeHistory  = `checkBox -q -v bakeHistory`" bakeHistory;
-				checkBox -l "Delete Empty Nodes (Recommended)" -v $dynamicaUI_deleteEmptyNodes -ann "Remove empty and orphaned nodes" 
-					-cc "$dynamicaUI_deleteEmptyNodes  = `checkBox -q -v bakeEmpty`" bakeEmpty;
+				checkBox -l "Optimize Channels (Recommended)" -v $boingUIUI_optimizeChannels -ann "Remove unneccassary keyframes (significantly reduces data and file size)" 
+					-cc "$boingUIUI_optimizeChannels  = `checkBox -q -v bakeOptimize`" bakeOptimize;
+				checkBox -l "Delete History (Recommended)" -v $boingUIUI_deleteBakeHistory -ann "Delete history on all baked objects" 
+					-cc "$boingUIUI_deleteBakeHistory  = `checkBox -q -v bakeHistory`" bakeHistory;
+				checkBox -l "Delete Empty Nodes (Recommended)" -v $boingUIUI_deleteEmptyNodes -ann "Remove empty and orphaned nodes" 
+					-cc "$boingUIUI_deleteEmptyNodes  = `checkBox -q -v bakeEmpty`" bakeEmpty;
 			setParent ..;
 		setParent ..;
 	setParent ..;
@@ -462,44 +462,44 @@ global proc string dynamicaUI_createCaptureTab()
 	return $mainForm;
 }
 
-global proc string dynamicaUI_createOptionsTab()
+global proc string boingUIUI_createOptionsTab()
 {	
-	global string $dynamicaUI_STsolverType;
-	global string $dynamicaUI_STgravityX;
-	global string $dynamicaUI_STgravityY;
-	global string $dynamicaUI_STgravityZ;
-	global string $dynamicaUI_STenabled;
-	global string $dynamicaUI_STsplitImpulse;
-	global string $dynamicaUI_STsubsteps;
-	global string $dynamicaUI_STphysicsrate;
-	global string $dynamicaUI_STcollisionMargin;
-	global string $dynamicaUI_activateSet;
-	global float $dynamicaUI_collisionMargin;
-	global float $dynamicaUI_crackWidth;
-	global int $dynamicaUI_createActivateSet = 1;
+	global string $boingUIUI_STsolverType;
+	global string $boingUIUI_STgravityX;
+	global string $boingUIUI_STgravityY;
+	global string $boingUIUI_STgravityZ;
+	global string $boingUIUI_STenabled;
+	global string $boingUIUI_STsplitImpulse;
+	global string $boingUIUI_STsubsteps;
+	global string $boingUIUI_STphysicsrate;
+	global string $boingUIUI_STcollisionMargin;
+	global string $boingUIUI_activateSet;
+	global float $boingUIUI_collisionMargin;
+	global float $boingUIUI_crackWidth;
+	global int $boingUIUI_createActivateSet = 1;
 	
 	string $mainForm = `columnLayout -adj 1`;
 	
-		dynamicaUI_createFrame("Solver Options", "", 1, 0);
+		boingUIUI_createFrame("Solver Options", "", 1, 0);
 			columnLayout;
 				rowLayout -nc 2;
 					columnLayout -w 220;
 						text -al "left" -fn "boldLabelFont" -l "Gravity" -ann "Direction and magnitude of gravity in the simulation.";
 						float $gravity[] = `getAttr dSolver1.gravity`;
 						rowLayout -nc 3;
-							$dynamicaUI_STgravityX = `floatField -pre 3 -w 50 -v $gravity[0]`;
-							$dynamicaUI_STgravityY = `floatField -pre 3 -w 50 -v $gravity[1]`;
-							$dynamicaUI_STgravityZ = `floatField -pre 3 -w 50 -v $gravity[2]`;
-							connectControl $dynamicaUI_STgravityX dSolver1.gravityX;
-							connectControl $dynamicaUI_STgravityY dSolver1.gravityY;
-							connectControl $dynamicaUI_STgravityZ dSolver1.gravityZ;
+							$boingUIUI_STgravityX = `floatField -pre 3 -w 50 -v $gravity[0]`;
+							$boingUIUI_STgravityY = `floatField -pre 3 -w 50 -v $gravity[1]`;
+							$boingUIUI_STgravityZ = `floatField -pre 3 -w 50 -v $gravity[2]`;
+							connectControl $boingUIUI_STgravityX dSolver1.gravityX;
+							connectControl $boingUIUI_STgravityY dSolver1.gravityY;
+							connectControl $boingUIUI_STgravityZ dSolver1.gravityZ;
 						setParent ..;
 					setParent ..;
 					columnLayout;
 						text -al "left" -fn "boldLabelFont" -l "Physics Framerate (Hertz)";
 						int $physicsrate= `getAttr dSolver1.physicsrate`; 
-						$dynamicaUI_STphysicsrate = `intField -v $physicsrate -w 50 -ann "Default is 240. Higher values \"speed up\" simulation"`;
-						connectControl $dynamicaUI_STphysicsrate dSolver1.physicsrate;
+						$boingUIUI_STphysicsrate = `intField -v $physicsrate -w 50 -ann "Default is 240. Higher values \"speed up\" simulation"`;
+						connectControl $boingUIUI_STphysicsrate dSolver1.physicsrate;
 					setParent ..;
 				setParent ..;
 				
@@ -507,16 +507,16 @@ global proc string dynamicaUI_createOptionsTab()
 					columnLayout -w 220;
 						text -al "left" -fn "boldLabelFont" -l "Substeps";
 						int $substeps = `getAttr dSolver1.substeps`; 
-						$dynamicaUI_STsubsteps = `intField -v $substeps -w 50 
+						$boingUIUI_STsubsteps = `intField -v $substeps -w 50 
 							-ann "Number of times the simulation is evaluated 'between' each frame step on the timeline.\nThe default value of 1 should work for most simulations."`;
-						connectControl $dynamicaUI_STsubsteps dSolver1.substeps;
+						connectControl $boingUIUI_STsubsteps dSolver1.substeps;
 					setParent ..;
 					columnLayout;
 						text -al "left" -fn "boldLabelFont" -l "Split Impulse";
 						int $enabled = `getAttr dSolver1.splitImpulse`;
-						$dynamicaUI_STsplitImpulse = `checkBox -l "Enabled" -v $enabled 
+						$boingUIUI_STsplitImpulse = `checkBox -l "Enabled" -v $enabled 
 							-ann "Enabling Split Impulse will allow the solver to apply positional corrections when deep collision penetrations occur.\nThese corrections do not affect resulting velocities."`;
-						connectControl $dynamicaUI_STsplitImpulse dSolver1.splitImpulse;
+						connectControl $boingUIUI_STsplitImpulse dSolver1.splitImpulse;
 					setParent ..;
 				setParent ..;
 				
@@ -524,9 +524,9 @@ global proc string dynamicaUI_createOptionsTab()
 					columnLayout;
 						text -al "left" -fn "boldLabelFont" -l "Solver State";
 						int $enabled = `getAttr dSolver1.enabled`;
-						$dynamicaUI_STenabled = `checkBox -l "Enabled" -v $enabled 
+						$boingUIUI_STenabled = `checkBox -l "Enabled" -v $enabled 
 							-ann "Toggles the state of the solver - like an on/off switch."`;
-						connectControl $dynamicaUI_STenabled dSolver1.enabled;
+						connectControl $boingUIUI_STenabled dSolver1.enabled;
 					setParent ..;
 					columnLayout;
 						//
@@ -535,16 +535,16 @@ global proc string dynamicaUI_createOptionsTab()
 			setParent ..;
 		setParent ..;
 		
-		dynamicaUI_createFrame("Tool Options", "", 1, 0);
+		boingUIUI_createFrame("Tool Options", "", 1, 0);
 			columnLayout;
 				rowLayout -nc 2;
 					columnLayout;
 						text -al "left" -fn "boldLabelFont" -l "Colision Margin (creation only)";
-						$dynamicaUI_collisionMargin = `getAttr dSolver1.collisionMargin`; 
-						$dynamicaUI_STcollisionMargin = `floatField -pre 3 -w 50 -v $dynamicaUI_collisionMargin 
+						$boingUIUI_collisionMargin = `getAttr dSolver1.collisionMargin`; 
+						$boingUIUI_STcollisionMargin = `floatField -pre 3 -w 50 -v $boingUIUI_collisionMargin 
 							-ann "The gap around each collision shape used for collision detection.\nThis value only effects Hull and Mesh rigid bodies during creation. Default is 0.040." 
-							-cc "$dynamicaUI_collisionMargin = `floatField -q -v $dynamicaUI_STcollisionMargin`"`;
-						connectControl $dynamicaUI_STcollisionMargin dSolver1.collisionMargin;
+							-cc "$boingUIUI_collisionMargin = `floatField -q -v $boingUIUI_STcollisionMargin`"`;
+						connectControl $boingUIUI_STcollisionMargin dSolver1.collisionMargin;
 					setParent ..;
 				setParent ..;
 				
@@ -552,18 +552,18 @@ global proc string dynamicaUI_createOptionsTab()
 					columnLayout;
 						text -al "left" -fn "boldLabelFont" -l "Disable Collisions Between Constrained Bodies (creation only)";
 						int $enabled = `getAttr dSolver1.disableCollisionsBetweenLinkedBodies`;
-						$dynamicaUI_disableCollisionsBetweenLinkedBodies = `checkBox -l "Enabled" -v $enabled 
+						$boingUIUI_disableCollisionsBetweenLinkedBodies = `checkBox -l "Enabled" -v $enabled 
 							-ann "Controls the collisions of rigid bodies which share a constraint. This only effects constraints during creation."`;
-						connectControl $dynamicaUI_disableCollisionsBetweenLinkedBodies dSolver1.disableCollisionsBetweenLinkedBodies;
+						connectControl $boingUIUI_disableCollisionsBetweenLinkedBodies dSolver1.disableCollisionsBetweenLinkedBodies;
 					setParent ..;
 				setParent ..;
 				
 				rowLayout -nc 2;
 					columnLayout;
 						text -al "left" -fn "boldLabelFont" -l "Create Control Sets";
-						$dynamicaUI_activateSet = `checkBox -l "Enabled" -v $dynamicaUI_createActivateSet 
+						$boingUIUI_activateSet = `checkBox -l "Enabled" -v $boingUIUI_createActivateSet 
 							-ann "Creates quick select sets containing rigid bodies modified by activation controls." 
-							-cc "$dynamicaUI_createActivateSet = `checkBox -q -v $dynamicaUI_activateSet`"`;
+							-cc "$boingUIUI_createActivateSet = `checkBox -q -v $boingUIUI_activateSet`"`;
 					setParent ..;
 					columnLayout;
 						//
@@ -571,7 +571,7 @@ global proc string dynamicaUI_createOptionsTab()
 				setParent ..;
 				
 				separator -h 10;
-				button -l "Toggle Advanced Tools Tab" -c "dynamicaUI_tools()";
+				button -l "Toggle Advanced Tools Tab" -c "boingUIUI_tools()";
 			setParent ..;
 		setParent ..;
 		
@@ -583,19 +583,19 @@ global proc string dynamicaUI_createOptionsTab()
 //*****************
 //<rp 2014>
 //*****************
-global proc string dynamicaUI_createCallBacksTab()
+global proc string boingUIUI_createCallBacksTab()
 {
 	string $mainForm = `columnLayout -adj 1`;
-        dynamicaUI_createFrame("Edit callbacks", "", 0, 0);
+        boingUIUI_createFrame("Edit callbacks", "", 0, 0);
             rowLayout -nc 2;
-                iconTextButton -st "iconAndTextVertical" -l "Create callback" -w 75 -i "dynamicaHelp.xpm"
+                iconTextButton -st "iconAndTextVertical" -l "Create callback" -w 75 -i "boingUIHelp.xpm"
                 -c "createNode dCallBack" -ann "Create callback";
-                iconTextButton -st "iconAndTextVertical" -l "Delete callback" -w 75 -i "dynamicaBulletWebsite.xpm"
+                iconTextButton -st "iconAndTextVertical" -l "Delete callback" -w 75 -i "boingUIBulletWebsite.xpm"
                 -c "system(\"load http://bulletphysics.org\")" -ann "Visit bulletphysics.org";
             setParent ..;
         setParent ..;
     
-        //dynamicaUI_createFrame("Callback", "", 0, 0);
+        //boingUIUI_createFrame("Callback", "", 0, 0);
             columnLayout;
     
             textScrollList -allowMultiSelection true
@@ -616,19 +616,19 @@ global proc string dynamicaUI_createCallBacksTab()
 //</rp 2014>
 //*****************
 
-global proc string dynamicaUI_createHelpTab()
+global proc string boingUIUI_createHelpTab()
 {	
 	string $mainForm = `columnLayout -adj 1`;
-		dynamicaUI_createFrame("Documentation & Resources", "View the online wiki documentation or bulletphysics.org", 0, 0);
+		boingUIUI_createFrame("Documentation & Resources", "View the online wiki documentation or bulletphysics.org", 0, 0);
 			rowLayout -nc 2;
-				iconTextButton -st "iconAndTextVertical" -l "Online Help" -w 75 -i "dynamicaHelp.xpm" 
-					-c "system(\"load http://code.google.com/p/dynamica/wiki/DynamicaIntroduction\")" -ann "View Online Documentation";
-				iconTextButton -st "iconAndTextVertical" -l "bulletphysics.org" -w 90 -i "dynamicaBulletWebsite.xpm" 
+				iconTextButton -st "iconAndTextVertical" -l "Online Help" -w 75 -i "boingUIHelp.xpm" 
+					-c "system(\"load http://code.google.com/p/boingUI/wiki/boingUIIntroduction\")" -ann "View Online Documentation";
+				iconTextButton -st "iconAndTextVertical" -l "bulletphysics.org" -w 90 -i "boingUIBulletWebsite.xpm" 
 					-c "system(\"load http://bulletphysics.org\")" -ann "Visit bulletphysics.org";
 			setParent ..;
 		setParent ..;
 		
-		dynamicaUI_createFrame("Credits", "", 0, 0);
+		boingUIUI_createFrame("Credits", "", 0, 0);
 			columnLayout;
 				text -al "left" -l "Original Plugin: Walt Disney Studios";
 				text -al "left" -l "Original Author: Nicola Candussi";
@@ -644,12 +644,12 @@ global proc string dynamicaUI_createHelpTab()
 	return $mainForm;
 }
 
-global proc string dynamicaUI_createFrame(string $label, string $annotation, int $collapsable, int $collapsed)
+global proc string boingUIUI_createFrame(string $label, string $annotation, int $collapsable, int $collapsed)
 {
 	return `frameLayout -cll $collapsable -cl $collapsed -mh 3 -mw 6 -w 486 -h 100 -bs "etchedIn" -l $label -ann $annotation`;
 }
 
-global proc string dynamicaUI_loadHelp()
+global proc string boingUIUI_loadHelp()
 {
 	string $path = `file -query -location "boingUI.mel"`;
 	$path = strip(`substitute "boingUI.mel" $path ""`);
@@ -668,30 +668,30 @@ global proc string dynamicaUI_loadHelp()
 	return $fileData;
 }
 
-global proc dynamicaUI_print(string $out, int $mode)
+global proc boingUIUI_print(string $out, int $mode)
 {
 	//modes: 0 = print, 1 = warning, 2 = error
-	global string $dynamicaUI_helpLine;
+	global string $boingUIUI_helpLine;
 	
 	if ($mode == 0)
 	{
-		if(`textField -ex $dynamicaUI_helpLine`) textField -e -bgc 0.8 0.9 0.8 -tx ("Dynamica: " + $out) $dynamicaUI_helpLine;
-		print("Dynamica: " + $out + "\n");
+		if(`textField -ex $boingUIUI_helpLine`) textField -e -bgc 0.8 0.9 0.8 -tx ("boingUI: " + $out) $boingUIUI_helpLine;
+		print("boingUI: " + $out + "\n");
 	}
 	else if ($mode == 1)
 	{
-		if(`textField -ex $dynamicaUI_helpLine`) textField -e -bgc 1.0 1.0 0.8 -tx ("Dynamica: " + $out) $dynamicaUI_helpLine;
-		warning("Dynamica Warning: " + $out + "\n");
+		if(`textField -ex $boingUIUI_helpLine`) textField -e -bgc 1.0 1.0 0.8 -tx ("boingUI: " + $out) $boingUIUI_helpLine;
+		warning("boingUI Warning: " + $out + "\n");
 	}
 	else if ($mode == 2)
 	{
-		if(`textField -ex $dynamicaUI_helpLine`) textField -e -bgc 1.0 0.6 0.6 -tx ("Dynamica: " + $out) $dynamicaUI_helpLine;
-		error("Dynamica Error: " + $out + "\n");
+		if(`textField -ex $boingUIUI_helpLine`) textField -e -bgc 1.0 0.6 0.6 -tx ("boingUI: " + $out) $boingUIUI_helpLine;
+		error("boingUI Error: " + $out + "\n");
 	}
 	refresh;
 }
 
-global proc dynamicaUI_relinkRigidBodies()
+global proc boingUIUI_relinkRigidBodies()
 {
 	$sel = `ls -tr`;
 	for ($s in $sel) if (mbIsType($s, "bSolver") && ($s != "bSolverMain"))
@@ -719,46 +719,46 @@ global proc dynamicaUI_relinkRigidBodies()
 }
 
 //repeatable argless commands
-global proc dynamicaUI_createActiveSphere() { dynamicaUI_createRigidBody(true, 5); }
+global proc boingUIUI_createActiveSphere() { boingUIUI_createRigidBody(true, 5); }
 
-global proc dynamicaUI_createActiveBox() { dynamicaUI_createRigidBody(true, 4); } 
+global proc boingUIUI_createActiveBox() { boingUIUI_createRigidBody(true, 4); } 
 
-global proc dynamicaUI_createActiveHull() { dynamicaUI_createRigidBody(true, 0); }
+global proc boingUIUI_createActiveHull() { boingUIUI_createRigidBody(true, 0); }
 
-global proc dynamicaUI_createActiveMesh() { dynamicaUI_createRigidBody(true, 1); }
+global proc boingUIUI_createActiveMesh() { boingUIUI_createRigidBody(true, 1); }
 
-global proc dynamicaUI_createPassiveSphere() { dynamicaUI_createRigidBody(false, 5); }
+global proc boingUIUI_createPassiveSphere() { boingUIUI_createRigidBody(false, 5); }
 
-global proc dynamicaUI_createPassiveBox() { dynamicaUI_createRigidBody(false, 4); }
+global proc boingUIUI_createPassiveBox() { boingUIUI_createRigidBody(false, 4); }
 
-global proc dynamicaUI_createPassiveHull() { dynamicaUI_createRigidBody(false, 0); }
+global proc boingUIUI_createPassiveHull() { boingUIUI_createRigidBody(false, 0); }
 
-global proc dynamicaUI_createPassiveMesh()  { dynamicaUI_createRigidBody(false, 1); }
+global proc boingUIUI_createPassiveMesh()  { boingUIUI_createRigidBody(false, 1); }
 
-global proc dynamicaUI_createPassiveHACD()  { dynamicaUI_createRigidBody(false, 8); }
+global proc boingUIUI_createPassiveHACD()  { boingUIUI_createRigidBody(false, 8); }
 
-global proc dynamicaUI_createPassivePlane()  { dynamicaUI_createRigidBody(false, 6); }
+global proc boingUIUI_createPassivePlane()  { boingUIUI_createRigidBody(false, 6); }
 
-global proc dynamicaUI_createNail() { dynamicaUI_createConstraint(0); }
+global proc boingUIUI_createNail() { boingUIUI_createConstraint(0); }
 
-global proc dynamicaUI_createHinge() { dynamicaUI_createConstraint(1); }
+global proc boingUIUI_createHinge() { boingUIUI_createConstraint(1); }
 
-global proc dynamicaUI_createSlider() { dynamicaUI_createConstraint(2); }
+global proc boingUIUI_createSlider() { boingUIUI_createConstraint(2); }
 
-global proc dynamicaUI_create6Dof() { dynamicaUI_createConstraint(3); }
+global proc boingUIUI_create6Dof() { boingUIUI_createConstraint(3); }
 //end commands
 
 
 
-global proc dynamicaUI_createSoftBody()
+global proc boingUIUI_createSoftBody()
 {
 	
-	global float $dynamicaUI_startFrame;
-	global float $dynamicaUI_collisionMargin;
+	global float $boingUIUI_startFrame;
+	global float $boingUIUI_collisionMargin;
 	dSolver;
-	$dynamicaUI_collisionMargin = `getAttr dSolver1.collisionMargin`; 
-	string $meshLayer = "DynamicaInputMeshes";
-	string $sbLayer = "DynamicaSoftBodies";
+	$boingUIUI_collisionMargin = `getAttr dSolver1.collisionMargin`; 
+	string $meshLayer = "boingUIInputMeshes";
+	string $sbLayer = "boingUISoftBodies";
 	string $obSelection[] = `ls -sl`;
 	string $selection[];
 	string $newBodies[];
@@ -767,7 +767,7 @@ global proc dynamicaUI_createSoftBody()
 	string $margin;
 	int $bodyCount = 0;
 	int $makeCollisionShape = 1;
-	float $collisionMargin = $dynamicaUI_collisionMargin * 1.75; //compensate for descrepancy between Maya vertex shift and Bullet planar shift
+	float $collisionMargin = $boingUIUI_collisionMargin * 1.75; //compensate for descrepancy between Maya vertex shift and Bullet planar shift
 	
 	for ($o in $obSelection) mbDeleteShapeHistory($o); //clean shape history
 	$selection = `ls -selection -dag -leaf -showType -type "geometry"`;
@@ -777,7 +777,7 @@ global proc dynamicaUI_createSoftBody()
 	// if there is actually a selection
 	if (size($selection) > 0)
 	{
-		dynamicaUI_print("Creating boing soft bodies...", 0);
+		boingUIUI_print("Creating boing soft bodies...", 0);
 		refresh;
 		// //create groups and layers if necessary
 		// $sbGroup = `group -em -n dSoftBodies`;
@@ -875,20 +875,20 @@ global proc dynamicaUI_createSoftBody()
 				refresh;
 			}
 			else {
-				dynamicaUI_print($obSelection[$i] + " is not a Polymesh, soft body not created!", 1);
+				boingUIUI_print($obSelection[$i] + " is not a Polymesh, soft body not created!", 1);
 			}
 		}
 		//else {
-				//dynamicaUI_print($shapeTransforms[0] + " is already a soft body", 1);			
+				//boingUIUI_print($shapeTransforms[0] + " is already a soft body", 1);			
 			// $makeCollisionShape = 1;
 		//  }
-		// if ($bodyCount) dynamicaUI_print("Created " + $bodyCount + " rigid bodies. Find rigid bodies and source meshes in Outliner and Display Layers.", 0);
+		// if ($bodyCount) boingUIUI_print("Created " + $bodyCount + " rigid bodies. Find rigid bodies and source meshes in Outliner and Display Layers.", 0);
 	}
 	else
 	{
-		dynamicaUI_print("Unable to create soft body(s), select Polymesh objects first...", 1);
+		boingUIUI_print("Unable to create soft body(s), select Polymesh objects first...", 1);
 	}
-	currentTime $dynamicaUI_startFrame;
+	currentTime $boingUIUI_startFrame;
 	select -r $newBodies;
 }
 
@@ -898,18 +898,18 @@ global proc dynamicaUI_createSoftBody()
 
 
 
-global proc dynamicaUI_createRigidBody(int $activebody, int $collisionShapeType)
+global proc boingUIUI_createRigidBody(int $activebody, int $collisionShapeType)
 {	//collision shape types: 0 = Hull, 1 = Mesh, 2 = Cylinder, 3 = Capsule, 4 = Box, 5 = Sphere, 6 = Plane
 	
 	dSolver; //create dSolver node if necessary
 
 	
-	global float $dynamicaUI_startFrame;
-	global float $dynamicaUI_collisionMargin;
-	$dynamicaUI_collisionMargin = `getAttr bSolver1.collisionMargin`;
+	global float $boingUIUI_startFrame;
+	global float $boingUIUI_collisionMargin;
+	$boingUIUI_collisionMargin = `getAttr bSolver1.collisionMargin`;
 	float $mass = 1; 
-	string $meshLayer = "DynamicaInputMeshes";
-	string $rbLayer = "DynamicaRigidBodies";
+	string $meshLayer = "boingUIInputMeshes";
+	string $rbLayer = "boingUIRigidBodies";
 	string $obSelection[] = `ls -sl`;
 	string $selection[];
 	string $newBodies[];
@@ -918,7 +918,7 @@ global proc dynamicaUI_createRigidBody(int $activebody, int $collisionShapeType)
 	string $margin;
 	int $bodyCount = 0;
 	int $makeCollisionShape = 1;
-	float $collisionMargin = $dynamicaUI_collisionMargin * 1.75; //compensate for descrepancy between Maya vertex shift and Bullet planar shift
+	float $collisionMargin = $boingUIUI_collisionMargin * 1.75; //compensate for descrepancy between Maya vertex shift and Bullet planar shift
 	
 
 	for ($o in $obSelection) mbDeleteShapeHistory($o); //clean shape history
@@ -936,7 +936,7 @@ global proc dynamicaUI_createRigidBody(int $activebody, int $collisionShapeType)
 		
 		if (size($selection))
 		{
-			dynamicaUI_print("Creating boing rigid bodies...", 0);
+			boingUIUI_print("Creating boing rigid bodies...", 0);
 			refresh;
 			//create groups and layers if necessary
 			//$rbGroup = `group -em -n dRigidBodies`;
@@ -1132,23 +1132,23 @@ global proc dynamicaUI_createRigidBody(int $activebody, int $collisionShapeType)
 						}
 						else
 						{
-							dynamicaUI_print($obSelection[$i] + " is not a Polymesh, rigid body not created!", 1);
+							boingUIUI_print($obSelection[$i] + " is not a Polymesh, rigid body not created!", 1);
 						}
 					}
 					else
 					{
-						dynamicaUI_print($shapeTransforms[0] + " is already a rigid body", 1);
+						boingUIUI_print($shapeTransforms[0] + " is already a rigid body", 1);
 						//$newBodies[$i] = $shapeTransforms[0];
 					}
 					
 					$makeCollisionShape = 1;
 				}
 			}
-			if ($bodyCount) dynamicaUI_print("Created " + $bodyCount + " rigid bodies. Find rigid bodies and source meshes in Outliner and Display Layers.", 0);
+			if ($bodyCount) boingUIUI_print("Created " + $bodyCount + " rigid bodies. Find rigid bodies and source meshes in Outliner and Display Layers.", 0);
 		}
 		else
 		{
-			dynamicaUI_print("Unable to create rigid body(s), select Polymesh objects first...", 1);
+			boingUIUI_print("Unable to create rigid body(s), select Polymesh objects first...", 1);
 		}
 	} 
 	else //create primitive
@@ -1175,15 +1175,15 @@ global proc dynamicaUI_createRigidBody(int $activebody, int $collisionShapeType)
 		addAttr -ln "originalRotationZ" -at double -k 0 -dv $rot[2] $rigidBodyTransforms[0];
 
 		$newBodies[0] = $rigidBodyTransforms[0];
-		dynamicaUI_print("Created rigid body primitive: " + $rigidBodyNode, 0);
+		boingUIUI_print("Created rigid body primitive: " + $rigidBodyNode, 0);
 	}
 
 	
-	currentTime $dynamicaUI_startFrame; //force refresh
+	currentTime $boingUIUI_startFrame; //force refresh
 	select -r $newBodies;
 }
 
-global proc string dynamicaUI_createConstraint(int $constraintType)
+global proc string boingUIUI_createConstraint(int $constraintType)
 {
 	//0 = Nail, 1 = Hinge, 2 = Slider, 3 = 6Dof
 	string $selection[] = `ls -sl`;
@@ -1200,7 +1200,7 @@ global proc string dynamicaUI_createConstraint(int $constraintType)
 
 	if ($selSize > 2) //more than 2 objects selected
 	{
-		dynamicaUI_constrainMultiple($constraintType);
+		boingUIUI_constrainMultiple($constraintType);
 		return "";
 	}
 	
@@ -1208,7 +1208,7 @@ global proc string dynamicaUI_createConstraint(int $constraintType)
 	
 	if(!$selOK)
 	{
-		dynamicaUI_print("Select one or more rigid bodies to create a constraint.", 2);
+		boingUIUI_print("Select one or more rigid bodies to create a constraint.", 2);
 		return "";
 	}
 	
@@ -1240,7 +1240,7 @@ global proc string dynamicaUI_createConstraint(int $constraintType)
 		string $rbTransform[] = `listRelatives -p $selection[0]`;
 		float $posA[3] = `getAttr ($rbTransform[0] + ".translate")`;
 		float $iWorldA[16] = `getAttr ($rbTransform[0] + ".worldMatrix")`;
-		float $pivA[] = dynamicaUI_worldToObj($posA, $iWorldA);
+		float $pivA[] = boingUIUI_worldToObj($posA, $iWorldA);
 		setAttr ($constraintNode + ".pivotInA") -typ float3 $pivA[0] $pivA[1] $pivA[2];
 		setAttr ($newConstraintTransf + ".translate") -typ float3 $posA[0] $posA[1] $posA[2];
 	}
@@ -1259,8 +1259,8 @@ global proc string dynamicaUI_createConstraint(int $constraintType)
 		$pivW[2] = mbLerpScalar($posA[2], $posB[2], 0.5);
 		float $iWorldA[16] = `getAttr ($rbTransformA[0] + ".worldMatrix")`;
 		float $iWorldB[16] = `getAttr ($rbTransformB[0] + ".worldMatrix")`;
-		float $pivA[] = dynamicaUI_worldToObj($pivW, $iWorldA);
-		float $pivB[] = dynamicaUI_worldToObj($pivW, $iWorldB);
+		float $pivA[] = boingUIUI_worldToObj($pivW, $iWorldA);
+		float $pivB[] = boingUIUI_worldToObj($pivW, $iWorldB);
 		setAttr ($constraintNode + ".pivotInA") -typ float3 $pivA[0] $pivA[1] $pivA[2];
 		setAttr ($constraintNode + ".pivotInB") -typ float3 $pivB[0] $pivB[1] $pivB[2];
 		setAttr ($newConstraintTransf + ".translate") -typ float3 $pivW[0] $pivW[1] $pivW[2];
@@ -1269,7 +1269,7 @@ global proc string dynamicaUI_createConstraint(int $constraintType)
 	return $newConstraintTransf;
 }
 
-global proc dynamicaUI_constrainMultiple(int $constraintType)
+global proc boingUIUI_constrainMultiple(int $constraintType)
 {
 	string $sel[] = `ls -sl`;
 	string $selTmp[] = $sel;
@@ -1277,7 +1277,7 @@ global proc dynamicaUI_constrainMultiple(int $constraintType)
 	string $nearest[];
 	string $constraints[];
 	string $newConstraint;
-	string $constraintLayer = "DynamicaConstraints";
+	string $constraintLayer = "boingUIConstraints";
 	string $constraintGroup;
 	int $constraintCount = 0;
 
@@ -1287,8 +1287,8 @@ global proc dynamicaUI_constrainMultiple(int $constraintType)
 	$overlapping = mbGetOverlappingTransforms($sel);
 	if (size($overlapping))
 	{
-		dynamicaUI_print("Spatial duplicates found and ignored.", 1);
-		print("Dynamica: overlapping transforms ----------------- :\n");
+		boingUIUI_print("Spatial duplicates found and ignored.", 1);
+		print("boingUI: overlapping transforms ----------------- :\n");
 		print($overlapping);
 		select -d $overlapping;
 	}
@@ -1297,12 +1297,12 @@ global proc dynamicaUI_constrainMultiple(int $constraintType)
 	if (size($sel) < 2)
 	{
 		select -r $selTmp;
-		dynamicaUI_print("No constrainable rigid bodies in selection", 2);
+		boingUIUI_print("No constrainable rigid bodies in selection", 2);
 		return;
 	}
 	else
 	{
-		dynamicaUI_print("Creating Dynamica Constraints...", 0);
+		boingUIUI_print("Creating boingUI Constraints...", 0);
 		//create groups and layers if necessary
 		$constraintGroup = `group -em -n dConstraints`;
 		mbHideAndLockTransform($constraintGroup);
@@ -1320,16 +1320,16 @@ global proc dynamicaUI_constrainMultiple(int $constraintType)
 		switch ($constraintType)
 		{
 			case 0:
-				$newConstraint = dynamicaUI_createConstraint(0);
+				$newConstraint = boingUIUI_createConstraint(0);
 				break;
 			case 1:
-				$newConstraint = dynamicaUI_createConstraint(1);
+				$newConstraint = boingUIUI_createConstraint(1);
 				break;
 			case 2:
-				$newConstraint = dynamicaUI_createConstraint(2);
+				$newConstraint = boingUIUI_createConstraint(2);
 				break;
 			case 3:
-				$newConstraint = dynamicaUI_createConstraint(3);
+				$newConstraint = boingUIUI_createConstraint(3);
 				break;
 		}
 		$constraintCount++;
@@ -1340,23 +1340,23 @@ global proc dynamicaUI_constrainMultiple(int $constraintType)
 	}
 	
 	select -r $constraints;
-	dynamicaUI_print("Created " + $constraintCount + " constraints.", 0);
+	boingUIUI_print("Created " + $constraintCount + " constraints.", 0);
 	clear($nearest);
 	clear($sel);
 	
 }
 
-global proc dynamicaUI_createRigidBodyArray(int $activebody, int $collisionShapeType)
+global proc boingUIUI_createRigidBodyArray(int $activebody, int $collisionShapeType)
 {
-	global float $dynamicaUI_startFrame;
+	global float $boingUIUI_startFrame;
 	float $mass = 1;
 	
 	if ($activebody == false) $mass = 0;
 	
-	global int $dynamicaUI_createArrayUI_size[];
-	global float $dynamicaUI_createArrayUI_offset[];
+	global int $boingUIUI_createArrayUI_size[];
+	global float $boingUIUI_createArrayUI_offset[];
 
-	if(`layoutDialog -title "Create Rigid Body Array" -ui "dynamicaUI_createArrayUI"` == "OK") {    
+	if(`layoutDialog -title "Create Rigid Body Array" -ui "boingUIUI_createArrayUI"` == "OK") {    
 		string $selection[] = `ls -selection -dag -leaf -showType -type "geometry"`;
 
 		//create dSolver node if necessary
@@ -1380,8 +1380,8 @@ global proc dynamicaUI_createRigidBodyArray(int $activebody, int $collisionShape
 		
 		select -r $rigidBodyTransforms[0];
 
-		int $size[]= $dynamicaUI_createArrayUI_size;
-		float $off[]= $dynamicaUI_createArrayUI_offset;
+		int $size[]= $boingUIUI_createArrayUI_size;
+		float $off[]= $boingUIUI_createArrayUI_offset;
 		float $x0[];
 		$x0[0] = -0.5 * $size[0] * $off[0];
 		$x0[1] = -0.5 * $size[1] * $off[1];
@@ -1394,27 +1394,27 @@ global proc dynamicaUI_createRigidBodyArray(int $activebody, int $collisionShape
 				}
 			}
 		}  
-		currentTime $dynamicaUI_startFrame; //force refresh		
+		currentTime $boingUIUI_startFrame; //force refresh		
 	}
 }
 
-global proc dynamicaUI_createArrayUIdismissCB(string $button)
+global proc boingUIUI_createArrayUIdismissCB(string $button)
 {
-	global string $dynamicaUI_createArrayUI_sizeCT;
-	global string $dynamicaUI_createArrayUI_offsetCT;
+	global string $boingUIUI_createArrayUI_sizeCT;
+	global string $boingUIUI_createArrayUI_offsetCT;
 
-	global int $dynamicaUI_createArrayUI_size[];
-	global float $dynamicaUI_createArrayUI_offset[];
+	global int $boingUIUI_createArrayUI_size[];
+	global float $boingUIUI_createArrayUI_offset[];
 
-	$dynamicaUI_createArrayUI_size = `intFieldGrp -query -value $dynamicaUI_createArrayUI_sizeCT`; 
-	$dynamicaUI_createArrayUI_offset = `floatFieldGrp -query -value $dynamicaUI_createArrayUI_offsetCT`; 
+	$boingUIUI_createArrayUI_size = `intFieldGrp -query -value $boingUIUI_createArrayUI_sizeCT`; 
+	$boingUIUI_createArrayUI_offset = `floatFieldGrp -query -value $boingUIUI_createArrayUI_offsetCT`; 
 	layoutDialog -dismiss $button;
 }
 
-global proc dynamicaUI_createArrayUI()
+global proc boingUIUI_createArrayUI()
 {
-	global string $dynamicaUI_createArrayUI_sizeCT;
-	global string $dynamicaUI_createArrayUI_offsetCT;
+	global string $boingUIUI_createArrayUI_sizeCT;
+	global string $boingUIUI_createArrayUI_offsetCT;
 
 	// Get the dialog's formLayout.
 	string $form = `setParent -q`;
@@ -1423,29 +1423,29 @@ global proc dynamicaUI_createArrayUI()
 	// to make sure all UI elements are visible.
 	formLayout -e -width 400 $form;
 
-	string $b1 = `button -l "OK"    -c "dynamicaUI_createArrayUIdismissCB(\"OK\")"`;
-	string $b2 = `button -l "Cancel"-c "dynamicaUI_createArrayUIdismissCB(\"Cancel\")"`;
+	string $b1 = `button -l "OK"    -c "boingUIUI_createArrayUIdismissCB(\"OK\")"`;
+	string $b2 = `button -l "Cancel"-c "boingUIUI_createArrayUIdismissCB(\"Cancel\")"`;
 
-	$dynamicaUI_createArrayUI_sizeCT = `intFieldGrp -columnAlign 1 "left" -adj 1 -numberOfFields 3 -label "Array Size" -v1 3 -v2 3 -v3 3`;
-	$dynamicaUI_createArrayUI_offsetCT = `floatFieldGrp -columnAlign 1 "left" -adj 1 -numberOfFields 3 -label "Array Offset" -v1 2.0 -v2 2.0 -v3 2.0`;
+	$boingUIUI_createArrayUI_sizeCT = `intFieldGrp -columnAlign 1 "left" -adj 1 -numberOfFields 3 -label "Array Size" -v1 3 -v2 3 -v3 3`;
+	$boingUIUI_createArrayUI_offsetCT = `floatFieldGrp -columnAlign 1 "left" -adj 1 -numberOfFields 3 -label "Array Offset" -v1 2.0 -v2 2.0 -v3 2.0`;
 
 	formLayout -edit
-	-attachForm            $dynamicaUI_createArrayUI_sizeCT   "top"    5
-	-attachForm            $dynamicaUI_createArrayUI_sizeCT   "left"   5
-	-attachNone            $dynamicaUI_createArrayUI_sizeCT   "bottom"
-	-attachForm            $dynamicaUI_createArrayUI_sizeCT   "right"  5 
+	-attachForm            $boingUIUI_createArrayUI_sizeCT   "top"    5
+	-attachForm            $boingUIUI_createArrayUI_sizeCT   "left"   5
+	-attachNone            $boingUIUI_createArrayUI_sizeCT   "bottom"
+	-attachForm            $boingUIUI_createArrayUI_sizeCT   "right"  5 
 
-	-attachControl         $dynamicaUI_createArrayUI_offsetCT  "top"   5 $dynamicaUI_createArrayUI_sizeCT
-	-attachForm            $dynamicaUI_createArrayUI_offsetCT  "left"   5
-	-attachNone            $dynamicaUI_createArrayUI_offsetCT  "bottom"
-	-attachForm            $dynamicaUI_createArrayUI_offsetCT   "right"  5 
+	-attachControl         $boingUIUI_createArrayUI_offsetCT  "top"   5 $boingUIUI_createArrayUI_sizeCT
+	-attachForm            $boingUIUI_createArrayUI_offsetCT  "left"   5
+	-attachNone            $boingUIUI_createArrayUI_offsetCT  "bottom"
+	-attachForm            $boingUIUI_createArrayUI_offsetCT   "right"  5 
 
-	-attachControl         $b1  "top"   5 $dynamicaUI_createArrayUI_offsetCT
+	-attachControl         $b1  "top"   5 $boingUIUI_createArrayUI_offsetCT
 	-attachForm            $b1  "left"   5
 	-attachNone            $b1  "bottom"
 	-attachPosition        $b1  "right"  5 33
 
-	-attachControl         $b2  "top"    5 $dynamicaUI_createArrayUI_offsetCT
+	-attachControl         $b2  "top"    5 $boingUIUI_createArrayUI_offsetCT
 	-attachPosition        $b2  "left"   5 33
 	-attachNone            $b2  "bottom"
 	-attachPosition        $b2  "right"  5 66
@@ -1453,7 +1453,7 @@ global proc dynamicaUI_createArrayUI()
 	$form;
 }
 
-global proc float[] dynamicaUI_worldToObj(float $pointW[], float $objToWorldMatrix[])
+global proc float[] boingUIUI_worldToObj(float $pointW[], float $objToWorldMatrix[])
 {
 	float $result[];
 	$result[0] = 0.0;
@@ -1479,19 +1479,19 @@ global proc float[] dynamicaUI_worldToObj(float $pointW[], float $objToWorldMatr
 	return $result;
 }
 
-global proc dynamicaUI_activateAxis(int $axis)
+global proc boingUIUI_activateAxis(int $axis)
 {
-	global int $dynamicaUI_activateAxis; //0 = +X, 1 = -X, 2 = +Y, 3 = -Y, 4 = +Z, 5 = -Z, 6 = radial out, 7 = radial in, 8 = daisy chain
-	$dynamicaUI_activateAxis = $axis; 
-	dynamicaUI_activateRigidBodies();
+	global int $boingUIUI_activateAxis; //0 = +X, 1 = -X, 2 = +Y, 3 = -Y, 4 = +Z, 5 = -Z, 6 = radial out, 7 = radial in, 8 = daisy chain
+	$boingUIUI_activateAxis = $axis; 
+	boingUIUI_activateRigidBodies();
 }
 
-global proc dynamicaUI_activateRigidBodies() 
+global proc boingUIUI_activateRigidBodies() 
 {
-	global float $dynamicaUI_activeStartFrame;
-	global float $dynamicaUI_activeEndFrame;
-	global int $dynamicaUI_activateAxis; //0 = +X, 1 = -X, 2 = +Y, 3 = -Y, 4 = +Z, 5 = -Z, 6 = radial out, 7 = radial in, 8 = daisy chain
-	global int $dynamicaUI_createActivateSet;
+	global float $boingUIUI_activeStartFrame;
+	global float $boingUIUI_activeEndFrame;
+	global int $boingUIUI_activateAxis; //0 = +X, 1 = -X, 2 = +Y, 3 = -Y, 4 = +Z, 5 = -Z, 6 = radial out, 7 = radial in, 8 = daisy chain
+	global int $boingUIUI_createActivateSet;
 
 	string $sel[] = `ls -sl`;
 	string $selTmp[] = `ls -sl`;
@@ -1515,16 +1515,16 @@ global proc dynamicaUI_activateRigidBodies()
 	if (!size($sel)) 
 	{
 		select -r $selTmp; //restore original selection
-		dynamicaUI_print("No rigid bodies found in selection.", 2);
+		boingUIUI_print("No rigid bodies found in selection.", 2);
 		return;
 	}
 	
 	//we are go!
-	dynamicaUI_print("Activating " + size($sel) + " rigid bodies...", 0);
+	boingUIUI_print("Activating " + size($sel) + " rigid bodies...", 0);
 	refresh;
-	if ($dynamicaUI_createActivateSet) sets -n "ActivatedRigidBodies";
+	if ($boingUIUI_createActivateSet) sets -n "ActivatedRigidBodies";
 
-	switch ($dynamicaUI_activateAxis) 
+	switch ($boingUIUI_activateAxis) 
 	{
 		case 0: $axis = "tx"; break;
 		case 1: $axis = "tx"; $reverseAxis = 1; break;
@@ -1536,26 +1536,26 @@ global proc dynamicaUI_activateRigidBodies()
 		case 8: break;
 	}
 	
-	if ($dynamicaUI_activateAxis < 6) //linear axis
+	if ($boingUIUI_activateAxis < 6) //linear axis
 	{
 		$sorted = mbSortObjectsByAttr($sel, $axis, 0);
 		for ($o in $sorted) $attrs[size($attrs)] = `getAttr ($o + "." + $axis)`;
 	}
-	else if ($dynamicaUI_activateAxis == 6 || $dynamicaUI_activateAxis == 7)//radial axis
+	else if ($boingUIUI_activateAxis == 6 || $boingUIUI_activateAxis == 7)//radial axis
 	{
 		$sorted = mbProximitySort($sel);
 		for ($o in $sorted) $attrs[size($attrs)] = mbDistanceBetweenNodes($sorted[0], $o);
 	}
-	else if ($dynamicaUI_activateAxis == 8) //daisy chain
+	else if ($boingUIUI_activateAxis == 8) //daisy chain
 	{
-		dynamicaUI_print("Computing chain sequence...", 0);
+		boingUIUI_print("Computing chain sequence...", 0);
 		int $last = size($sel) - 1;
 		$sorted = mbDaisyChainObjects($sel, $sel[$last], 0);
 		for ($i=0;$i<size($sorted);$i++) $attrs[size($attrs)] = $i; //mbDistanceBetweenNodes($sorted[$i], $sorted[$i+1]);
 	}
 
 	if ($reverseAxis) $sorted = mbReverseStringArray($sorted);
-	$attrs = mbScaleArray($attrs, $dynamicaUI_activeStartFrame, $dynamicaUI_activeEndFrame, 1);
+	$attrs = mbScaleArray($attrs, $boingUIUI_activeStartFrame, $boingUIUI_activeEndFrame, 1);
 
 	
 	for ($i=0;$i<size($sorted);$i++) 
@@ -1582,11 +1582,11 @@ global proc dynamicaUI_activateRigidBodies()
 		}
 	}
 
-	dynamicaUI_print(size($sel) + " rigid bodies activated. Frame range: "
-		+ $dynamicaUI_activeStartFrame + " - " + $dynamicaUI_activeEndFrame, 0);
+	boingUIUI_print(size($sel) + " rigid bodies activated. Frame range: "
+		+ $boingUIUI_activeStartFrame + " - " + $boingUIUI_activeEndFrame, 0);
 }
 
-global proc dynamicaUI_deactivateRigidBodies(int $toPassive)
+global proc boingUIUI_deactivateRigidBodies(int $toPassive)
 {
 	string $sel[] = `ls -sl`;
 	string $selTmp[] = `ls -sl`;
@@ -1598,11 +1598,11 @@ global proc dynamicaUI_deactivateRigidBodies(int $toPassive)
 	if (!size($sel)) 
 	{
 		select -r $selTmp; //restore original selection
-		dynamicaUI_print("No rigid bodies found in selection.", 2);
+		boingUIUI_print("No rigid bodies found in selection.", 2);
 		return;
 	}
 	
-	dynamicaUI_print("Removing activation from " + size($sel) + " rigid bodies...", 0);
+	boingUIUI_print("Removing activation from " + size($sel) + " rigid bodies...", 0);
 	refresh;
 	
 	for ($s in $sel)
@@ -1614,17 +1614,17 @@ global proc dynamicaUI_deactivateRigidBodies(int $toPassive)
 	
 	if ($toPassive)
 	{
-		dynamicaUI_print(size($sel) + " rigid bodies made passive (mass = 0).", 0);
+		boingUIUI_print(size($sel) + " rigid bodies made passive (mass = 0).", 0);
 	}
 	else
 	{
-		dynamicaUI_print(size($sel) + " rigid bodies made active (mass > 0).", 0);
+		boingUIUI_print(size($sel) + " rigid bodies made active (mass > 0).", 0);
 	}
 }
 
-global proc dynamicaUI_setInitialState(int $reset)
+global proc boingUIUI_setInitialState(int $reset)
 {	
-	global float $dynamicaUI_startFrame;
+	global float $boingUIUI_startFrame;
 	string $sel[] = `ls -sl`;
 	string $selTmp[] = `ls -sl`;
 	string $constraints[];
@@ -1639,12 +1639,12 @@ global proc dynamicaUI_setInitialState(int $reset)
 	if (!size($sel)) 
 	{
 		select -r $selTmp; //restore original selection
-		dynamicaUI_print("No rigid bodies found in selection.", 2);
+		boingUIUI_print("No rigid bodies found in selection.", 2);
 		return;
 	}
 	
 	//we are go!
-	dynamicaUI_print("Setting initial state for " + size($sel) + " rigid bodies...", 0);
+	boingUIUI_print("Setting initial state for " + size($sel) + " rigid bodies...", 0);
 	refresh;
 
 	for ($s in $sel)
@@ -1685,13 +1685,13 @@ global proc dynamicaUI_setInitialState(int $reset)
 		}
 	}
 
-	currentTime $dynamicaUI_startFrame;
-	dynamicaUI_updateConstraints($constraints);
+	currentTime $boingUIUI_startFrame;
+	boingUIUI_updateConstraints($constraints);
 }
 
-global proc dynamicaUI_updateConstraints(string $constraints[])
+global proc boingUIUI_updateConstraints(string $constraints[])
 {
-	global float $dynamicaUI_startFrame;
+	global float $boingUIUI_startFrame;
 	string $sel[];
 	
 	for ($c in $constraints)
@@ -1726,16 +1726,16 @@ global proc dynamicaUI_updateConstraints(string $constraints[])
 	}
 }
 
-global proc dynamicaUI_bakeRigidBodies()
+global proc boingUIUI_bakeRigidBodies()
 {
-	global int $dynamicaUI_deleteEmptyNodes;
-	global int $dynamicaUI_deleteBakeHistory;
-	global int $dynamicaUI_optimizeChannels;
-	global int $dynamicaUI_captureAll;
-	global float $dynamicaUI_captureStartFrame;
-	global float $dynamicaUI_captureEndFrame;
+	global int $boingUIUI_deleteEmptyNodes;
+	global int $boingUIUI_deleteBakeHistory;
+	global int $boingUIUI_optimizeChannels;
+	global int $boingUIUI_captureAll;
+	global float $boingUIUI_captureStartFrame;
+	global float $boingUIUI_captureEndFrame;
 	
-	string $dBakeLayer = "DynamicaBaked";
+	string $dBakeLayer = "boingUIBaked";
 	string $bakeGroup;
 	string $sel[] = `ls -sl`;
 	string $toBake[];
@@ -1747,7 +1747,7 @@ global proc dynamicaUI_bakeRigidBodies()
 	select -cl;
 	
 	//select all rigid bodies
-	if ($dynamicaUI_captureAll) $sel = `ls -tr`;
+	if ($boingUIUI_captureAll) $sel = `ls -tr`;
 	for ($s in $sel) if (mbIsType($s, "dRigidBody")) mbAddToSelection($s);
 	$sel = `ls -sl`;
 	
@@ -1769,24 +1769,24 @@ global proc dynamicaUI_bakeRigidBodies()
 	if (!size($sel)) 
 	{
 		select -r $sel;
-		dynamicaUI_print("No rigid bodies to bake.", 2);
+		boingUIUI_print("No rigid bodies to bake.", 2);
 		return;
 	}
 	
 	//confirm
-	$confirm = `confirmDialog -t "Dynamica: Bake Rigid Bodies" -m "Bake Dynamica Simulation?\nThis action is not undoable." 
+	$confirm = `confirmDialog -t "boingUI: Bake Rigid Bodies" -m "Bake boingUI Simulation?\nThis action is not undoable." 
 		-b "Yes" -b "No" -db "Yes" -cb "No" -ds "No"`;
 	if ($confirm == "No") 
 	{
 		select -r $sel;
-		dynamicaUI_print("Bake cancelled by user.", 1);
+		boingUIUI_print("Bake cancelled by user.", 1);
 		return;
 	}
 	
 	//we are go
-	dynamicaUI_print("Baking " + size($sel) + "rigid bodies...", 0);
+	boingUIUI_print("Baking " + size($sel) + "rigid bodies...", 0);
 	mbCreateLayer($dBakeLayer, 0);
-	if ($dynamicaUI_deleteBakeHistory) delete -ch;
+	if ($boingUIUI_deleteBakeHistory) delete -ch;
 	undoInfo -state off;
 	select -cl;
 	
@@ -1812,12 +1812,12 @@ global proc dynamicaUI_bakeRigidBodies()
 	select -r $toBake;
 	
 	//bake!
-	dynamicaUI_print("Dynamica: Baking simulation...", 0);
+	boingUIUI_print("boingUI: Baking simulation...", 0);
 	$baked = `ls -sl`;
 	cycleCheck -e off;
 	bakeResults 
 		-simulation 1 
-		-t ((string)$dynamicaUI_captureStartFrame + ":" + (string)$dynamicaUI_captureEndFrame) 
+		-t ((string)$boingUIUI_captureStartFrame + ":" + (string)$boingUIUI_captureEndFrame) 
 		-sampleBy 1 
 		-disableImplicitControl 1 
 		-preserveOutsideKeys 1 
@@ -1834,7 +1834,7 @@ global proc dynamicaUI_bakeRigidBodies()
 	select -cl;
 	
 	//delete orphans
-	dynamicaUI_print("Removing orphaned rigid bodies and constraints...", 0);
+	boingUIUI_print("Removing orphaned rigid bodies and constraints...", 0);
 	for ($s in $sel) 
 	{
 		select -add $s;
@@ -1871,13 +1871,13 @@ global proc dynamicaUI_bakeRigidBodies()
 	$sel = `ls -sl`;
 	if (size($sel))
 	{
-		dynamicaUI_print(size($sel) + " orphans found, deleting...", 0);
+		boingUIUI_print(size($sel) + " orphans found, deleting...", 0);
 		delete;
 	}
 	
-	if ($dynamicaUI_optimizeChannels) 
+	if ($boingUIUI_optimizeChannels) 
 	{
-		dynamicaUI_print("Optimizing channels...", 0);
+		boingUIUI_print("Optimizing channels...", 0);
 		//delete -staticChannels -uac 0 -hi none -cp 0 -s 0; //brute force - kills all static channels in scene
 		for ($b in $baked)
 		{
@@ -1905,15 +1905,15 @@ global proc dynamicaUI_bakeRigidBodies()
 		}
 	}
 
-	if ($dynamicaUI_deleteEmptyNodes)
+	if ($boingUIUI_deleteEmptyNodes)
 	{
-		dynamicaUI_print("Removing empty nodes...", 0);
+		boingUIUI_print("Removing empty nodes...", 0);
 		mbDeleteEmptyNodes();
 	}
 
-	if ($dynamicaUI_deleteBakeHistory)
+	if ($boingUIUI_deleteBakeHistory)
 	{
-		dynamicaUI_print("Removing history...", 0);
+		boingUIUI_print("Removing history...", 0);
 		delete -all -ch;
 		
 		for ($b in $baked) mbDeleteShapeHistory($b); //clean shape history
@@ -1923,7 +1923,7 @@ global proc dynamicaUI_bakeRigidBodies()
 	select -r $baked;
 	$bakeGroup = `group -em -n dBaked`;
 	for ($b in $baked) parent $b $bakeGroup; //move to baked group
-	dynamicaUI_print("Baked " + size($baked) + " rigid bodies on frames " + $dynamicaUI_captureStartFrame + " - " + $dynamicaUI_captureEndFrame, 0);
+	boingUIUI_print("Baked " + size($baked) + " rigid bodies on frames " + $boingUIUI_captureStartFrame + " - " + $boingUIUI_captureEndFrame, 0);
 }
 
 //callbacks
@@ -1933,35 +1933,35 @@ global proc int bulletExportOptions( string $parent, string $action, string $set
 }
 
 //script jobs
-global proc dynamicaUI_syncSolver()
+global proc boingUIUI_syncSolver()
 {
 	if (`objExists dSolver1`)
 	{
-		global float $dynamicaUI_startFrame;
+		global float $boingUIUI_startFrame;
 		float $startFrame = `playbackOptions -q -min`;
 		setAttr "dSolver1.startTime" $startFrame;
-		$dynamicaUI_startFrame = $startFrame;
-		dynamicaUI_print("Updated solver Start Time to: " + (string)$dynamicaUI_startFrame, 0);
+		$boingUIUI_startFrame = $startFrame;
+		boingUIUI_print("Updated solver Start Time to: " + (string)$boingUIUI_startFrame, 0);
 	}
 }
 
-global proc dynamicaUI_onSceneOpen()
+global proc boingUIUI_onSceneOpen()
 {
-	global int $dynamicaUI_syncSolverJob = -1;
-	if (!`scriptJob -ex $dynamicaUI_syncSolverJob`)
+	global int $boingUIUI_syncSolverJob = -1;
+	if (!`scriptJob -ex $boingUIUI_syncSolverJob`)
 	{
-		$dynamicaUI_syncSolverJob = `scriptJob -kws -e "playbackRangeChanged" dynamicaUI_syncSolver`;
+		$boingUIUI_syncSolverJob = `scriptJob -kws -e "playbackRangeChanged" boingUIUI_syncSolver`;
 	}
 }
 
-global proc dynamicaUI_onPluginLoad()
+global proc boingUIUI_onPluginLoad()
 {
-	global int $dynamicaUI_sceneOpenJob = -1;
-	if (!`scriptJob -ex $dynamicaUI_sceneOpenJob`)
+	global int $boingUIUI_sceneOpenJob = -1;
+	if (!`scriptJob -ex $boingUIUI_sceneOpenJob`)
 	{
-		$dynamicaUI_sceneOpenJob = `scriptJob -e "SceneOpened" dynamicaUI_onSceneOpen`;
+		$boingUIUI_sceneOpenJob = `scriptJob -e "SceneOpened" boingUIUI_onSceneOpen`;
 	}
 	
-	dynamicaUI_onSceneOpen();
+	boingUIUI_onSceneOpen();
 }
 
