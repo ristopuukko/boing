@@ -485,48 +485,48 @@ global proc string boingUI_createOptionsTab()
 				rowLayout -nc 2;
 					columnLayout -w 220;
 						text -al "left" -fn "boldLabelFont" -l "Gravity" -ann "Direction and magnitude of gravity in the simulation.";
-						float $gravity[] = `getAttr bSolver1.gravity`;
+						float $gravity[] = `getAttr bSolver.gravity`;
 						rowLayout -nc 3;
 							$boingUI_STgravityX = `floatField -pre 3 -w 50 -v $gravity[0]`;
 							$boingUI_STgravityY = `floatField -pre 3 -w 50 -v $gravity[1]`;
 							$boingUI_STgravityZ = `floatField -pre 3 -w 50 -v $gravity[2]`;
-							connectControl $boingUI_STgravityX bSolver1.gravityX;
-							connectControl $boingUI_STgravityY bSolver1.gravityY;
-							connectControl $boingUI_STgravityZ bSolver1.gravityZ;
+							connectControl $boingUI_STgravityX bSolver.gravityX;
+							connectControl $boingUI_STgravityY bSolver.gravityY;
+							connectControl $boingUI_STgravityZ bSolver.gravityZ;
 						setParent ..;
 					setParent ..;
 					columnLayout;
 						text -al "left" -fn "boldLabelFont" -l "Physics Framerate (Hertz)";
-						int $physicsrate= `getAttr bSolver1.physicsrate`; 
+						int $physicsrate= `getAttr bSolver.physicsrate`; 
 						$boingUI_STphysicsrate = `intField -v $physicsrate -w 50 -ann "Default is 240. Higher values \"speed up\" simulation"`;
-						connectControl $boingUI_STphysicsrate bSolver1.physicsrate;
+						connectControl $boingUI_STphysicsrate bSolver.physicsrate;
 					setParent ..;
 				setParent ..;
 				
 				rowLayout -nc 2;
 					columnLayout -w 220;
 						text -al "left" -fn "boldLabelFont" -l "Substeps";
-						int $substeps = `getAttr bSolver1.substeps`; 
+						int $substeps = `getAttr bSolver.substeps`; 
 						$boingUI_STsubsteps = `intField -v $substeps -w 50 
 							-ann "Number of times the simulation is evaluated 'between' each frame step on the timeline.\nThe default value of 1 should work for most simulations."`;
-						connectControl $boingUI_STsubsteps bSolver1.substeps;
+						connectControl $boingUI_STsubsteps bSolver.substeps;
 					setParent ..;
 					columnLayout;
 						text -al "left" -fn "boldLabelFont" -l "Split Impulse";
-						int $enabled = `getAttr bSolver1.splitImpulse`;
+						int $enabled = `getAttr bSolver.splitImpulse`;
 						$boingUI_STsplitImpulse = `checkBox -l "Enabled" -v $enabled 
 							-ann "Enabling Split Impulse will allow the solver to apply positional corrections when deep collision penetrations occur.\nThese corrections do not affect resulting velocities."`;
-						connectControl $boingUI_STsplitImpulse bSolver1.splitImpulse;
+						connectControl $boingUI_STsplitImpulse bSolver.splitImpulse;
 					setParent ..;
 				setParent ..;
 				
 				rowLayout -nc 2;
 					columnLayout;
 						text -al "left" -fn "boldLabelFont" -l "Solver State";
-						int $enabled = `getAttr bSolver1.enabled`;
+						int $enabled = `getAttr bSolver.enabled`;
 						$boingUI_STenabled = `checkBox -l "Enabled" -v $enabled 
 							-ann "Toggles the state of the solver - like an on/off switch."`;
-						connectControl $boingUI_STenabled bSolver1.enabled;
+						connectControl $boingUI_STenabled bSolver.enabled;
 					setParent ..;
 					columnLayout;
 						//
@@ -540,21 +540,21 @@ global proc string boingUI_createOptionsTab()
 				rowLayout -nc 2;
 					columnLayout;
 						text -al "left" -fn "boldLabelFont" -l "Collision Margin (creation only)";
-						$boingUI_collisionMargin = `getAttr bSolver1.collisionMargin`; 
+						$boingUI_collisionMargin = `getAttr bSolver.collisionMargin`; 
 						$boingUI_STcollisionMargin = `floatField -pre 3 -w 50 -v $boingUI_collisionMargin 
 							-ann "The gap around each collision shape used for collision detection.\nThis value only effects Hull and Mesh rigid bodies during creation. Default is 0.040." 
 							-cc "$boingUI_collisionMargin = `floatField -q -v $boingUI_STcollisionMargin`"`;
-						connectControl $boingUI_STcollisionMargin bSolver1.collisionMargin;
+						connectControl $boingUI_STcollisionMargin bSolver.collisionMargin;
 					setParent ..;
 				setParent ..;
 				
 				rowLayout -nc 1;
 					columnLayout;
 						text -al "left" -fn "boldLabelFont" -l "Disable Collisions Between Constrained Bodies (creation only)";
-						int $enabled = `getAttr bSolver1.disableCollisionsBetweenLinkedBodies`;
+						int $enabled = `getAttr bSolver.disableCollisionsBetweenLinkedBodies`;
 						$boingUI_disableCollisionsBetweenLinkedBodies = `checkBox -l "Enabled" -v $enabled 
 							-ann "Controls the collisions of rigid bodies which share a constraint. This only effects constraints during creation."`;
-						connectControl $boingUI_disableCollisionsBetweenLinkedBodies bSolver1.disableCollisionsBetweenLinkedBodies;
+						connectControl $boingUI_disableCollisionsBetweenLinkedBodies bSolver.disableCollisionsBetweenLinkedBodies;
 					setParent ..;
 				setParent ..;
 				
@@ -702,9 +702,9 @@ global proc boingUI_relinkRigidBodies()
 	$sel = `ls -tr`;
 	for ($s in $sel) if (mbIsType($s, "boingRb"))
 	{
-		if (`isConnected |dDebugDraw|bSolver1.rigidBodies ($s+".solver")`)
+		if (`isConnected |dDebugDraw|bSolver.rigidBodies ($s+".solver")`)
 		{
-			disconnectAttr |dDebugDraw|bSolver1.rigidBodies ($s+".solver") ;
+			disconnectAttr |dDebugDraw|bSolver.rigidBodies ($s+".solver") ;
 		}
 	}
 	$sel = `ls -tr`;
@@ -712,9 +712,9 @@ global proc boingUI_relinkRigidBodies()
 	{
 		// $ll = longNameOf($s);
 		//print $s;	print " ----";
-		if (!`isConnected |dDebugDraw|bSolver1.rigidBodies ($s+".solver")`)
+		if (!`isConnected |dDebugDraw|bSolver.rigidBodies ($s+".solver")`)
 		{
-			connectAttr -f |dDebugDraw|bSolver1.rigidBodies ($s+".solver") ;
+			connectAttr -f |dDebugDraw|bSolver.rigidBodies ($s+".solver") ;
 		}
 	}
 }
@@ -757,7 +757,7 @@ global proc boingUI_createSoftBody()
 	global float $boingUI_startFrame;
 	global float $boingUI_collisionMargin;
 	dSolver;
-	$boingUI_collisionMargin = `getAttr bSolver1.collisionMargin`;
+	$boingUI_collisionMargin = `getAttr bSolver.collisionMargin`;
 	string $meshLayer = "boingUIInputMeshes";
 	string $sbLayer = "boingUISoftBodies";
 	string $obSelection[] = `ls -sl`;
@@ -902,12 +902,12 @@ global proc boingUI_createSoftBody()
 global proc boingUI_createRigidBody(int $activebody, int $collisionShapeType)
 {	//collision shape types: 0 = Hull, 1 = Mesh, 2 = Cylinder, 3 = Capsule, 4 = Box, 5 = Sphere, 6 = Plane
 	
-	dSolver; //create dSolver node if necessary
+	bSolver; //create dSolver node if necessary
 
 	
 	global float $boingUI_startFrame;
 	global float $boingUI_collisionMargin;
-	$boingUI_collisionMargin = `getAttr bSolver1.collisionMargin`;
+	$boingUI_collisionMargin = `getAttr bSolver.collisionMargin`;
 	float $mass = 1; 
 	string $meshLayer = "boingUIInputMeshes";
 	string $rbLayer = "boingUIRigidBodies";
@@ -950,8 +950,6 @@ global proc boingUI_createRigidBody(int $activebody, int $collisionShapeType)
 		
 			if ($isGroup)
 			{
-				print("it is a group\n");
-				
 				$marginShape = $obSelection[0];
 				print("it is a group!\n");
 				
@@ -965,11 +963,9 @@ global proc boingUI_createRigidBody(int $activebody, int $collisionShapeType)
 				
 				if ($makeCollisionShape)
 				{
-					$rigidBodyNode = `dRigidBody`;
+					$rigidBodyNode = `boingRb`;
 							
-					string $collisionShapeNode = `createNode dCollisionShape`;
-					//print("$collisionShapeNode = "+$collisionShapeNode+ "\n");
-					connectAttr ($collisionShapeNode + ".outCollisionShape") ($rigidBodyNode + ".inCollisionShape");
+					connectAttr ($rigidBodyNode + ".outCollisionShape") ($rigidBodyNode + ".inCollisionShape");
 					
 					string $rigidBodyTransforms[] = `listRelatives -p $rigidBodyNode`;
 					$sz = size($rigidBodyTransforms);
@@ -978,7 +974,7 @@ global proc boingUI_createRigidBody(int $activebody, int $collisionShapeType)
 					///assume at least one mesh in the group
 					if ($selection[1] == "mesh") 
 					{
-						connectAttr ($marginShape + ".message") ($collisionShapeNode + ".inShape");
+						connectAttr ($marginShape + ".message") ($rigidBodyNode + ".inShape");
 						setAttr ($rigidBodyTransforms[0] + ".overrideEnabled") 1;
 						setAttr ($rigidBodyTransforms[0] + ".overrideShading") 0;		
 					}
@@ -1154,7 +1150,7 @@ global proc boingUI_createRigidBody(int $activebody, int $collisionShapeType)
 	} 
 	else //create primitive
 	{
-		string $rigidBodyNode = `dRigidBody`;
+		string $rigidBodyNode = `boingRb`;
 		string $collisionShapeNode = `createNode dCollisionShape`;
 		connectAttr ($collisionShapeNode + ".outCollisionShape") ($rigidBodyNode + ".inCollisionShape");
 		string $rigidBodyTransforms[] = `listRelatives -parent $rigidBodyNode`;
@@ -1230,7 +1226,7 @@ global proc string boingUI_createConstraint(int $constraintType)
 			break;
 	}
 	
-	setAttr ($constraintNode + ".disableCollide") `getAttr bSolver1.disableCollisionsBetweenLinkedBodies`;
+	setAttr ($constraintNode + ".disableCollide") `getAttr bSolver.disableCollisionsBetweenLinkedBodies`;
 	$constraintTransforms = `listRelatives -p $constraintNode`;
 	$newConstraintTransf = $constraintTransforms[0];
 	
@@ -1283,7 +1279,7 @@ global proc boingUI_constrainMultiple(int $constraintType)
 	int $constraintCount = 0;
 
 	//filter selection
-	for ($s in $sel) if (!mbIsType($s, "dRigidBody")) select -d $s;
+	for ($s in $sel) if (!mbIsType($s, "boingRb")) select -d $s;
 	
 	$overlapping = mbGetOverlappingTransforms($sel);
 	if (size($overlapping))
@@ -1593,7 +1589,7 @@ global proc boingUI_deactivateRigidBodies(int $toPassive)
 	string $selTmp[] = `ls -sl`;
 	
 	select -cl;	
-	for ($s in $sel) if (mbIsType($s, "boingRb")) select -add $s; //if dRigidBody
+	for ($s in $sel) if (mbIsType($s, "boingRb")) select -add $s; //if boingRB
 	$sel = `ls -sl`;
 	
 	if (!size($sel)) 
@@ -1632,7 +1628,7 @@ global proc boingUI_setInitialState(int $reset)
 	
 	//filter selection
 	select -cl;	
-	for ($s in $sel) if (mbIsType($s, "boingRb")) select -add $s; //if dRigidBody
+	for ($s in $sel) if (mbIsType($s, "boingRb")) select -add $s; //if boingRB
 	$sel = `ls -sl`;
 	for ($s in $sel) if (mbIsKeyed($s)) select -d $s; //if keyed
 	$sel = `ls -sl`;
@@ -1855,7 +1851,7 @@ global proc boingUI_bakeRigidBodies()
 		}
 
 		//filter and process primitives
-		if (mbIsType($s, "dRigidBody"))
+		if (mbIsType($s, "boingRb"))
 		{
 			$connectedTransforms = mbGetConnectedTransforms($s);
 			string $connectedCollisionShape = mbGetConnectedByType(mbGetShape($s), "dCollisionShape");
@@ -1936,11 +1932,11 @@ global proc int bulletExportOptions( string $parent, string $action, string $set
 //script jobs
 global proc boingUI_syncSolver()
 {
-	if (`objExists bSolver1`)
+	if (`objExists bSolver`)
 	{
 		global float $boingUI_startFrame;
 		float $startFrame = `playbackOptions -q -min`;
-		setAttr "bSolver1.startTime" $startFrame;
+		setAttr "bSolver.startTime" $startFrame;
 		$boingUI_startFrame = $startFrame;
 		boingUI_print("Updated solver Start Time to: " + (string)$boingUI_startFrame, 0);
 	}

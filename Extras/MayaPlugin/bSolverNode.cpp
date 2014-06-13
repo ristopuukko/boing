@@ -169,6 +169,10 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     //glPushAttrib( GL_ALL_ATTRIB_BITS );
     //std::set<boingRBNode *>::iterator it;
     for(it=nodes.begin(); it!=nodes.end(); ++it) {
+        MPlug plgDraw((*it)->thisMObject(), boingRBNode::ia_draw);
+        bool draw;
+        plgDraw.getValue(draw);
+        if (!draw) continue;
         rigid_body_t::pointer rb = (*it)->rigid_body();
         (*it)->update();
         if(rb) {

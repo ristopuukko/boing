@@ -106,6 +106,7 @@ MObject		boingRBNode::oa_contactName;
 MObject		boingRBNode::oa_contactPosition;
 
 //collisionShapeNode
+MObject     boingRBNode::ia_draw;
 MObject     boingRBNode::ia_shape;
 MObject     boingRBNode::ia_type;
 MObject     boingRBNode::ia_scale;
@@ -124,6 +125,11 @@ MStatus boingRBNode::initialize()
 	MFnEnumAttribute fnEnumAttr;
     MFnUnitAttribute fnUnitAttr;
     
+    
+    ia_draw = fnNumericAttr.create("drawBulletShape", "dbs", MFnNumericData::kBoolean, 1.0, &status);
+    MCHECKSTATUS(status, "creating drawBulletShape attribute")
+    status = addAttribute(ia_draw);
+
     ia_collisionShape = fnMsgAttr.create("inCollisionShape", "incs", &status);
     MCHECKSTATUS(status, "creating inCollisionShape attribute")
     status = addAttribute(ia_collisionShape);

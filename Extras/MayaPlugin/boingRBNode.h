@@ -117,6 +117,7 @@ public:
 	static  MObject		oa_contactPosition;
     static  MObject     worldMatrix;
     //Attributes
+    static  MObject     ia_draw;
     static  MObject     ia_shape;
     static  MObject     ia_type;
     static  MObject     ia_scale;
