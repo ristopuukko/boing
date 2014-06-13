@@ -20,29 +20,29 @@ not be misrepresented as being the original software.
 written by Michael Baker <michael@mBakr.com>
 */
 
-//dynamicaUITools.mel - dependent on dynamicaUI.mel
+//boingUITools.mel - dependent on boingUI.mel
 
-global proc dynamicaUI_addTools()
+global proc boingUI_addTools()
 {
-	global string $dynamicaUI_window;
-	global string $dynamicaUI_tabs;
-	global string $dynamicaUI_helpLine;
-	global string $dynamicaUI_toolTabLabel = "Advanced";
-	global string $dynamicaUI_toolTab;
+	global string $boingUI_window;
+	global string $boingUI_tabs;
+	global string $boingUI_helpLine;
+	global string $boingUI_toolTabLabel = "Advanced";
+	global string $boingUI_toolTab;
 
-	if ( `window -ex $dynamicaUI_window` )
+	if ( `window -ex $boingUI_window` )
 	{
-		string $tabs[] = `tabLayout -q -tl $dynamicaUI_tabs`;
+		string $tabs[] = `tabLayout -q -tl $boingUI_tabs`;
 		int $toolsTabExists = 0;
 		
 		//check if Tools tab exists, delete if yes, create if no
 		for ($t in $tabs)
 		{
-			if ($t == $dynamicaUI_toolTabLabel)
+			if ($t == $boingUI_toolTabLabel)
 			{ 
-				deleteUI $dynamicaUI_toolTab;
-				//tabLayout -e -sti 1 $dynamicaUI_tabs;
-				dynamicaUI_print("Advanced tab removed from main Dynamica window", 1);
+				deleteUI $boingUI_toolTab;
+				//tabLayout -e -sti 1 $boingUI_tabs;
+				boingUI_print("Advanced tab removed from main Dynamica window", 1);
 				$toolsTabExists = 1;
 				break;
 			}
@@ -50,13 +50,13 @@ global proc dynamicaUI_addTools()
 		
 		if (!$toolsTabExists)
 		{
-			$dynamicaUI_toolTab = dynamicaUI_createToolsTab();
-			tabLayout -e -tl $dynamicaUI_toolTab $dynamicaUI_toolTabLabel $dynamicaUI_tabs;
-			//tabLayout -e -st $dynamicaUI_toolTab $dynamicaUI_tabs;
-			dynamicaUI_print("Advanced tab added to main Dynamica window", 1);
+			$boingUI_toolTab = boingUI_createToolsTab();
+			tabLayout -e -tl $boingUI_toolTab $boingUI_toolTabLabel $boingUI_tabs;
+			//tabLayout -e -st $boingUI_toolTab $boingUI_tabs;
+			boingUI_print("Advanced tab added to main Dynamica window", 1);
 		}
 		
-		showWindow $dynamicaUI_window;
+		showWindow $boingUI_window;
 	}
 	else
 	{
@@ -64,19 +64,19 @@ global proc dynamicaUI_addTools()
 	}
 }
 
-global proc string dynamicaUI_createToolsTab()
+global proc string boingUI_createToolsTab()
 {
-	global string $dynamicaUI_tabs;
-	global float $dynamicaUITools_massMax = 10;
-	string $mainForm = `columnLayout -adj 1 -p $dynamicaUI_tabs`;
+	global string $boingUI_tabs;
+	global float $boingUITools_massMax = 10;
+	string $mainForm = `columnLayout -adj 1 -p $boingUI_tabs`;
 		text -al "left" -bgc 1.0 0.1 0.1 -l "Advanced Dynamica Tools. Warning: some of these features are experimental!";
 		
-		dynamicaUI_createFrame("Compute Mass of selected rigid bodies", "Assign computed mass (based on volume) to selected rigid bodies.", 1, 0);
+		boingUI_createFrame("Compute Mass of selected rigid bodies", "Assign computed mass (based on volume) to selected rigid bodies.", 1, 0);
 			rowLayout -nc 3;
 				text -align "left" -l "Maximum Mass: ";
-				floatField -pre 3 -w 50 -v $dynamicaUITools_massMax -ann "Maximum mass value"
-					-cc "$dynamicaUITools_massMax = `floatField -q -v massMax`" massMax;
-				button -l "Compute Mass" -c "dynamicaUITools_computeMass()";
+				floatField -pre 3 -w 50 -v $boingUITools_massMax -ann "Maximum mass value"
+					-cc "$boingUITools_massMax = `floatField -q -v massMax`" massMax;
+				button -l "Compute Mass" -c "boingUITools_computeMass()";
 			setParent ..;
 		setParent ..;
 	setParent ..;
@@ -84,9 +84,9 @@ global proc string dynamicaUI_createToolsTab()
 	return $mainForm;
 }
 
-global proc dynamicaUITools_computeMass()
+global proc boingUITools_computeMass()
 {
-	global float $dynamicaUITools_massMax;
+	global float $boingUITools_massMax;
 	string $sel[] = `ls -sl`;
 	string $meshes[];
 	string $RBs[];
@@ -118,12 +118,12 @@ global proc dynamicaUITools_computeMass()
 	if (!size($meshes)) 
 	{
 		select -r $selTmp; //restore original selection
-		dynamicaUI_print("No connected meshes found in selection.", 2);
+		boingUI_print("No connected meshes found in selection.", 2);
 		return;
 	}
 	
 	//we are go!
-	dynamicaUI_print("Computing mass for " + size($sel) + " rigid bodies...", 0);
+	boingUI_print("Computing mass for " + size($sel) + " rigid bodies...", 0);
 	refresh;
 	
 	for ($i=0;$i<size($meshes);$i++)
@@ -132,7 +132,7 @@ global proc dynamicaUITools_computeMass()
 		float $minVolume = 1;
 		float $maxVolume = 100;
 		float $massMin = 1;
-		float $massMax = $dynamicaUITools_massMax;
+		float $massMax = $boingUITools_massMax;
 
 		if ($obVolume > $maxVolume) $maxVolume = $obVolume;
 		//if ($obVolume < $minVolume) $minVolume = $obVolume;
@@ -154,7 +154,7 @@ global proc dynamicaUITools_computeMass()
 		}
 	}
 	
-	dynamicaUI_print("Mass computed for " + size($sel) + " rigid bodies...", 0);
+	boingUI_print("Mass computed for " + size($sel) + " rigid bodies...", 0);
 }
 
 

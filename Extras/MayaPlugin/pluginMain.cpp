@@ -271,7 +271,7 @@ MStatus initializePlugin( MObject obj )
 	MDGMessage::addNodeRemovedCallback(SoftBodyNode::nodeRemoved, SoftBodyNode::typeName);
     MCHECKSTATUS(status, "registering SoftBodyNode")
 
-	MGlobal::executeCommand( "source dynamicaUI.mel" );
+	MGlobal::executeCommand( "source boingUI.mel" );
     MGlobal::executeCommand( "dynamicaUI_initialize" );
     
 

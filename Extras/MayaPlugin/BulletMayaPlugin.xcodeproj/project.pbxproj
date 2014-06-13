@@ -934,11 +934,11 @@
 		F9AB38551948DA330072EB3C /* Makefile_boing_2013.mac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; path = Makefile_boing_2013.mac; sourceTree = "<group>"; };
 		F9AB38561948DA330072EB3C /* Makefile_boing_2014.mac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; path = Makefile_boing_2014.mac; sourceTree = "<group>"; };
 		F9C54CB81948B9D0009537FE /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
-		F9C7F0CD18A29E5A00BAF5D5 /* dynamicaUI.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = dynamicaUI.mel; path = scripts/dynamicaUI.mel; sourceTree = "<group>"; };
+		F9C7F0CD18A29E5A00BAF5D5 /* boingUI.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; lineEnding = 0; name = boingUI.mel; path = scripts/boingUI.mel; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		F9C7F0CE18A29E5A00BAF5D5 /* AEdSolverTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = AEdSolverTemplate.mel; path = scripts/AEdSolverTemplate.mel; sourceTree = "<group>"; };
 		F9C7F0CF18A29E5A00BAF5D5 /* mbUtils.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = mbUtils.mel; path = scripts/mbUtils.mel; sourceTree = "<group>"; };
 		F9C7F0D018A29E5A00BAF5D5 /* AEdRigidBodyTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = AEdRigidBodyTemplate.mel; path = scripts/AEdRigidBodyTemplate.mel; sourceTree = "<group>"; };
-		F9C7F0D118A29E5A00BAF5D5 /* dynamicaUITools.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = dynamicaUITools.mel; path = scripts/dynamicaUITools.mel; sourceTree = "<group>"; };
+		F9C7F0D118A29E5A00BAF5D5 /* boingUITools.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; lineEnding = 0; name = boingUITools.mel; path = scripts/boingUITools.mel; sourceTree = "<group>"; };
 		F9C7F0D218A29E5A00BAF5D5 /* AEdHingeConstraintTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = AEdHingeConstraintTemplate.mel; path = scripts/AEdHingeConstraintTemplate.mel; sourceTree = "<group>"; };
 		F9C7F0D318A29E5A00BAF5D5 /* AEdNailConstraintTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = AEdNailConstraintTemplate.mel; path = scripts/AEdNailConstraintTemplate.mel; sourceTree = "<group>"; };
 		F9C7F0D418A29E5A00BAF5D5 /* AEdSixdofConstraintTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = AEdSixdofConstraintTemplate.mel; path = scripts/AEdSixdofConstraintTemplate.mel; sourceTree = "<group>"; };
@@ -1077,11 +1077,11 @@
 			isa = PBXGroup;
 			children = (
 				F91E78DC18D8806900526A5C /* AEdCallBackTemplate.mel */,
-				F9C7F0CD18A29E5A00BAF5D5 /* dynamicaUI.mel */,
+				F9C7F0CD18A29E5A00BAF5D5 /* boingUI.mel */,
 				F9C7F0CE18A29E5A00BAF5D5 /* AEdSolverTemplate.mel */,
 				F9C7F0CF18A29E5A00BAF5D5 /* mbUtils.mel */,
 				F9C7F0D018A29E5A00BAF5D5 /* AEdRigidBodyTemplate.mel */,
-				F9C7F0D118A29E5A00BAF5D5 /* dynamicaUITools.mel */,
+				F9C7F0D118A29E5A00BAF5D5 /* boingUITools.mel */,
 				F9C7F0D218A29E5A00BAF5D5 /* AEdHingeConstraintTemplate.mel */,
 				F9C7F0D318A29E5A00BAF5D5 /* AEdNailConstraintTemplate.mel */,
 				F9C7F0D418A29E5A00BAF5D5 /* AEdSixdofConstraintTemplate.mel */,

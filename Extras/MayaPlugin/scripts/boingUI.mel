@@ -651,8 +651,8 @@ global proc string dynamicaUI_createFrame(string $label, string $annotation, int
 
 global proc string dynamicaUI_loadHelp()
 {
-	string $path = `file -query -location "dynamicaUI.mel"`;
-	$path = strip(`substitute "dynamicaUI.mel" $path ""`);
+	string $path = `file -query -location "boingUI.mel"`;
+	$path = strip(`substitute "boingUI.mel" $path ""`);
 	$path = `substitute "scripts" $path "doc"`;
 	$path += "HELP.txt";
 
