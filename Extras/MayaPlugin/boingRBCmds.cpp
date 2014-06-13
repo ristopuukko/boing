@@ -47,7 +47,9 @@ MString createBoingRBCmd::typeName("createBoingRb");
 
 createBoingRBCmd::createBoingRBCmd()
   : m_argDatabase(0),
-    m_dgModifier(0)
+    m_dgModifier(0),
+    m_dagModifier(0)
+
 {
 }
 
@@ -60,6 +62,9 @@ createBoingRBCmd::~createBoingRBCmd()
 
   if (m_dgModifier) {
     delete m_dgModifier;
+  }
+  if (m_dagModifier) {
+    delete m_dagModifier;
   }
 }
 
@@ -109,6 +114,11 @@ createBoingRBCmd::undoIt()
       delete m_dgModifier;
       m_dgModifier = 0;
   }
+  if (m_dagModifier) {
+      m_dagModifier->undoIt();
+      delete m_dagModifier;
+      m_dagModifier = 0;
+  }
 
   return MS::kSuccess;
 }
@@ -120,11 +130,14 @@ createBoingRBCmd::redoIt()
     MGlobal::getActiveSelectionList(m_undoSelectionList);
 
     MString name;
-    if (m_argDatabase->isFlagSet("-name")) {
-	m_argDatabase->getFlagArgument("-name", 0, name);
+    if ( m_argDatabase->isFlagSet("-name") ) {
+        m_argDatabase->getFlagArgument("-name", 0, name);
+    } else if ( m_argDatabase->isFlagSet("-n") ) {
+        m_argDatabase->getFlagArgument("-n", 0, name);
     }
+    
     if (!name.length()) {
-	name = "boingRb";
+        name = "boingRb1";
     }
 
     m_dgModifier = new MDagModifier;

@@ -1485,7 +1485,7 @@ void bSolverNode::gatherPassiveTransforms(MPlugArray &rbConnections, std::vector
                 xform.m_x1 = vec3f((float)mpos.x, (float)mpos.y, (float)mpos.z);
                 xform.m_q1 = quatf((float)mquat.w, (float)mquat.x, (float)mquat.y, (float)mquat.z);
                 xforms.push_back(xform);
-                cout<<"gatherPassiveTransforms : "<<fnTransform.name().asChar()<< " translation = "<<mpos<< " and rotation = "<<mquat<<endl;
+                //cout<<"gatherPassiveTransforms : "<<fnTransform.name().asChar()<< " translation = "<<mpos<< " and rotation = "<<mquat<<endl;
             }
         } /*else if(fnDagNode.typeId() == rigidBodyArrayNode::typeId) {
             rigidBodyArrayNode *rbNode = static_cast<rigidBodyArrayNode*>(fnDagNode.userNode());
