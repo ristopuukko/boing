@@ -272,7 +272,7 @@ MStatus initializePlugin( MObject obj )
     MCHECKSTATUS(status, "registering SoftBodyNode")
 
 	MGlobal::executeCommand( "source boingUI.mel" );
-    MGlobal::executeCommand( "dynamicaUI_initialize" );
+    MGlobal::executeCommand( "boingUI_initialize" );
     
 
 	fMayaExitingCB				= MSceneMessage::addCallback( MSceneMessage::kMayaExiting,				releaseCallback, 0);
