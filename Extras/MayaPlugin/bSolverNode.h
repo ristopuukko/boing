@@ -49,7 +49,7 @@ Modified by Dongsoo Han <dongsoo.han@amd.com>
 
 #include "mathUtils.h"
 #include "boingRBNode.h"
-//#include "dynamicaRbCmd.h"
+//#include "boingRbCmd.h"
 #include "bCallBackNode.h"
 
 class bSolverNode : public MPxLocatorNode
@@ -154,7 +154,7 @@ protected:
     MObjectArray sScallBackNodes;
     MObjectArray sEcallBackNodes;
     MObjectArray fEcallBackNodes;
-    //friend  class dynamicaRbCmd;
+    //friend  class boingRbCmd;
     //</rp 2014>
     
     

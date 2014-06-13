@@ -17,18 +17,19 @@ would be appreciated but is not required.
 not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
  
-Written by: Risto Puukko <risto.puukko@gmail.com>
+Written by: Nicola Candussi <nicola@fluidinteractive.com>
 */
 
-//boingRbCmd.cpp
+//boingRBCmds.cpp
+#include "boingRBCmds.h"
+#include "boingRBNode.h"
 #include "BulletSoftBody/btSoftBody.h"
 #include <maya/MGlobal.h>
 #include <maya/MItDependencyNodes.h>
 #include <maya/MSyntax.h>
+#include <maya/MFnDependencyNode.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MObject.h>
-#include <maya/MFnDependencyNode.h>
-#include <maya/MArgList.h>
 #include <maya/MPlug.h>
 #include <maya/MPlugArray.h>
 #include <maya/MDoubleArray.h>
@@ -36,37 +37,138 @@ Written by: Risto Puukko <risto.puukko@gmail.com>
 #include <maya/MDagModifier.h>
 
 #include <iostream>
-#include "boingRBNode.h"
-#include "boingRbCmd.h"
 #include "bt_solver.h"
 #include "shared_ptr.h"
 #include "bt_rigid_body.h"
 #include "solver.h"
 #include "LinearMath/btSerializer.h"
 
+
+MString createBoingRBCmd::typeName("boingRb");
+
+createBoingRBCmd::createBoingRBCmd()
+  : m_argDatabase(0),
+    m_dagModifier(0)
+{
+}
+
+
+createBoingRBCmd::~createBoingRBCmd()
+{
+  if (m_argDatabase) {
+    delete m_argDatabase;
+  }
+
+  if (m_dagModifier) {
+    delete m_dagModifier;
+  }
+}
+
+
+void *
+createBoingRBCmd::creator()
+{
+  return new createBoingRBCmd;
+}
+
+
+MSyntax
+createBoingRBCmd::syntax()
+{
+    MSyntax syntax;
+    syntax.enableQuery(false);
+    syntax.enableEdit(false);
+
+    syntax.addFlag("-n", "-name", MSyntax::kString);
+  //  syntax.addFlag("-fn", "-filename", MSyntax::kString);
+   // syntax.addFlag("-col", "-color", MSyntax::kString);
+   // syntax.addFlag("-dia", "-diameter", MSyntax::kDouble);
+
+    return syntax;
+}
+
+
+MStatus
+createBoingRBCmd::doIt(const MArgList &args)
+{
+    MStatus stat;
+    m_argDatabase = new MArgDatabase(syntax(), args, &stat);
+    if (stat == MS::kFailure) {
+	return stat;
+    }
+    return redoIt();
+}
+
+
+MStatus
+createBoingRBCmd::undoIt()
+{
+  MGlobal::setActiveSelectionList(m_undoSelectionList);
+
+  if (m_dagModifier) {
+      m_dagModifier->undoIt();
+      delete m_dagModifier;
+      m_dagModifier = 0;
+  }
+
+  return MS::kSuccess;
+}
+
+
+MStatus
+createBoingRBCmd::redoIt()
+{
+    MGlobal::getActiveSelectionList(m_undoSelectionList);
+
+    MString name;
+    if (m_argDatabase->isFlagSet("-name")) {
+	m_argDatabase->getFlagArgument("-name", 0, name);
+    }
+    if (!name.length()) {
+	name = "boingRb";
+    }
+
+    m_dagModifier = new MDagModifier;
+
+    //MStringArray commandResult;
+    MStatus status;
+    
+    MObject boingRbObj = m_dagModifier->createNode(boingRBNode::typeId, MObject::kNullObj, &status);
+    if (status !=MS::kSuccess) {
+        cerr<<"error creating boingRb!"<<endl;
+        if (status == MS::kInvalidParameter) cerr<<"MS::kInvalidParameter"<<endl;
+    }
+    //m_dagModifier->renameNode(boingRbObj, name);
+    m_dagModifier->doIt();
+
+    setResult(MFnDependencyNode(boingRbObj).name());
+
+    return MS::kSuccess;
+}
+
 MString boingRbCmd::typeName("boingRb");
 
 boingRbCmd::boingRbCmd()
- : argParser(0)
+: argParser(0)
 {}
 
 
 boingRbCmd::~boingRbCmd()
 {
-  if (argParser) {
-    delete argParser;
-  }
-
-  //if (m_dagModifier) {
-  //  delete m_dagModifier;
-  //}
+    if (argParser) {
+        delete argParser;
+    }
+    
+    //if (m_dagModifier) {
+    //  delete m_dagModifier;
+    //}
 }
 
 
 void *
 boingRbCmd::creator()
 {
-  return new boingRbCmd;
+    return new boingRbCmd;
 }
 
 MSyntax
@@ -75,13 +177,13 @@ boingRbCmd::cmdSyntax()
     MSyntax syntax;
     syntax.enableQuery(false);
     syntax.enableEdit(false);
-
+    
     syntax.addFlag("-set", "-setAttr", MSyntax::kString);
     syntax.addFlag("-get", "-getAttr", MSyntax::kString);
     syntax.addFlag("-cr", "-create", MSyntax::kString);
     syntax.addFlag("-del", "-delete", MSyntax::kString);
     syntax.addFlag("-val", "-value", MSyntax::kDouble, MSyntax::kDouble, MSyntax::kDouble);
-
+    
     return syntax;
 }
 
@@ -102,17 +204,17 @@ boingRbCmd::doIt(const MArgList &args)
 
 
 /*MStatus
-boingRbCmd::undoIt()
-{
-  //MGlobal::setActiveSelectionList(m_undoSelectionList);
-
-    if (m_dagModifier) {
-      m_dagModifier->undoIt();
-      delete m_dagModifier;
-      m_dagModifier = 0;
-  
-  return MS::kSuccess;
-}*/
+ boingRbCmd::undoIt()
+ {
+ //MGlobal::setActiveSelectionList(m_undoSelectionList);
+ 
+ if (m_dagModifier) {
+ m_dagModifier->undoIt();
+ delete m_dagModifier;
+ m_dagModifier = 0;
+ 
+ return MS::kSuccess;
+ }*/
 
 
 MStatus boingRbCmd::redoIt()
@@ -120,11 +222,11 @@ MStatus boingRbCmd::redoIt()
     //MGlobal::getActiveSelectionList(m_undoSelectionList)
     
     /*
-    if (argData->isFlagSet("help"))
-    {
-        MGlobal::displayInfo(MString("Tässä olisi helppi-teksti"));
-        return MS::kSuccess;
-    }*/
+     if (argData->isFlagSet("help"))
+     {
+     MGlobal::displayInfo(MString("Tässä olisi helppi-teksti"));
+     return MS::kSuccess;
+     }*/
     isSetAttr = argParser->isFlagSet("-setAttr");
     isGetAttr = argParser->isFlagSet("-getAttr");
     isCreate = argParser->isFlagSet("-create");
@@ -136,26 +238,26 @@ MStatus boingRbCmd::redoIt()
         //MArgList argList;
         argParser->getFlagArgument("setAttr", 0, sAttr);
         //cout<<sAttr<<endl;
-
+        
         MStringArray jobArgsArray = parseArguments(sAttr, ".");
         /*
-        MString stringBuffer;
-        for (unsigned int charIdx = 0; charIdx < sAttr.numChars(); charIdx++) {
-            MString ch = sAttr.substringW(charIdx, charIdx);
-            //cout<<"ch = "<<ch<<endl;
-            if (ch == ".") {
-                if (stringBuffer.length() > 0) {
-                    jobArgsArray.append(stringBuffer);
-                    //cout<<"jobArgsArray = "<<jobArgsArray<<endl;
-                    stringBuffer.clear();
-                }
-            } else {
-                stringBuffer += ch;
-                //cout<<"stringBuffer = "<<stringBuffer<<endl;
-            }
-        }
-        jobArgsArray.append(stringBuffer);
-        */
+         MString stringBuffer;
+         for (unsigned int charIdx = 0; charIdx < sAttr.numChars(); charIdx++) {
+         MString ch = sAttr.substringW(charIdx, charIdx);
+         //cout<<"ch = "<<ch<<endl;
+         if (ch == ".") {
+         if (stringBuffer.length() > 0) {
+         jobArgsArray.append(stringBuffer);
+         //cout<<"jobArgsArray = "<<jobArgsArray<<endl;
+         stringBuffer.clear();
+         }
+         } else {
+         stringBuffer += ch;
+         //cout<<"stringBuffer = "<<stringBuffer<<endl;
+         }
+         }
+         jobArgsArray.append(stringBuffer);
+         */
         MVector value;
         argParser->getFlagArgument("-value", 0, value.x);
         argParser->getFlagArgument("-value", 1, value.y);
@@ -163,7 +265,7 @@ MStatus boingRbCmd::redoIt()
         //cout<<"jobArgsArray[1] : "<<jobArgsArray[1]<<endl;
         MString attr = checkAttribute(jobArgsArray[1]);
         setBulletVectorAttribute(nameToNode(jobArgsArray[0]), attr, value);
-                    
+        
         //cout<<value<<endl;
         setResult(MS::kSuccess);
         
@@ -173,7 +275,7 @@ MStatus boingRbCmd::redoIt()
         
         //cout<<gAttr<<endl;
         MStringArray jobArgsArray = parseArguments(gAttr, ".");
-
+        
         MString attr = checkAttribute(jobArgsArray[1]);
         //cout<<"attr = "<<attr<<endl;
         if (attr!="name") {
@@ -196,8 +298,8 @@ MStatus boingRbCmd::redoIt()
             //btDefaultSerializer* serializer = new MySerializer(solver_t->get_solver());
             //btHashMap<btHashPtr,const char*>   m_nameMap;
             //for(size_t i = 0; i < m_rigid_bodies.size(); ++i) {
-                //solver_t::remove_rigid_body(m_rigid_bodies[i]);
-                //cout<<"m_rigid_bodies["<<i<<"] : "<<m_rigid_bodies[i]<<endl;  
+            //solver_t::remove_rigid_body(m_rigid_bodies[i]);
+            //cout<<"m_rigid_bodies["<<i<<"] : "<<m_rigid_bodies[i]<<endl;
             //}
             //cout << "rigid bodies" << endl;
             //std::set<rigid_body_t::pointer>m_rigid_bodies = solver_t->get_rigid_bodies();
@@ -208,31 +310,31 @@ MStatus boingRbCmd::redoIt()
             //std::set<rigid_body_t::pointer>::iterator it;
             //unsigned int i=0;
             //for (it = m_rigid_bodies.begin(); it != m_rigid_bodies.end(); ++it) {
-                //rigid_body_t::pointer body = static_cast<rigid_body_t::pointer>bt_rigid_body_t::body();
-                //rigid_body_t::pointer body = it->get();
-                //bt_rigid_body_t::body();
-                //collision_shape_t::pointer collshape_pointer = (collision_shape_t::pointer)body->collision_shape();
-                //const char *namePtr = solv->m_nameMap.find(it);
-              //  rigid_body_t::pointer m_rigid_body = it->get();
-              //  const rigid_body_impl_t* rb = m_rigid_body->impl();
-                
-                //const char*const * namePtr = solv->m_nameMap.find(rb);
-              //  const char* namePtr = serializer->findNameForPointer(rb);
-              //  cout<<++i<<endl;
-                //if (namePtr && *namePtr) {
-                //cout<<namePtr<<endl;
-              //  result.append((MString) namePtr);
-                //} else {
-                //    continue;
-                //}
-                //cout<<collshape_pointer<<endl;
-                
-                //cout<<"pointer : " << (*)it << endl;
-
-                //const char* rbname = MySerializer::findNameForPointer(it);
-                //cout<<"rbname = "<<rbname<<endl;
+            //rigid_body_t::pointer body = static_cast<rigid_body_t::pointer>bt_rigid_body_t::body();
+            //rigid_body_t::pointer body = it->get();
+            //bt_rigid_body_t::body();
+            //collision_shape_t::pointer collshape_pointer = (collision_shape_t::pointer)body->collision_shape();
+            //const char *namePtr = solv->m_nameMap.find(it);
+            //  rigid_body_t::pointer m_rigid_body = it->get();
+            //  const rigid_body_impl_t* rb = m_rigid_body->impl();
+            
+            //const char*const * namePtr = solv->m_nameMap.find(rb);
+            //  const char* namePtr = serializer->findNameForPointer(rb);
+            //  cout<<++i<<endl;
+            //if (namePtr && *namePtr) {
+            //cout<<namePtr<<endl;
+            //  result.append((MString) namePtr);
+            //} else {
+            //    continue;
             //}
-
+            //cout<<collshape_pointer<<endl;
+            
+            //cout<<"pointer : " << (*)it << endl;
+            
+            //const char* rbname = MySerializer::findNameForPointer(it);
+            //cout<<"rbname = "<<rbname<<endl;
+            //}
+            
             cout<<"result : "<<result<<endl;
             setResult(result);
         }
@@ -260,7 +362,7 @@ MStatus boingRbCmd::redoIt()
                 cout<<"name"<<endl;
                 cout<<"singleArg[0] : "<<singleArg[0]<<endl;
                 cout<<"singleArg[1] : "<<singleArg[1]<<endl;
-
+                
             } else if (singleArg[0] == "geo") {
                 //geo
                 inputShape = singleArg[1];
@@ -268,82 +370,82 @@ MStatus boingRbCmd::redoIt()
                 //initialvelocity
                 MStringArray velArray = parseArguments(singleArg[1], ",");
                 vel = MVector(velArray[0].asDouble(),
-                                velArray[1].asDouble(),
-                                velArray[2].asDouble()
-                                );
+                              velArray[1].asDouble(),
+                              velArray[2].asDouble()
+                              );
                 //cout<<"velocity = "<<vel<<endl;
-
+                
             } else if (singleArg[0] == "pos") {
                 //initialposition
                 MStringArray posArray = parseArguments(singleArg[1], ",");
                 pos = MVector(posArray[0].asDouble(),
-                                posArray[1].asDouble(),
-                                posArray[2].asDouble()
-                                );
+                              posArray[1].asDouble(),
+                              posArray[2].asDouble()
+                              );
                 //cout<<"position = "<<pos<<endl;
-
+                
             } else if (singleArg[0] == "rot") {
                 //initialrotation
                 MStringArray rotArray = parseArguments(singleArg[1], ",");
                 rot = MVector(rotArray[0].asDouble(),
-                                rotArray[1].asDouble(),
-                                rotArray[2].asDouble()
-                                );
+                              rotArray[1].asDouble(),
+                              rotArray[2].asDouble()
+                              );
                 //cout<<"rotation = "<<rot<<endl;
                 
             } else {
-                cout<<"Unrecognized parameter : "<<singleArg[0]<<endl; 
+                cout<<"Unrecognized parameter : "<<singleArg[0]<<endl;
             }
         }
-        // create the collisionShape-node 
+        // create the collisionShape-node
         MObject node = nameToNode(inputShape);
         collision_shape_t::pointer collShape = createCollisionShape(node);
         createRigidBody(collShape, node, rbname, vel, pos, rot);
-
+        
     } else if ( isDelete  ) {
-
+        
     }
     
     return MS::kSuccess;
 }
 
 MStringArray boingRbCmd::parseArguments(MString arg, MString token) {
-
-        MStringArray jobArgsArray;
-        MString stringBuffer;
-        for (unsigned int charIdx = 0; charIdx < arg.numChars(); charIdx++) {
-            MString ch = arg.substringW(charIdx, charIdx);
-            //cout<<"ch = "<<ch<<endl;
-            if (ch == token ) {
-                if (stringBuffer.length() > 0) {
-                    jobArgsArray.append(stringBuffer);
-                    //cout<<"jobArgsArray = "<<jobArgsArray<<endl;
-                    stringBuffer.clear();
-                }
-            } else {
-                stringBuffer += ch;
-                //cout<<"stringBuffer = "<<stringBuffer<<endl;
+    
+    MStringArray jobArgsArray;
+    MString stringBuffer;
+    for (unsigned int charIdx = 0; charIdx < arg.numChars(); charIdx++) {
+        MString ch = arg.substringW(charIdx, charIdx);
+        //cout<<"ch = "<<ch<<endl;
+        if (ch == token ) {
+            if (stringBuffer.length() > 0) {
+                jobArgsArray.append(stringBuffer);
+                //cout<<"jobArgsArray = "<<jobArgsArray<<endl;
+                stringBuffer.clear();
             }
+        } else {
+            stringBuffer += ch;
+            //cout<<"stringBuffer = "<<stringBuffer<<endl;
         }
-        jobArgsArray.append(stringBuffer);
-
-        return jobArgsArray;
+    }
+    jobArgsArray.append(stringBuffer);
+    
+    return jobArgsArray;
 }
 
-MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  collision_shape, 
-                                        MObject node,
-                                        MString name,
-                                        MVector vel,
-                                        MVector pos,
-                                        MVector rot)
+MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  collision_shape,
+                                    MObject node,
+                                    MString name,
+                                    MVector vel,
+                                    MVector pos,
+                                    MVector rot)
 {
     //MGlobal::getActiveSelectionList(m_undoSelectionList);
-
+    
     
     if (!name.length()) {
         name = "dRigidBody";
     }
-
+    
     double mscale[3] = {1,1,1};
     MQuaternion mrotation = MEulerRotation(rot).asQuaternion();
     
@@ -387,26 +489,26 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  collision_shape,
     m_rigid_body->set_transform(vec3f((float)pos.x, (float)pos.y, (float)pos.z),
                                 quatf((float)mrotation.w, (float)mrotation.x, (float)mrotation.y, (float)mrotation.z));
     m_rigid_body->collision_shape()->set_scale(vec3f((float)mscale[0], (float)mscale[1], (float)mscale[2]));
-
-
+    
+    
     float mass = 1.f;
     //MPlug(thisObject, rigidBodyNode::ia_mass).getValue(mass);
     /*
-    float curMass = m_rigid_body->get_mass();
-    bool changedMassStatus= false;
-    if ((curMass > 0.f) != (mass > 0.f))
-    {
-        changedMassStatus = true;
-    }
-    if (changedMassStatus)        solver_t::remove_rigid_body(m_rigid_body);
-    */
+     float curMass = m_rigid_body->get_mass();
+     bool changedMassStatus= false;
+     if ((curMass > 0.f) != (mass > 0.f))
+     {
+     changedMassStatus = true;
+     }
+     if (changedMassStatus)        solver_t::remove_rigid_body(m_rigid_body);
+     */
     m_rigid_body->set_mass(mass);
     m_rigid_body->set_inertia((float)mass * m_rigid_body->collision_shape()->local_inertia());
-
-
+    
+    
     //if (changedMassStatus)
     //    solver_t::add_rigid_body(m_rigid_body, name.asChar());
-
+    
     //initialize those default values too
     float restitution = 0.3f;
     //MPlug(thisObject, rigidBodyNode::ia_restitution).getValue(restitution);
@@ -420,29 +522,29 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  collision_shape,
     float angDamp = 0.2f;
     //MPlug(thisObject, rigidBodyNode::ia_angularDamping).getValue(angDamp);
     m_rigid_body->set_angular_damping(angDamp);
-
+    
     //shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     //const char *namePtr = solv->m_nameMap.find(m_rigid_body);
     //const char* rbname = MySerializer::findNameForPointer(m_rigid_body);
     //cout<<"rbname = "<<namePtr<<endl;
-     //solv.get()->dynamicsWorld();
-
+    //solv.get()->dynamicsWorld();
+    
     return MS::kSuccess;
 }
 
 
 collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
 {
-
+    
     collision_shape_t::pointer collision_shape = 0;
-
+    
     //MObject thisObject(thisMObject());
     //MPlug plgType(thisObject, ia_type);
     int type=0;
     //plgType.getValue(type);
-
+    
     switch(type) {
-    case 0:  
+        case 0:
         {
             //convex hull
             {
@@ -459,17 +561,17 @@ collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
                     fnMesh.getPoints(mpoints, MSpace::kObject);
                     fnMesh.getNormals(mnormals, MSpace::kObject);
                     fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
-
+                    
                     std::vector<vec3f> vertices(mpoints.length());
                     std::vector<vec3f> normals(mpoints.length());
                     std::vector<unsigned int> indices(mtrianglevertices.length());
-
+                    
                     btAlignedObjectArray<btVector3> btVerts; //mb
-
+                    
                     for(size_t i = 0; i < vertices.size(); ++i) {
                         vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
                         normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
-
+                        
 #if UPDATE_SHAPE //future collision margin adjust
                         btVerts.push_back(btVector3(mpoints[i].x, mpoints[i].y, mpoints[i].z)); //mb
 #endif
@@ -477,11 +579,11 @@ collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
                     for(size_t i = 0; i < indices.size(); ++i) {
                         indices[i] = mtrianglevertices[i];
                     }
-
+                    
 #if UPDATE_SHAPE //future collision margin adjust
                     btAlignedObjectArray<btVector3> planeEquations;
                     btGeometryUtil::getPlaneEquationsFromVertices(btVerts, planeEquations);
-
+                    
                     btAlignedObjectArray<btVector3> shiftedPlaneEquations;
                     for (int p=0;p<planeEquations.size();p++)
                     {
@@ -489,32 +591,32 @@ collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
                         plane[3] += collisionShapeNode::collisionMarginOffset;
                         shiftedPlaneEquations.push_back(plane);
                     }
-
+                    
                     btAlignedObjectArray<btVector3> shiftedVertices;
                     btGeometryUtil::getVerticesFromPlaneEquations(shiftedPlaneEquations, shiftedVertices);
-
+                    
                     std::vector<vec3f> shiftedVerticesVec3f(shiftedVertices.size());
-                    for(size_t i = 0; i < shiftedVertices.size(); ++i) 
+                    for(size_t i = 0; i < shiftedVertices.size(); ++i)
                     {
                         shiftedVerticesVec3f[i] = vec3f(shiftedVertices[i].getX(), shiftedVertices[i].getY(), shiftedVertices[i].getZ());
                         //std::cout << "orig verts: " << vertices[i][0] << " " << vertices[i][1] << " " << vertices[i][2] << std::endl;
                         //std::cout << "shft verts: " << shiftedVertices[i].getX() << " " << shiftedVertices[i].getY() << " " << shiftedVertices[i].getZ() << std::endl;
                         //std::cout << std::endl;
                     }
-
+                    
                     collision_shape = solver_t::create_convex_hull_shape(&(shiftedVerticesVec3f[0]), shiftedVerticesVec3f.size(), &(normals[0]), &(indices[0]), indices.size());
-
+                    
 #endif
-
+                    
 #if UPDATE_SHAPE == 0
                     collision_shape = solver_t::create_convex_hull_shape(&(vertices[0]), vertices.size(), &(normals[0]), &(indices[0]), indices.size()); //original
 #endif
                 }
             }
         }
-
-        break;
-    case 1:
+            
+            break;
+        case 1:
         {
             //mesh
             {
@@ -529,11 +631,11 @@ collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
                     fnMesh.getPoints(mpoints, MSpace::kObject);
                     fnMesh.getNormals(mnormals, MSpace::kObject);
                     fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
-
+                    
                     std::vector<vec3f> vertices(mpoints.length());
                     std::vector<vec3f> normals(mpoints.length());
                     std::vector<unsigned int> indices(mtrianglevertices.length());
-
+                    
                     for(size_t i = 0; i < vertices.size(); ++i) {
                         vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
                         normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
@@ -543,55 +645,55 @@ collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
                     }
                     bool dynamicMesh = true;
                     collision_shape = solver_t::create_mesh_shape(&(vertices[0]), vertices.size(), &(normals[0]),
-                        &(indices[0]), indices.size(),dynamicMesh);
+                                                                  &(indices[0]), indices.size(),dynamicMesh);
                 }
             }
         }
-        break;
-    case 2:
-        //cylinder
-        break;
-    case 3:
-        //capsule
-        break;
-
-    case 7:
-        //btBvhTriangleMeshShape
+            break;
+        case 2:
+            //cylinder
+            break;
+        case 3:
+            //capsule
+            break;
+            
+        case 7:
+            //btBvhTriangleMeshShape
         {
-
-                if(node.hasFn(MFn::kMesh)) {
-                    MDagPath dagPath;
-                    MDagPath::getAPathTo(node, dagPath);
-                    MFnMesh fnMesh(dagPath);
-                    MFloatPointArray mpoints;
-                    MFloatVectorArray mnormals;
-                    MIntArray mtrianglecounts;
-                    MIntArray mtrianglevertices;
-                    fnMesh.getPoints(mpoints, MSpace::kObject);
-                    fnMesh.getNormals(mnormals, MSpace::kObject);
-                    fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
-
-                    std::vector<vec3f> vertices(mpoints.length());
-                    std::vector<vec3f> normals(mpoints.length());
-                    std::vector<unsigned int> indices(mtrianglevertices.length());
-
-                    for(size_t i = 0; i < vertices.size(); ++i) {
-                        vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
-                        normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
-                    }
-                    for(size_t i = 0; i < indices.size(); ++i) {
-                        indices[i] = mtrianglevertices[i];
-                    }
-                    bool dynamicMesh = false;
-                    collision_shape = solver_t::create_mesh_shape(&(vertices[0]), vertices.size(), &(normals[0]),
-                        &(indices[0]), indices.size(),dynamicMesh);
+            
+            if(node.hasFn(MFn::kMesh)) {
+                MDagPath dagPath;
+                MDagPath::getAPathTo(node, dagPath);
+                MFnMesh fnMesh(dagPath);
+                MFloatPointArray mpoints;
+                MFloatVectorArray mnormals;
+                MIntArray mtrianglecounts;
+                MIntArray mtrianglevertices;
+                fnMesh.getPoints(mpoints, MSpace::kObject);
+                fnMesh.getNormals(mnormals, MSpace::kObject);
+                fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
+                
+                std::vector<vec3f> vertices(mpoints.length());
+                std::vector<vec3f> normals(mpoints.length());
+                std::vector<unsigned int> indices(mtrianglevertices.length());
+                
+                for(size_t i = 0; i < vertices.size(); ++i) {
+                    vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
+                    normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
+                }
+                for(size_t i = 0; i < indices.size(); ++i) {
+                    indices[i] = mtrianglevertices[i];
+                }
+                bool dynamicMesh = false;
+                collision_shape = solver_t::create_mesh_shape(&(vertices[0]), vertices.size(), &(normals[0]),
+                                                              &(indices[0]), indices.size(),dynamicMesh);
             }
         }
-        break;
-    case 8:
-        //hacd convex decomposition
+            break;
+        case 8:
+            //hacd convex decomposition
         {
-
+            
             {
                 if(node.hasFn(MFn::kMesh)) {
                     MDagPath dagPath;
@@ -604,11 +706,11 @@ collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
                     fnMesh.getPoints(mpoints, MSpace::kObject);
                     fnMesh.getNormals(mnormals, MSpace::kObject);
                     fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
-
+                    
                     std::vector<vec3f> vertices(mpoints.length());
                     std::vector<vec3f> normals(mpoints.length());
                     std::vector<unsigned int> indices(mtrianglevertices.length());
-
+                    
                     for(size_t i = 0; i < vertices.size(); ++i) {
                         vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
                         normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
@@ -618,16 +720,16 @@ collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
                     }
                     bool dynamicMesh = false;
                     collision_shape = solver_t::create_hacd_shape(&(vertices[0]), vertices.size(), &(normals[0]),
-                        &(indices[0]), indices.size(),dynamicMesh);
+                                                                  &(indices[0]), indices.size(),dynamicMesh);
                 }
             }
         }
-        break;
-    default:
+            break;
+        default:
         {
         }
     }
-
+    
     return collision_shape;
 }
 
@@ -691,9 +793,9 @@ MStatus boingRbCmd::setBulletVectorAttribute(MObject node, MString attr, MVector
             }
         }
     }
-
+    
     return MS::kSuccess;
-
+    
 }
 
 MVector boingRbCmd::getBulletVectorAttribute(MObject node, MString attr) {
@@ -737,7 +839,7 @@ MVector boingRbCmd::getBulletVectorAttribute(MObject node, MString attr) {
     return vec;
     
 }
-    
+
 MObject boingRbCmd::nameToNode( MString name ) {
     MSelectionList selList;
     selList.add( name );

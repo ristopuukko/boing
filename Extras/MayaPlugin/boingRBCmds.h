@@ -20,10 +20,10 @@ not be misrepresented as being the original software.
 Written by: Nicola Candussi <nicola@fluidinteractive.com>
 */
 
-//boingRbCmd.h
+//boingRBCmds.h
 
-#ifndef DYN_DYNAMICARBCMD_H
-#define DYN_DYNAMICARBCMD_H
+#ifndef DYN_BOINGRBCMD_H
+#define DYN_BOINGRBCMD_H
 
 #include <maya/MArgDatabase.h>
 #include <maya/MDagModifier.h>
@@ -39,15 +39,45 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 #include "bSolverNode.h"
 #include "collision_shape.h"
 
+class createBoingRBCmd : public MPxCommand
+{
+public:
+    createBoingRBCmd();
+    virtual ~createBoingRBCmd();
+
+    static void *creator();
+    static MSyntax syntax();
+
+    static MString typeName;
+
+    MStatus doIt(const MArgList &i_mArgList);
+    MStatus redoIt();
+    MStatus undoIt();
+    bool isUndoable() const { return true; }
+    bool hasSyntax() const { return true; }
+
+
+protected:
+    MArgDatabase *m_argDatabase;
+    MDagModifier *m_dagModifier;
+    //MObject nameToNode( MString name ) ;
+    //MPlug nameToNodePlug( MString attrName, MObject nodeObject );
+    MSelectionList m_undoSelectionList; 
+};
+
+
+//boingRbCmd.h
+
+
 class boingRbCmd : public MPxCommand
 {
 public:
     boingRbCmd();
     virtual ~boingRbCmd();
-
+    
     static void *creator();
     static MSyntax cmdSyntax();
-
+    
     MStatus doIt(const MArgList &i_mArgList);
     MStatus redoIt();
     //MStatus undoIt();
@@ -69,10 +99,10 @@ public:
                             MVector rot);
     
     MStatus deleteRigidBody();
-
-
+    
+    
     static MString typeName;
-//private:
+    //private:
     
 protected:
     bool    isSetAttr;
@@ -81,9 +111,6 @@ protected:
     bool    isDelete;
     bool    isValue;
     MArgParser *argParser;
-    //MDagModifier *m_dagModifier;
-
-    //MSelectionList m_undoSelectionList;
     
 };
 

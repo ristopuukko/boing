@@ -44,8 +44,7 @@ Nov 2011 - Dec 2011 : Added logic for soft bodies
 #include "constraint/sixdofConstraintNode.h"
 #include "bSolverNode.h"
 #include "bSolverCmd.h"
-#include "boingRBCmd.h"
-#include "dynamicaRbCmd.h"
+#include "boingRBCmds.h"
 #include "bCallBackNode.h"
 #include "constraint/dNailConstraintCmd.h"
 #include "constraint/dHingeConstraintCmd.h" 
@@ -212,15 +211,15 @@ MStatus initializePlugin( MObject obj )
                                     bSolverCmd::syntax);
     MCHECKSTATUS(status, "registering bSolverCmd")
     
-    status = plugin.registerCommand( boingRBCmd::typeName,
-                                    boingRBCmd::creator,
-                                    boingRBCmd::syntax);
-    MCHECKSTATUS(status, "registering boingRBCmd")
+    status = plugin.registerCommand( createBoingRBCmd::typeName,
+                                    createBoingRBCmd::creator,
+                                    createBoingRBCmd::syntax);
+    MCHECKSTATUS(status, "registering createBoingRBCmd")
 
-    status = plugin.registerCommand( dynamicaRbCmd::typeName,
-                                    dynamicaRbCmd::creator,
-                                    dynamicaRbCmd::cmdSyntax);
-    MCHECKSTATUS(status, "registering dynamicaRbCmd")
+    status = plugin.registerCommand( boingRbCmd::typeName,
+                                    boingRbCmd::creator,
+                                    boingRbCmd::cmdSyntax);
+    MCHECKSTATUS(status, "registering boingRbCmd")
     
     const MString classification = "drawdb/geometry/transform";
     status = plugin.registerTransform( bCallBackNode::typeName,
@@ -309,11 +308,11 @@ MStatus uninitializePlugin( MObject obj )
     MCHECKSTATUS(status, "deregistering dRigidBodyCmd")
 */
     //<rp 2014>
-    status = plugin.deregisterCommand(boingRBCmd::typeName);
-    MCHECKSTATUS(status, "deregistering boingRBCmd")
+    status = plugin.deregisterCommand(createBoingRBCmd::typeName);
+    MCHECKSTATUS(status, "deregistering createBoingRBCmd")
 
-    status = plugin.deregisterCommand( dynamicaRbCmd::typeName );
-    MCHECKSTATUS(status, "deregistering dynamicaRbCmd")
+    status = plugin.deregisterCommand( boingRbCmd::typeName );
+    MCHECKSTATUS(status, "deregistering boingRbCmd")
 
     status = plugin.deregisterNode(bCallBackNode::typeId);
     MCHECKSTATUS(status, "deregistering bCallBackNode")

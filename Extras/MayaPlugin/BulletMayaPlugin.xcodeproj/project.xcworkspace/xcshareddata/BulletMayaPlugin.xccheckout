@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>2360374A-B7E2-44F4-91DF-0CA9F28A3B07</string>
+	<key>IDESourceControlProjectName</key>
+	<string>BulletMayaPlugin</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>6012B0D2-F1E3-40EC-900A-E00B84423670</key>
+		<string>https://github.com/ristopuukko/boing.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Extras/MayaPlugin/BulletMayaPlugin.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>6012B0D2-F1E3-40EC-900A-E00B84423670</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/ristopuukko/boing.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>6012B0D2-F1E3-40EC-900A-E00B84423670</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6012B0D2-F1E3-40EC-900A-E00B84423670</string>
+			<key>IDESourceControlWCCName</key>
+			<string>boing</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -458,8 +458,8 @@
 		F94A488818DDC5BC007CFA3F /* dynamicaRbCmd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F94A488718DDC5BC007CFA3F /* dynamicaRbCmd.cpp */; };
 		F986F649193F2A970040A399 /* boingRBNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F986F647193F2A970040A399 /* boingRBNode.cpp */; };
 		F986F64A193F2A970040A399 /* boingRBNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F986F648193F2A970040A399 /* boingRBNode.h */; };
-		F986F64D193F2E080040A399 /* boingRBCmd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F986F64B193F2E080040A399 /* boingRBCmd.cpp */; };
-		F986F64E193F2E080040A399 /* boingRBCmd.h in Headers */ = {isa = PBXBuildFile; fileRef = F986F64C193F2E080040A399 /* boingRBCmd.h */; };
+		F986F64D193F2E080040A399 /* boingRBCmds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F986F64B193F2E080040A399 /* boingRBCmds.cpp */; };
+		F986F64E193F2E080040A399 /* boingRBCmds.h in Headers */ = {isa = PBXBuildFile; fileRef = F986F64C193F2E080040A399 /* boingRBCmds.h */; };
 		F9C7F0DC18A2A83D00BAF5D5 /* dynamicaRbCmd.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C7F0DB18A2A83D00BAF5D5 /* dynamicaRbCmd.h */; };
 		F9EA839E18D7A6440058D1C3 /* bCallBackNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9EA839C18D7A6440058D1C3 /* bCallBackNode.cpp */; };
 		F9EA839F18D7A6440058D1C3 /* bCallBackNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F9EA839D18D7A6440058D1C3 /* bCallBackNode.h */; };
@@ -926,13 +926,13 @@
 		F906D3371941031D0054663E /* bSolverCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bSolverCmd.h; sourceTree = "<group>"; };
 		F906D3381941031D0054663E /* bSolverCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bSolverCmd.cpp; sourceTree = "<group>"; };
 		F91E78DC18D8806900526A5C /* AEdCallBackTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; name = AEdCallBackTemplate.mel; path = scripts/AEdCallBackTemplate.mel; sourceTree = "<group>"; };
-		F94A488718DDC5BC007CFA3F /* dynamicaRbCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynamicaRbCmd.cpp; sourceTree = "<group>"; };
+		F94A488718DDC5BC007CFA3F /* dynamicaRbCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = dynamicaRbCmd.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F986F647193F2A970040A399 /* boingRBNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = boingRBNode.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F986F648193F2A970040A399 /* boingRBNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boingRBNode.h; sourceTree = "<group>"; };
-		F986F64B193F2E080040A399 /* boingRBCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = boingRBCmd.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		F986F64C193F2E080040A399 /* boingRBCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boingRBCmd.h; sourceTree = "<group>"; };
-		F9AB38551948DA330072EB3C /* Makefile_boing_2013.mac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile_boing_2013.mac; sourceTree = "<group>"; };
-		F9AB38561948DA330072EB3C /* Makefile_boing_2014.mac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile_boing_2014.mac; sourceTree = "<group>"; };
+		F986F64B193F2E080040A399 /* boingRBCmds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = boingRBCmds.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		F986F64C193F2E080040A399 /* boingRBCmds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = boingRBCmds.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		F9AB38551948DA330072EB3C /* Makefile_boing_2013.mac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; path = Makefile_boing_2013.mac; sourceTree = "<group>"; };
+		F9AB38561948DA330072EB3C /* Makefile_boing_2014.mac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; path = Makefile_boing_2014.mac; sourceTree = "<group>"; };
 		F9C54CB81948B9D0009537FE /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		F9C7F0CD18A29E5A00BAF5D5 /* dynamicaUI.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = dynamicaUI.mel; path = scripts/dynamicaUI.mel; sourceTree = "<group>"; };
 		F9C7F0CE18A29E5A00BAF5D5 /* AEdSolverTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = AEdSolverTemplate.mel; path = scripts/AEdSolverTemplate.mel; sourceTree = "<group>"; };
@@ -946,7 +946,7 @@
 		F9C7F0D618A29E5A00BAF5D5 /* AEdCollisionShapeTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = AEdCollisionShapeTemplate.mel; path = scripts/AEdCollisionShapeTemplate.mel; sourceTree = "<group>"; };
 		F9C7F0D718A29E5A00BAF5D5 /* AEdRigidBodyArrayTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = AEdRigidBodyArrayTemplate.mel; path = scripts/AEdRigidBodyArrayTemplate.mel; sourceTree = "<group>"; };
 		F9C7F0D818A29E5A00BAF5D5 /* dynamica.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; name = dynamica.mel; path = scripts/dynamica.mel; sourceTree = "<group>"; };
-		F9C7F0DB18A2A83D00BAF5D5 /* dynamicaRbCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dynamicaRbCmd.h; sourceTree = "<group>"; };
+		F9C7F0DB18A2A83D00BAF5D5 /* dynamicaRbCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = dynamicaRbCmd.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F9EA839C18D7A6440058D1C3 /* bCallBackNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = bCallBackNode.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F9EA839D18D7A6440058D1C3 /* bCallBackNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = bCallBackNode.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 /* End PBXFileReference section */
@@ -1025,8 +1025,8 @@
 				BC4341D41117F4CF00C9C8D7 /* shared_ptr.h */,
 				F986F647193F2A970040A399 /* boingRBNode.cpp */,
 				F986F648193F2A970040A399 /* boingRBNode.h */,
-				F986F64B193F2E080040A399 /* boingRBCmd.cpp */,
-				F986F64C193F2E080040A399 /* boingRBCmd.h */,
+				F986F64B193F2E080040A399 /* boingRBCmds.cpp */,
+				F986F64C193F2E080040A399 /* boingRBCmds.h */,
 				BC4341D91117F4CF00C9C8D7 /* rigid_body.h */,
 				BC4341DA1117F4CF00C9C8D7 /* rigid_body_impl.h */,
 				BC4341DB1117F4CF00C9C8D7 /* pluginMain.cpp */,
@@ -1762,7 +1762,7 @@
 				BC4340A81117F3C600C9C8D7 /* btConvex2dShape.h in Headers */,
 				F906D33B1941031D0054663E /* bSolverCmd.h in Headers */,
 				BC4340AA1117F3C600C9C8D7 /* btConvexHullShape.h in Headers */,
-				F986F64E193F2E080040A399 /* boingRBCmd.h in Headers */,
+				F986F64E193F2E080040A399 /* boingRBCmds.h in Headers */,
 				BC4340AC1117F3C600C9C8D7 /* btConvexInternalShape.h in Headers */,
 				BC4340AE1117F3C600C9C8D7 /* btConvexPointCloudShape.h in Headers */,
 				BC4340B01117F3C600C9C8D7 /* btConvexShape.h in Headers */,
@@ -2167,7 +2167,7 @@
 				BC43416B1117F3C600C9C8D7 /* SpuCollisionTaskProcess.cpp in Sources */,
 				BC43416D1117F3C600C9C8D7 /* SpuContactManifoldCollisionAlgorithm.cpp in Sources */,
 				BC4341701117F3C600C9C8D7 /* SpuFakeDma.cpp in Sources */,
-				F986F64D193F2E080040A399 /* boingRBCmd.cpp in Sources */,
+				F986F64D193F2E080040A399 /* boingRBCmds.cpp in Sources */,
 				BC4341721117F3C600C9C8D7 /* SpuGatheringCollisionDispatcher.cpp in Sources */,
 				BC4341741117F3C600C9C8D7 /* SpuLibspe2Support.cpp in Sources */,
 				BC4341771117F3C600C9C8D7 /* boxBoxDistance.cpp in Sources */,
