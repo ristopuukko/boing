@@ -158,7 +158,9 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
                          M3dView::DisplayStatus status )
 {
     MStringArray rbs;
-    std::set<boingRBNode *>nodes;
+    //std::set<boingRBNode *>nodes;
+    int count = thisObject.impl()->
+    boingRBNode *nodes = new boingRBNode;
 	MObject thisObject(thisMObject());
     getRigidBodies(thisObject, rbs, nodes);
     std::set<boingRBNode*>::iterator it;

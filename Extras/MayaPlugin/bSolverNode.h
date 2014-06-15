@@ -66,13 +66,13 @@ public:
 	virtual bool            isBounded() const { 
 		return false;
 	}
-virtual MBoundingBox boundingBox() const
-{
-    MObject node = thisMObject();
-    MPoint corner1(-1, -1, -1);
-    MPoint corner2(1, 1, 1);
-    return MBoundingBox(corner1, corner2);
-}
+    virtual MBoundingBox boundingBox() const
+    {
+        MObject node = thisMObject();
+        MPoint corner1(-1, -1, -1);
+        MPoint corner2(1, 1, 1);
+        return MBoundingBox(corner1, corner2);
+    }
 
     virtual bool        excludeAsLocator() const { 
 		return false; 

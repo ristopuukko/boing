@@ -1123,7 +1123,9 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
 	solver_t::remove_rigid_body(m_rigid_body);
     //m_rigid_body = solver_t::create_rigid_body(collision_shape);
     m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
+    m_collision_shape->set_user_pointer(&name);
     solver_t::add_rigid_body(m_rigid_body,name().asChar());
+    
 // once at creation/load time : get transform from Maya transform node
     
     MPlugArray conn;
@@ -1381,6 +1383,7 @@ void boingRBNode::updateShape(const MPlug& plug, MDataBlock& data, float& collis
     }*/
 
     collision_shape_t::pointer  collision_shape;
+    
 	
     if(plgCollisionShape.isConnected()) {
         MPlugArray connections;
@@ -1391,6 +1394,9 @@ void boingRBNode::updateShape(const MPlug& plug, MDataBlock& data, float& collis
 				collisionShapeNode *pCollisionShapeNode = static_cast<collisionShapeNode*>(fnNode.userNode());
 				pCollisionShapeNode->setCollisionMarginOffset(collisionMarginOffset); //mb
                 collision_shape = pCollisionShapeNode->collisionShape();
+                char * name;
+                m_collision_shape->get_user_pointer(name);
+                cout<<"collision_shape->get_user_pointer() : "<<name<<endl;
             } else {
                 std::cout << "boingRBNode connected to a non-collision shape node!" << std::endl;
             }

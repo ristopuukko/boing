@@ -47,6 +47,15 @@ protected:
 
     void set_shape(btCollisionShape *shape) { return m_shape.reset(shape); }
 
+    // rp 2014
+    virtual void set_user_pointer(void *userPtr) {
+        m_shape->setUserPointer(userPtr);
+    }
+    virtual void get_user_pointer(void *userPtr) {
+        userPtr = m_shape->getUserPointer());
+    }
+    //
+    
 public:
     friend class bt_rigid_body_t;
     virtual ~bt_collision_shape_t() { }

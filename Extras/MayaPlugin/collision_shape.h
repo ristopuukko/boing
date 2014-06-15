@@ -51,6 +51,18 @@ public:
     virtual vec3f const& center()        { return m_impl->center();   }
     virtual quatf const& rotation()      { return m_impl->rotation();   }
 
+    // rp 2014
+    virtual void set_user_pointer(void *userPtr) {
+        m_impl->set_user_pointer(userPtr);
+    }
+    virtual void get_user_pointer(void *userPtr) {
+        m_impl->get_user_pointer(userPtr);
+    }
+    
+    
+    //
+    
+    
 public:
     virtual ~collision_shape_t() {}
 
@@ -58,6 +70,7 @@ public:
 	{
 		return m_impl->getBulletCollisionShape();
 	}
+    
 protected:
     friend class solver_t;
 

@@ -281,6 +281,16 @@ public:
 
 	virtual void createWorld();
     
+    // rp 2014
+    virtual void set_user_pointer(void *userPointer) {
+        
+    }
+    
+    virtual btCollisionObjectArray getCollisionObjectArray() {
+        return ( m_dynamicsWorld->getCollisionObjectArray() );
+    }
+    //
+    
 protected:
     friend class solver_t;
     bt_solver_t();
