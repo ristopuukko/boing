@@ -163,12 +163,14 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     getRigidBodies(thisObject, rbs, nodes);
     std::set<boingRBNode*>::iterator it;
 
-    
-    
     //view.beginGL();
     //glPushAttrib( GL_ALL_ATTRIB_BITS );
     //std::set<boingRBNode *>::iterator it;
     for(it=nodes.begin(); it!=nodes.end(); ++it) {
+        boingRBNode *bn = (*it);
+        
+        
+        cout<<MFnDependencyNode(bn->thisMObject()).name().asChar()<<endl;
         MPlug plgDraw((*it)->thisMObject(), boingRBNode::ia_draw);
         bool draw;
         plgDraw.getValue(draw);
