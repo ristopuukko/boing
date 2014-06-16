@@ -158,9 +158,7 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
                          M3dView::DisplayStatus status )
 {
     MStringArray rbs;
-    //std::set<boingRBNode *>nodes;
-    int count = thisObject.impl()->
-    boingRBNode *nodes = new boingRBNode;
+    std::set<boingRBNode *>nodes;
 	MObject thisObject(thisMObject());
     getRigidBodies(thisObject, rbs, nodes);
     std::set<boingRBNode*>::iterator it;
@@ -169,10 +167,8 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     //glPushAttrib( GL_ALL_ATTRIB_BITS );
     //std::set<boingRBNode *>::iterator it;
     for(it=nodes.begin(); it!=nodes.end(); ++it) {
-        boingRBNode *bn = (*it);
-        
-        
-        cout<<MFnDependencyNode(bn->thisMObject()).name().asChar()<<endl;
+        //boingRBNode *bn = (*it);
+        //cout<<MFnDependencyNode(bn->thisMObject()).name().asChar()<<endl;
         MPlug plgDraw((*it)->thisMObject(), boingRBNode::ia_draw);
         bool draw;
         plgDraw.getValue(draw);
@@ -183,7 +179,10 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
             //remove the scale, since it's already included in the node transform
             vec3f scale;
             rb->collision_shape()->get_scale(scale);
-            
+            void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
+            cout<<"namePtr : "<<namePtr<<endl;
+            char *name = static_cast<char*>(namePtr);
+            cout<<"drawing collision shape "<<name<<endl;
             glPushMatrix();
             glScalef(1/scale[0], 1/scale[1], 1/scale[2]);
             vec3f pos;

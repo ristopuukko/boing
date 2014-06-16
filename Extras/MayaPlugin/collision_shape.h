@@ -50,14 +50,15 @@ public:
     virtual vec3f const& local_inertia() { return m_impl->local_inertia();  }
     virtual vec3f const& center()        { return m_impl->center();   }
     virtual quatf const& rotation()      { return m_impl->rotation();   }
-
+    
     // rp 2014
-    virtual void set_user_pointer(void *userPtr) {
-        m_impl->set_user_pointer(userPtr);
-    }
-    virtual void get_user_pointer(void *userPtr) {
-        m_impl->get_user_pointer(userPtr);
-    }
+    //virtual void set_user_pointer(void *userPtr) {
+    //    impl()->getBulletCollisionShape()->setUserPointer(userPtr);
+        
+    //}
+    //virtual void get_user_pointer(void *userPtr) {
+    //    userPtr = impl()->getBulletCollisionShape()->getUserPointer();
+    //}
     
     
     //

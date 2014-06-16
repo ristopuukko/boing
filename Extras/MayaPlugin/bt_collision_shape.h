@@ -52,10 +52,10 @@ protected:
         m_shape->setUserPointer(userPtr);
     }
     virtual void get_user_pointer(void *userPtr) {
-        userPtr = m_shape->getUserPointer());
+        userPtr = m_shape->getUserPointer();
     }
     //
-    
+
 public:
     friend class bt_rigid_body_t;
     virtual ~bt_collision_shape_t() { }
