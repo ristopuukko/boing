@@ -280,12 +280,7 @@ public:
 	virtual void destroyWorld();
 
 	virtual void createWorld();
-    
-    // rp 2014
-    virtual void set_user_pointer(void *userPointer) {
-        
-    }
-    
+
     virtual btCollisionObjectArray getCollisionObjectArray() {
         return ( m_dynamicsWorld->getCollisionObjectArray() );
     }

@@ -163,6 +163,27 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     getRigidBodies(thisObject, rbs, nodes);
     std::set<boingRBNode*>::iterator it;
 
+    
+    shared_ptr<solver_impl_t> solv = solver_t::get_solver();
+    btSoftRigidDynamicsWorld* dynamicsWorld = ((bt_solver_t*)solv.get())->dynamicsWorld();
+    btCollisionWorld* pCollisionWorld = dynamicsWorld->getCollisionWorld();
+    int numManifolds = pCollisionWorld->getDispatcher()->getNumManifolds();
+    //cout<<"numManifolds : "<<numManifolds<<endl;
+    
+    btCollisionObjectArray btArray = ((bt_solver_t*)solv.get())->getCollisionObjectArray();
+ 
+    cout<< "btArray.size()  : " <<btArray.size()<<endl;
+    for(int i=0; i<btArray.size(); ++i) {
+        void *namePtr = btArray[i]->getCollisionShape()->getUserPointer();
+        char *name = static_cast<char*>(namePtr);
+        cout<<"parsing through : "<<name<<endl;
+    }
+    
+    
+
+    
+    
+    
     //view.beginGL();
     //glPushAttrib( GL_ALL_ATTRIB_BITS );
     //std::set<boingRBNode *>::iterator it;
@@ -179,10 +200,9 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
             //remove the scale, since it's already included in the node transform
             vec3f scale;
             rb->collision_shape()->get_scale(scale);
-            void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
-            cout<<"namePtr : "<<namePtr<<endl;
-            char *name = static_cast<char*>(namePtr);
-            cout<<"drawing collision shape "<<name<<endl;
+            //void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
+            //char *name = static_cast<char*>(namePtr);
+            //cout<<"drawing collision shape "<<name<<endl;
             glPushMatrix();
             glScalef(1/scale[0], 1/scale[1], 1/scale[2]);
             vec3f pos;

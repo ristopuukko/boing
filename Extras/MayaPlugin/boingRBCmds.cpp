@@ -42,6 +42,8 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 #include "solver.h"
 #include "LinearMath/btSerializer.h"
 
+#include "BulletCollision/CollisionDispatch/btCollisionObject.h"
+
 
 MString createBoingRBCmd::typeName("createBoingRb");
 
@@ -455,7 +457,7 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  collision_shape,
     
     
     if (!name.length()) {
-        name = "dRigidBody";
+        name = "boingRb1";
     }
     
     double mscale[3] = {1,1,1};
@@ -487,7 +489,9 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  collision_shape,
     //cout<<"transform : "<<pos<<endl;
     //cout<<"rotation : "<<rot<<endl;
     //cout<<"velocity : "<<vel<<endl;
-    //m_rigid_body->collision_shape()->set_user_pointer(name);
+    const char *rName = name.asChar();
+    void *namePtr = (void*)rName;
+    m_rigid_body->collision_shape()->getBulletCollisionShape()->setUserPointer(namePtr);
     
     //const rigid_body_impl_t* rb = static_cast<const rigid_body_impl_t*>(m_rigid_body.get());
     
