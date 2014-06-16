@@ -491,7 +491,8 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  collision_shape,
     //cout<<"velocity : "<<vel<<endl;
     const char *rName = name.asChar();
     void *namePtr = (void*)rName;
-    m_rigid_body->collision_shape()->getBulletCollisionShape()->setUserPointer(namePtr);
+    cout<<"namePtr : "<<namePtr<<endl;
+    collision_shape->getBulletCollisionShape()->setUserPointer(namePtr);
     
     //const rigid_body_impl_t* rb = static_cast<const rigid_body_impl_t*>(m_rigid_body.get());
     

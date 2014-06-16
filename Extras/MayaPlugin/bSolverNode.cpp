@@ -165,18 +165,19 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
 
     
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
-    btSoftRigidDynamicsWorld* dynamicsWorld = ((bt_solver_t*)solv.get())->dynamicsWorld();
-    btCollisionWorld* pCollisionWorld = dynamicsWorld->getCollisionWorld();
-    int numManifolds = pCollisionWorld->getDispatcher()->getNumManifolds();
+    //btSoftRigidDynamicsWorld* dynamicsWorld = ((bt_solver_t*)solv.get())->dynamicsWorld();
+    //btCollisionWorld* pCollisionWorld = dynamicsWorld->getCollisionWorld();
+    //int numManifolds = pCollisionWorld->getDispatcher()->getNumManifolds();
     //cout<<"numManifolds : "<<numManifolds<<endl;
     
     btCollisionObjectArray btArray = ((bt_solver_t*)solv.get())->getCollisionObjectArray();
  
-    cout<< "btArray.size()  : " <<btArray.size()<<endl;
+    //cout<< "btArray.size()  : " <<btArray.size()<<endl;
     for(int i=0; i<btArray.size(); ++i) {
         void *namePtr = btArray[i]->getCollisionShape()->getUserPointer();
-        char *name = static_cast<char*>(namePtr);
-        cout<<"parsing through : "<<name<<endl;
+        //char *name = static_cast<char*>(namePtr);
+        rbs.append(static_cast<char*>(namePtr));
+        //cout<<"parsing through : "<<name<<endl;
     }
     
     
@@ -187,14 +188,17 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     //view.beginGL();
     //glPushAttrib( GL_ALL_ATTRIB_BITS );
     //std::set<boingRBNode *>::iterator it;
-    for(it=nodes.begin(); it!=nodes.end(); ++it) {
+    
+    //for(it=nodes.begin(); it!=nodes.end(); ++it) {
+    for(int i = 0 ; ; i < rbs.length(); ++i) {
         //boingRBNode *bn = (*it);
         //cout<<MFnDependencyNode(bn->thisMObject()).name().asChar()<<endl;
-        MPlug plgDraw((*it)->thisMObject(), boingRBNode::ia_draw);
-        bool draw;
-        plgDraw.getValue(draw);
-        if (!draw) continue;
-        rigid_body_t::pointer rb = (*it)->rigid_body();
+        //MPlug plgDraw((*it)->thisMObject(), boingRBNode::ia_draw);
+        //bool draw;
+        //plgDraw.getValue(draw);
+        //if (!draw) continue;
+        //rigid_body_t::pointer rb = (*it)->rigid_body();
+        rigid_body_t::pointer rb = rbs[i]
         (*it)->update();
         if(rb) {
             //remove the scale, since it's already included in the node transform
