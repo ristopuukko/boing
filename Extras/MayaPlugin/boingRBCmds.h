@@ -90,7 +90,7 @@ public:
     MStringArray parseArguments(MString arg, MString token);
     collision_shape_t::pointer createCollisionShape(const MObject& node);
     
-    MStatus createRigidBody(collision_shape_t::pointer  collision_shape,
+    MStatus createRigidBody(collision_shape_t::pointer  &collision_shape,
                             MObject node,
                             MString name,
                             MVector vel,

@@ -167,17 +167,25 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
         (*it)->update();
     }
     
-    //shared_ptr<solver_impl_t> solv = solver_t::get_solver();
-    //btSoftRigidDynamicsWorld* dynamicsWorld = ((bt_solver_t*)solv.get())->dynamicsWorld();
+    shared_ptr<solver_impl_t> solv = solver_t::get_solver();
+    btSoftRigidDynamicsWorld* dynamicsWorld = ((bt_solver_t*)solv.get())->dynamicsWorld();
     //btCollisionWorld* pCollisionWorld = dynamicsWorld->getCollisionWorld();
     //int numManifolds = pCollisionWorld->getDispatcher()->getNumManifolds();
     //cout<<"numManifolds : "<<numManifolds<<endl;
-    
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
     
     //btCollisionObjectArray btArray = ((bt_solver_t*)solv.get())->getCollisionObjectArray();
     //cout<< "btArray.size()  : " <<btArray.size()<<endl;
     std::set<rigid_body_t::pointer>::iterator rit;
+
+    int size = ((bt_solver_t*)solver_t::get_solver().get())->m_nameMap.size();
+    cout<<"((bt_solver_t*)solv.get())->m_nameMap.size() : "<<size<<endl;
+    for ( int i=0; i<size; ++i) {
+        //const char*const * namePt = ((bt_solver_t*)solv.get())->m_nameMap.find(rb->collision_shape()->getBulletCollisionShape());
+        const char*const * namePt = ((bt_solver_t*)solv.get())->m_nameMap.getAtIndex(i);
+        //if (namePt && *namePt)
+        cout<<*namePt<<endl;
+    }
     
     for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
         rigid_body_t::pointer rb = (*rit);
@@ -185,6 +193,9 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
         char *name = static_cast<char*>(namePtr);
         //rbs.append(static_cast<char*>(namePtr));
         cout<<"parsing through : "<<name<<endl;
+        
+        
+
     //}
     
     

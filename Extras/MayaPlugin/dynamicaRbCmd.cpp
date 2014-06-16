@@ -43,6 +43,8 @@ Written by: Risto Puukko <risto.puukko@gmail.com>
 #include "bt_rigid_body.h"
 #include "solver.h"
 #include "LinearMath/btSerializer.h"
+#include "LinearMath/btHashMap.h"
+
 
 MString boingRbCmd::typeName("boingRb");
 
@@ -381,7 +383,6 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  collision_shape,
     
     //rigidBodyNode *rbNode = static_cast<rigidBodyNode*>(rb->get());
     //rb->register_name(solv.get(),rbNode->name().asChar());
-    
     solv->register_name(rb, name.asChar());
     
     m_rigid_body->set_transform(vec3f((float)pos.x, (float)pos.y, (float)pos.z),
