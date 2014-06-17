@@ -123,6 +123,10 @@ MObject     bSolverNode::ia_DBG_DrawConstraints;
 MObject     bSolverNode::ia_DBG_DrawConstraintLimits;
 MObject     bSolverNode::ia_DBG_FastWireframe;
 
+//std::vector<char*>   bSolverNode::procRbArray;
+btAlignedObjectArray<char*>   bSolverNode::procRbArray;
+
+
 float bSolverNode::collisionMarginOffset; //mb
 
 #define ATTR_POSITION "position"
@@ -152,6 +156,18 @@ static int getDbgDrawVal(const MObject& thisObj, const MObject& attr, int flag)
 	return retVal ? (1 << flag) : 0;
 }
 
+/*
+std::vector<char *> bSolverNode::getProcRbArray() {
+    return procRbArray;
+}
+
+void bSolverNode::setprocRbArray(char *procRb) {
+    procRbArray.push_back( procRb ) ;
+}
+void bSolverNode::destroyProcRbArray() {
+    procRbArray.clear();
+}
+*/
 
 void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
                          M3dView::DisplayStyle style,
@@ -163,9 +179,16 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     getRigidBodies(thisObject, rbs, nodes);
     std::set<boingRBNode*>::iterator it;
     
+    for(int idx=0; idx<procRbArray.size(); idx++) {
+        std::cout<<"procRbArray : "<<procRbArray[idx]<<endl;
+        cout<<idx<<endl;
+    }
+    
+    /*
     for(it=nodes.begin(); it!=nodes.end(); ++it) {
         (*it)->update();
     }
+    */
     
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     //btSoftRigidDynamicsWorld* dynamicsWorld = ((bt_solver_t*)solv.get())->dynamicsWorld();
@@ -191,11 +214,11 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
         //void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
         //rb->impl()->body()->setUserPointer((void*) idx );
         //void *namePtr = rb->impl()->body()->getUserPointer();
-        void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
+        //void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
 
-        char *name = static_cast<char*>(namePtr);
+        //char *name = static_cast<char*>(namePtr);
         //char *name = (char*)namePtr;
-        printf("%s\n", (const char*)name);
+        //printf("%s\n", (const char*)name);
         
         //rbs.append(static_cast<char*>(namePtr));
         //cout<<"name : "<<name<<endl;
@@ -1007,7 +1030,22 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
      MFnDependencyNode fnNode(node);
      
     cout<<"bSolverNode::initRigidBody fnNode() : "<<fnNode.name()<<endl;
-     
+    
+    //for(int i=0; i<5; i++) {
+    MString test = "test_";
+    test += fnNode.name();
+    cout<<test<<endl;
+    //setprocRbArray((char*)test.asChar());
+    //int size = procRbArray.size();
+    //procRbArray.resize(size+1);
+    procRbArray.push_back((char*)test.asChar());
+    //}
+
+    
+    for(int idx=0; idx<procRbArray.size(); idx++) {
+        std::cout<<"procRbArray : "<<procRbArray[idx]<<endl;
+    }
+
     boingRBNode *rbNode = static_cast<boingRBNode*>(fnNode.userNode());
     
 	if (m_reInitialize)
@@ -1458,7 +1496,7 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
 	shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     btCollisionObjectArray btArray = ((bt_solver_t*)solv.get())->getCollisionObjectArray();
-    cout<< "btArray.size()  : " <<btArray.size()<<endl;
+    //cout<< "btArray.size()  : " <<btArray.size()<<endl;
     std::set<rigid_body_t::pointer>::iterator it;
     
     for(it=rbds.begin(); it!=rbds.end(); ++it) {
@@ -1469,6 +1507,8 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
         solver_t::remove_rigid_body(rb);
     }
     
+    //destroyProcRbArray();
+    procRbArray.clear();
     
     
 }
@@ -2049,7 +2089,7 @@ boingRBNode* bSolverNode::getboingRBNode(btCollisionObject* btColObj)
 
 void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
 {
-    cout<<"bSolverNode::computeRigidBodies()"<<endl;
+    //cout<<"bSolverNode::computeRigidBodies()"<<endl;
     
     bool enabled = data.inputValue(ia_enabled).asBool();
     if(!enabled) {

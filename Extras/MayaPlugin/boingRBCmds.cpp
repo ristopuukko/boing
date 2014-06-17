@@ -40,6 +40,7 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 #include "shared_ptr.h"
 #include "bt_rigid_body.h"
 #include "solver.h"
+#include "bSolverNode.h"
 #include "LinearMath/btSerializer.h"
 
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
@@ -496,11 +497,17 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
     //const rigid_body_impl_t* rb = static_cast<const rigid_body_impl_t*>(m_rigid_body.get());
     
     char *rName = (char *)name.asChar();
+    //cout<<"Setting "<<name.asChar()<<" to vector procRbArray"<<endl;
+    //bSolverNode::setprocRbArray(rName);
+    //bSolverNode::procRbArray.push_back ((char*const)name.asChar());
+    //cout<<bSolverNode::getProcRbArray()<<endl;
     void *namePtr = rName;
     //cout<<"############# createRigidBody ########## "<<endl;
     //cout<<"namePtr : "<<(static_cast<char*>(namePtr))<<endl;
     //m_rigid_body->impl()->body()->btCollisionObject::setUserPointer(namePtr);
     collision_shape->getBulletCollisionShape()->setUserPointer(namePtr);
+   
+    
     //m_rigid_body->collision_shape()->getBulletCollisionShape()->setUserPointer(namePtr);
     //const rigid_body_impl_t* rb = m_rigid_body->impl();
     

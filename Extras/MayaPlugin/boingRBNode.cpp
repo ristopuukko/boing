@@ -727,23 +727,23 @@ void boingRBNode::computeCollisionShape(const MPlug& plug, MDataBlock& data)
 		{
             case 4:
                 //box
-                cout<<"boingRBNode::computeCollisionShape creates a box!"<<endl;
+                //cout<<"boingRBNode::computeCollisionShape creates a box!"<<endl;
                 m_collision_shape = solver_t::create_box_shape();
                 break;
             case 5:
                 //sphere
-                cout<<"boingRBNode::computeCollisionShape creates a sphere!"<<endl;
+                //cout<<"boingRBNode::computeCollisionShape creates a sphere!"<<endl;
                 m_collision_shape = solver_t::create_sphere_shape();
                 break;
             case 6:
                 //plane
-                cout<<"boingRBNode::computeCollisionShape creates a plane!"<<endl;
+                //cout<<"boingRBNode::computeCollisionShape creates a plane!"<<endl;
                 m_collision_shape = solver_t::create_plane_shape();
                 break;
             
             default:
 			{
-                cout<<"boingRBNode::computeCollisionShape creates a mesh!"<<endl;
+                //cout<<"boingRBNode::computeCollisionShape creates a mesh!"<<endl;
 				MPlugArray plgaConnectedTo;
 				plgInShape.connectedTo(plgaConnectedTo, true, true);
 				int numSelectedShapes = plgaConnectedTo.length();
@@ -751,7 +751,7 @@ void boingRBNode::computeCollisionShape(const MPlug& plug, MDataBlock& data)
 				if(numSelectedShapes > 0) 
 				{
                     MFnDependencyNode fnNode(plgaConnectedTo[0].node());
-                    cout<<"boingRBNode::computeCollisionShape fnNode.name : "<<fnNode.name().asChar()<<endl;
+                    //cout<<"boingRBNode::computeCollisionShape fnNode.name : "<<fnNode.name().asChar()<<endl;
 					MObject node = plgaConnectedTo[0].node();
 					m_collision_shape = createCollisionShape(node);
 				}

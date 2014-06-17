@@ -37,20 +37,19 @@ Modified by Dongsoo Han <dongsoo.han@amd.com>
 
 #include <maya/MString.h>
 #include <maya/MTypeId.h>
-//#include <maya/MPxNode.h>
 #include <maya/MPxLocatorNode.h>
 #include <maya/MItDependencyNodes.h>
 #include <maya/MTime.h>
 #include <maya/MObjectArray.h>
 #include <maya/MStringArray.h>
-
-
-//#include <vector>
-
+#include <vector>
 #include "mathUtils.h"
 #include "boingRBNode.h"
 //#include "boingRbCmd.h"
 #include "bCallBackNode.h"
+
+//using namespace std;
+
 
 class bSolverNode : public MPxLocatorNode
 {
@@ -146,15 +145,25 @@ public:
 	static void updateAllRigidBodies();
     //<rp 2014>
     static void getRigidBodies(MObject &node, MStringArray& rbds, std::set<boingRBNode*>&nodes);
+    //static std::vector<char*>   getProcRbArray();
+    //static void setprocRbArray(char *procRb);
+    //static void destroyProcRbArray();
     //</rp 2014>
 
+//private:
+//    static std::vector<char*> procRbArray;
+    
 protected:
     //<rp 2014>
     MObjectArray fScallBackNodes;
     MObjectArray sScallBackNodes;
     MObjectArray sEcallBackNodes;
     MObjectArray fEcallBackNodes;
-    //friend  class boingRbCmd;
+
+    //static std::vector<char*>   procRbArray;
+    static btAlignedObjectArray<char*> procRbArray;
+    
+    friend  class boingRbCmd;
     //</rp 2014>
     
     
