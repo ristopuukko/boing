@@ -173,26 +173,27 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     //int numManifolds = pCollisionWorld->getDispatcher()->getNumManifolds();
     //cout<<"numManifolds : "<<numManifolds<<endl;
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
-    
-    //btCollisionObjectArray btArray = ((bt_solver_t*)solv.get())->getCollisionObjectArray();
-    //cout<< "btArray.size()  : " <<btArray.size()<<endl;
-    std::set<rigid_body_t::pointer>::iterator rit;
-
-    int size = ((bt_solver_t*)solver_t::get_solver().get())->m_nameMap.size();
-    cout<<"((bt_solver_t*)solv.get())->m_nameMap.size() : "<<size<<endl;
-    for ( int i=0; i<size; ++i) {
-        //const char*const * namePt = ((bt_solver_t*)solv.get())->m_nameMap.find(rb->collision_shape()->getBulletCollisionShape());
-        const char*const * namePt = ((bt_solver_t*)solv.get())->m_nameMap.getAtIndex(i);
-        //if (namePt && *namePt)
-        cout<<*namePt<<endl;
+    /*
+    btCollisionObjectArray btArray = ((bt_solver_t*)solv.get())->getCollisionObjectArray();
+    cout<< "btArray.size()  : " <<btArray.size()<<endl;
+    for(int i = 0 ; i < btArray.size(); ++i) {
+        void *namePtr = btArray[i]->getCollisionShape()->getUserPointer();
+        char *name = static_cast<char*>(namePtr);
+        cout<<"btArray["<<i<<"] : "<<name<<endl;
     }
+    */
+    std::set<rigid_body_t::pointer>::iterator rit;
     
     for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
         rigid_body_t::pointer rb = (*rit);
         void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
         char *name = static_cast<char*>(namePtr);
         //rbs.append(static_cast<char*>(namePtr));
-        cout<<"parsing through : "<<name<<endl;
+        cout<<"getUserPointer()            : "<<name<<endl;
+        btCollisionShape btColl = rb->collision_shape()->getBulletCollisionShape();
+        char * addr = (char*)btColl;
+        btColl
+        cout<<"getBulletCollisionShape()   : "<<addr<<endl;
         
         
 

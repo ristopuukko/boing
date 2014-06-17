@@ -20,7 +20,9 @@ subject to the following restrictions:
 #include "LinearMath/btVector3.h"
 #include "LinearMath/btMatrix3x3.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h" //for the shape types
+#include <iostream>
 class btSerializer;
+
 
 
 ///The btCollisionShape class provides an interface for collision shapes that can be shared among btCollisionObjects.
@@ -124,10 +126,14 @@ public:
 	void	setUserPointer(void*  userPtr)
 	{
 		m_userPointer = userPtr;
+        //char *charPtr = (char*)m_userPointer;
+        //std::cout<<"storing : "<<charPtr<<" in setUserPointer()"<<std::endl;
 	}
 
 	void*	getUserPointer() const
 	{
+        //char *charPtr = (char*)m_userPointer;
+        //std::cout<<"returning : "<<charPtr<<" from getUserPointer()"<<std::endl;
 		return m_userPointer;
 	}
 

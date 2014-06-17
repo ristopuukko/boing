@@ -478,14 +478,16 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
             fnTransform.getScale(mscale);
         }
     }
-    //cout<<"removing m_rigid_body"<<endl;
-    solver_t::remove_rigid_body(m_rigid_body);
     
-    cout<<"register name : "<<name<<endl;
+    //cout<<"register name : "<<name<<endl;
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     rigid_body_t::pointer m_rigid_body = solver_t::create_rigid_body(collision_shape);
     
-    //cout<<"transform : "<<pos<<endl;
+    //cout<<"removing m_rigid_body"<<endl;
+    //solver_t::remove_rigid_body(m_rigid_body);
+
+    solver_t::add_rigid_body(m_rigid_body, name.asChar());
+   //cout<<"transform : "<<pos<<endl;
     //cout<<"rotation : "<<rot<<endl;
     //cout<<"velocity : "<<vel<<endl;
 
@@ -493,11 +495,15 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
     //int numManifolds = pCollisionWorld->getDispatcher()->getNumManifolds();
     //const rigid_body_impl_t* rb = static_cast<const rigid_body_impl_t*>(m_rigid_body.get());
     
-    const char *rName = name.asChar();
-    void *namePtr = (void*)rName;
-    cout<<"storing namePtr : "<<(static_cast<char*>(namePtr))<<endl;
+    char *rName = (char *)name.asChar();
+    void *namePtr = rName;
+    cout<<"############# createRigidBody ########## "<<endl;
+    cout<<"namePtr : "<<(static_cast<char*>(namePtr))<<endl;
     m_rigid_body->collision_shape()->getBulletCollisionShape()->setUserPointer(namePtr);
-
+    cout<<"getBulletCollisionShape() : "<<(char*)(m_rigid_body->collision_shape()->getBulletCollisionShape())<<endl;
+    cout<<"############# end createRigidBody ########## "<<endl;
+    
+    //collision_shape->getBulletCollisionShape()->setUserPointer(namePtr);
     //const rigid_body_impl_t* rb = m_rigid_body->impl();
     
     //rigidBodyNode *rbNode = static_cast<rigidBodyNode*>(rb->get());
@@ -541,8 +547,6 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
     float angDamp = 0.2f;
     //MPlug(thisObject, rigidBodyNode::ia_angularDamping).getValue(angDamp);
     m_rigid_body->set_angular_damping(angDamp);
-    
-    solver_t::add_rigid_body(m_rigid_body, name.asChar());
 
     return MS::kSuccess;
 }
@@ -818,7 +822,7 @@ MVector boingRbCmd::getBulletVectorAttribute(MObject node, MString attr) {
     MVector vec;
     MFnDependencyNode fnNode(node);
     
-    if(fnDagNode.typeId() == boingRBNode::typeId) {
+    if(fnNode.typeId() == boingRBNode::typeId) {
         boingRBNode *rbNode = static_cast<boingRBNode*>(fnNode.userNode());
         rigid_body_t::pointer rb = rbNode->rigid_body();
         if (rb)
