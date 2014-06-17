@@ -1113,21 +1113,20 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
 
     cout << "m_collision_shape : "<<m_collision_shape<<endl;
     
-    if(!m_collision_shape) { //collision_shape) {
+    if(!m_collision_shape) {
         //not connected to a collision shape, put a default one
-        //collision_shape = solver_t::create_sphere_shape();
         m_collision_shape = solver_t::create_sphere_shape();
     }
 	
-    cout<<"removing m_rigid_body"<<endl;
+    //cout<<"removing m_rigid_body"<<endl;
 	solver_t::remove_rigid_body(m_rigid_body);
-    //m_rigid_body = solver_t::create_rigid_body(collision_shape);
     m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
     const char *rName = MFnDependencyNode(thisObject).name().asChar();
     void *namePtr = (void*)rName;
-    cout<<"setting user pointer : "<<MFnDependencyNode(thisObject).name().asChar()<<endl;
+    //cout<<"########### boingRbNode ###########"<<endl;
+    //cout<<"setting user pointer : "<<rName<<endl;
     m_collision_shape->getBulletCollisionShape()->setUserPointer(namePtr);
-    //m_collision_shape->set_user_pointer(namePtr);
+    //cout<<"pointer value : "<<&rName<<endl;
     solver_t::add_rigid_body(m_rigid_body,name().asChar());
     
 // once at creation/load time : get transform from Maya transform node

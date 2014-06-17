@@ -69,7 +69,7 @@ public:
 	virtual void add_constraint(bt_constraint_t* constraint, bool disableCollide = false) = 0;
 	virtual void remove_constraint(bt_constraint_t* constraint) = 0;
 	virtual void remove_all_constraints() = 0;
-    
+    virtual btRigidBody* body() = 0;
     // <rp 2014>
     //virtual void set_user_pointer(void *p) = 0;
     // <//rp 2014>

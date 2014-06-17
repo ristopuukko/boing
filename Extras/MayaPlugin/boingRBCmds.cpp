@@ -349,7 +349,7 @@ MStatus boingRbCmd::redoIt()
             //cout<<"rbname = "<<rbname<<endl;
             //}
             
-            cout<<"result : "<<result<<endl;
+            //cout<<"result : "<<result<<endl;
             setResult(result);
         }
         
@@ -368,14 +368,14 @@ MStatus boingRbCmd::redoIt()
         for (int i=0; i<size; ++i) {
             //cout<<"createArgs[i] = "<<createArgs[i]<<endl;
             MStringArray singleArg = parseArguments(createArgs[i],"=");
-            cout<<"singleArg[0] : "<<singleArg[0]<<endl;
-            cout<<"singleArg[1] : "<<singleArg[1]<<endl;
+            //cout<<"singleArg[0] : "<<singleArg[0]<<endl;
+            //cout<<"singleArg[1] : "<<singleArg[1]<<endl;
             if (singleArg[0] == "name") {
                 //name
                 rbname = singleArg[1];
-                cout<<"name"<<endl;
-                cout<<"singleArg[0] : "<<singleArg[0]<<endl;
-                cout<<"singleArg[1] : "<<singleArg[1]<<endl;
+                //cout<<"name"<<endl;
+                //cout<<"singleArg[0] : "<<singleArg[0]<<endl;
+                //cout<<"singleArg[1] : "<<singleArg[1]<<endl;
                 
             } else if (singleArg[0] == "geo") {
                 //geo
@@ -466,7 +466,8 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
     //collision_shape_t::pointer  collision_shape;
     if(!collision_shape) {
         //not connected to a collision shape, put a default one
-        collision_shape = solver_t::create_sphere_shape();
+        collision_shape = solver_t::create_box_shape();
+        //collision_shape = solver_t::create_sphere_shape();
     } else {
         if ( rot == MVector::zero || pos == MVector::zero ) {
             MFnDagNode fnDagNode(node);
@@ -486,7 +487,6 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
     //cout<<"removing m_rigid_body"<<endl;
     //solver_t::remove_rigid_body(m_rigid_body);
 
-    solver_t::add_rigid_body(m_rigid_body, name.asChar());
    //cout<<"transform : "<<pos<<endl;
     //cout<<"rotation : "<<rot<<endl;
     //cout<<"velocity : "<<vel<<endl;
@@ -497,13 +497,11 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
     
     char *rName = (char *)name.asChar();
     void *namePtr = rName;
-    cout<<"############# createRigidBody ########## "<<endl;
-    cout<<"namePtr : "<<(static_cast<char*>(namePtr))<<endl;
-    m_rigid_body->collision_shape()->getBulletCollisionShape()->setUserPointer(namePtr);
-    cout<<"getBulletCollisionShape() : "<<(char*)(m_rigid_body->collision_shape()->getBulletCollisionShape())<<endl;
-    cout<<"############# end createRigidBody ########## "<<endl;
-    
-    //collision_shape->getBulletCollisionShape()->setUserPointer(namePtr);
+    //cout<<"############# createRigidBody ########## "<<endl;
+    //cout<<"namePtr : "<<(static_cast<char*>(namePtr))<<endl;
+    //m_rigid_body->impl()->body()->btCollisionObject::setUserPointer(namePtr);
+    collision_shape->getBulletCollisionShape()->setUserPointer(namePtr);
+    //m_rigid_body->collision_shape()->getBulletCollisionShape()->setUserPointer(namePtr);
     //const rigid_body_impl_t* rb = m_rigid_body->impl();
     
     //rigidBodyNode *rbNode = static_cast<rigidBodyNode*>(rb->get());
@@ -547,6 +545,8 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
     float angDamp = 0.2f;
     //MPlug(thisObject, rigidBodyNode::ia_angularDamping).getValue(angDamp);
     m_rigid_body->set_angular_damping(angDamp);
+
+    solver_t::add_rigid_body(m_rigid_body, name.asChar());
 
     return MS::kSuccess;
 }

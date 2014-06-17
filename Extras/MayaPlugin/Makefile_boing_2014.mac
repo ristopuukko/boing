@@ -365,7 +365,7 @@ $(LIBRARY): $(OBJECTS)
 install: $(LIBRARY)
 	cp -f $(LIBRARY) $(MAYA_PLUG_IN_PATH)/plug-ins
 	cp -f scripts/*.mel $(MAYA_PLUG_IN_PATH)/scripts
-	cp -f icons/*.xpm $(MAYA_PLUG_IN_PATH)/icons
+	#cp -f icons/*.xpm $(MAYA_PLUG_IN_PATH)/icons
 	cp -f icons/*.png $(MAYA_PLUG_IN_PATH)/icons
 
 clean:
