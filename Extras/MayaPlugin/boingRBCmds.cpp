@@ -408,13 +408,17 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
         //not connected to a collision shape, put a default one
         collision_shape = solver_t::create_box_shape();
     } else {
-        if ( rot == MVector::zero || pos == MVector::zero ) {
+        if ( !node.isNull() ) {
             MFnDagNode fnDagNode(node);
             //cout<<"node : "<<fnDagNode.partialPathName()<<endl;
             MFnTransform fnTransform(fnDagNode.parent(0));
             //cout<<"MFnTransform node : "<<fnTransform.partialPathName()<<endl;
-            pos = fnTransform.getTranslation(MSpace::kTransform);
-            fnTransform.getRotation(mrotation, MSpace::kTransform);
+            if ( pos == MVector::zero ) {
+                pos = fnTransform.getTranslation(MSpace::kTransform);
+            }
+            if ( rot == MVector::zero ) {
+                fnTransform.getRotation(mrotation, MSpace::kTransform);
+            }
             fnTransform.getScale(mscale);
         }
     }
