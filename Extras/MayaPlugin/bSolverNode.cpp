@@ -123,9 +123,7 @@ MObject     bSolverNode::ia_DBG_DrawConstraints;
 MObject     bSolverNode::ia_DBG_DrawConstraintLimits;
 MObject     bSolverNode::ia_DBG_FastWireframe;
 
-//std::vector<char*>   bSolverNode::procRbArray;
-btAlignedObjectArray<char*>   bSolverNode::procRbArray;
-
+MStringArray    bSolverNode::procRbArray;
 
 float bSolverNode::collisionMarginOffset; //mb
 
@@ -156,18 +154,6 @@ static int getDbgDrawVal(const MObject& thisObj, const MObject& attr, int flag)
 	return retVal ? (1 << flag) : 0;
 }
 
-/*
-std::vector<char *> bSolverNode::getProcRbArray() {
-    return procRbArray;
-}
-
-void bSolverNode::setprocRbArray(char *procRb) {
-    procRbArray.push_back( procRb ) ;
-}
-void bSolverNode::destroyProcRbArray() {
-    procRbArray.clear();
-}
-*/
 
 void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
                          M3dView::DisplayStyle style,
@@ -179,83 +165,18 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     getRigidBodies(thisObject, rbs, nodes);
     std::set<boingRBNode*>::iterator it;
     
-    for(int idx=0; idx<procRbArray.size(); idx++) {
-        std::cout<<"procRbArray : "<<procRbArray[idx]<<endl;
-        cout<<idx<<endl;
-    }
-    
-    /*
-    for(it=nodes.begin(); it!=nodes.end(); ++it) {
-        (*it)->update();
-    }
-    */
-    
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
-    //btSoftRigidDynamicsWorld* dynamicsWorld = ((bt_solver_t*)solv.get())->dynamicsWorld();
-    //btCollisionWorld* pCollisionWorld = dynamicsWorld->getCollisionWorld();
-    //int numManifolds = pCollisionWorld->getDispatcher()->getNumManifolds();
-    //cout<<"numManifolds : "<<numManifolds<<endl;
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
-    /*
-    btCollisionObjectArray btArray = ((bt_solver_t*)solv.get())->getCollisionObjectArray();
-    cout<< "btArray.size()  : " <<btArray.size()<<endl;
-    for(int i = 0 ; i < btArray.size(); ++i) {
-        void *namePtr = btArray[i]->getCollisionShape()->getUserPointer();
-        char *name = static_cast<char*>(namePtr);
-        cout<<"btArray["<<i<<"] : "<<name<<endl;
-    }
-    */
+
     std::set<rigid_body_t::pointer>::iterator rit;
-    //int idx=0;
+    
     for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
-        //cout<<idx<<endl;
-        //idx++;
         rigid_body_t::pointer rb = (*rit);
-        //void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
-        //rb->impl()->body()->setUserPointer((void*) idx );
-        //void *namePtr = rb->impl()->body()->getUserPointer();
-        //void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
-
-        //char *name = static_cast<char*>(namePtr);
-        //char *name = (char*)namePtr;
-        //printf("%s\n", (const char*)name);
-        
-        //rbs.append(static_cast<char*>(namePtr));
-        //cout<<"name : "<<name<<endl;
-        
-
-    //}
-    
-    
-
-    
-    
-    
-    //view.beginGL();
-    //glPushAttrib( GL_ALL_ATTRIB_BITS );
-    //for(int i = 0 ; ; i < rbs.length(); ++i) {
-        //boingRBNode *bn = (*it);
-        //cout<<MFnDependencyNode(bn->thisMObject()).name().asChar()<<endl;
-        //MPlug plgDraw((*it)->thisMObject(), boingRBNode::ia_draw);
-        //bool draw;
-        //plgDraw.getValue(draw);
-        //if (!draw) continue;
-        //rigid_body_t::pointer rb = (*it)->rigid_body();
-        
-        //btArray[i]->getCollisionShape()
-        //rigid_body_t::pointer rb = rbs[i]
-        
-        //btCollisionObject *btc = static_cast<btCollisionObject *>(rb->collision_shape()->getBulletCollisionShape());
-        //boingRBNode *bn = getboingRBNode(btc);
-        //bn->update();
-        //(*it)->update();
         if(rb) {
             //remove the scale, since it's already included in the node transform
             vec3f scale;
             rb->collision_shape()->get_scale(scale);
-            //void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
-            //char *name = static_cast<char*>(namePtr);
-            //cout<<"drawing collision shape "<<name<<endl;
+
             glPushMatrix();
             glScalef(1/scale[0], 1/scale[1], 1/scale[2]);
             vec3f pos;
@@ -1000,9 +921,7 @@ void destroySoftBody(const MPlug& plug, MObject& node, MDataBlock& data)
 
 void destroyRigidBody(const MPlug& plug, MObject& node, MDataBlock& data)
 {
-	//MFnDagNode fnDagNode(node);
     MFnDependencyNode fnNode(node);
-	//boingRBNode *rbNode = static_cast<boingRBNode*>(fnDagNode.userNode());
 	boingRBNode *rbNode = static_cast<boingRBNode*>(fnNode.userNode());
   	rbNode->destroyRigidBody();
 }
@@ -1026,32 +945,19 @@ void bSolverNode::getConnectedTransform(MObject& node, MObject & retNode) {
 
 void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& data)
 {
-    //bSolverNode::collisionMarginOffset = data.inputValue(bSolverNode::ia_collisionMargin).asFloat();
      MFnDependencyNode fnNode(node);
      
-    cout<<"bSolverNode::initRigidBody fnNode() : "<<fnNode.name()<<endl;
+    //cout<<"bSolverNode::initRigidBody fnNode() : "<<fnNode.name()<<endl;
     
-    //for(int i=0; i<5; i++) {
-    MString test = "test_";
-    test += fnNode.name();
-    cout<<test<<endl;
-    //setprocRbArray((char*)test.asChar());
-    //int size = procRbArray.size();
-    //procRbArray.resize(size+1);
-    procRbArray.push_back((char*)test.asChar());
-    //}
-
-    
-    for(int idx=0; idx<procRbArray.size(); idx++) {
-        std::cout<<"procRbArray : "<<procRbArray[idx]<<endl;
-    }
-
     boingRBNode *rbNode = static_cast<boingRBNode*>(fnNode.userNode());
     
 	if (m_reInitialize)
 		rbNode->computeRigidBody(plug,data);
 	
 	rigid_body_t::pointer rb = rbNode->rigid_body();
+
+    procRbArray.append(fnNode.name());
+    
     MObject transNode;
     getConnectedTransform(node, transNode);
     if (transNode.isNull()) return;
@@ -1106,7 +1012,6 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
         plgPosition.child(1).setValue((double)pos[1]);
         plgPosition.child(2).setValue((double)pos[2]);
         MPlug plgRotation(node, boingRBNode::ia_rotation);
-        cout<<"setting rotation : "<<rot<<endl;
         MVector r(meuler.asVector());
         plgRotation.child(0).setValue(r.x);
         plgRotation.child(1).setValue(r.y);
@@ -1141,13 +1046,6 @@ void bSolverNode::initSoftBody(const MPlug& plug, MObject& node, MDataBlock& dat
 	if (m_reInitialize)
 		sbNode->computeSoftBody(plug,data);
     
-	/*
-     MObject temp;
-     
-     MPlug plgSoft(node, SoftBodyNode::ca_softBody);
-     plgSoft.setValue(false);
-     plgSoft.getValue(temp);
-     */
 	MPlug plgInputMesh(node, SoftBodyNode::inputMesh);
     MObject upd;
     //force evaluation of the shape
@@ -1492,7 +1390,8 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
 		}
     }
     
-    //solver_t::remove_all_rigid_bodies();
+    solver_t::remove_all_rigid_bodies();
+    /*
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
 	shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     btCollisionObjectArray btArray = ((bt_solver_t*)solv.get())->getCollisionObjectArray();
@@ -1501,13 +1400,9 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
     
     for(it=rbds.begin(); it!=rbds.end(); ++it) {
         rigid_body_t::pointer rb = (*it);
-        //void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
-        //char *name = static_cast<char*>(namePtr);
-        //cout<<"removing rb : "<<name<<endl;
         solver_t::remove_rigid_body(rb);
     }
-    
-    //destroyProcRbArray();
+    */
     procRbArray.clear();
     
     
@@ -2143,11 +2038,6 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
                 
 				if (rb)
 				{
-					//if(fnDagNode.parentCount() == 0) {
-                    //std::cout << "No transform found!" << std::endl;
-					//	continue;
-					//}
-                    
 					const void* rigidBody = ((bt_rigid_body_t*)(rb->impl()))->body();
                     
 					if ( !rigidBody )

@@ -145,13 +145,8 @@ public:
 	static void updateAllRigidBodies();
     //<rp 2014>
     static void getRigidBodies(MObject &node, MStringArray& rbds, std::set<boingRBNode*>&nodes);
-    //static std::vector<char*>   getProcRbArray();
-    //static void setprocRbArray(char *procRb);
-    //static void destroyProcRbArray();
     //</rp 2014>
 
-//private:
-//    static std::vector<char*> procRbArray;
     
 protected:
     //<rp 2014>
@@ -160,8 +155,7 @@ protected:
     MObjectArray sEcallBackNodes;
     MObjectArray fEcallBackNodes;
 
-    //static std::vector<char*>   procRbArray;
-    static btAlignedObjectArray<char*> procRbArray;
+    static MStringArray procRbArray;
     
     friend  class boingRbCmd;
     //</rp 2014>

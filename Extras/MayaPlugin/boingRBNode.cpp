@@ -1111,7 +1111,7 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
         }
     }*/
 
-    cout << "m_collision_shape : "<<m_collision_shape<<endl;
+    //cout << "m_collision_shape : "<<m_collision_shape<<endl;
     
     if(!m_collision_shape) {
         //not connected to a collision shape, put a default one

@@ -84,8 +84,9 @@ public:
     bool hasSyntax() const { return true; }
     MObject nameToNode( MString name ) ;
     MPlug nameToNodePlug( MString attrName, MObject nodeObject );
-    MStatus setBulletVectorAttribute(MObject node, MString attr, MVector vec);
-    MVector getBulletVectorAttribute(MObject node, MString attr);
+    MStatus deleteRigidBody(MString &name);
+    MStatus setBulletVectorAttribute(MString &name, MString attr, MVector vec);
+    MVector getBulletVectorAttribute(MString &name, MString attr);
     MString checkAttribute(MString attr);
     MStringArray parseArguments(MString arg, MString token);
     collision_shape_t::pointer createCollisionShape(const MObject& node);
@@ -110,7 +111,8 @@ protected:
     bool    isDelete;
     bool    isValue;
     MArgParser *argParser;
-    
+    static rigid_body_t::pointer getPointerFromName(MString &name);
+
 };
 
 #endif
