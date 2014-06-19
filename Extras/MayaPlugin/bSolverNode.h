@@ -47,9 +47,10 @@ Modified by Dongsoo Han <dongsoo.han@amd.com>
 #include "boingRBNode.h"
 //#include "boingRbCmd.h"
 #include "bCallBackNode.h"
+#include "boing.h"
+
 
 //using namespace std;
-
 
 class bSolverNode : public MPxLocatorNode
 {
@@ -133,6 +134,7 @@ public:
 	static  MObject     ia_DBG_DrawConstraintLimits;
 	static  MObject     ia_DBG_FastWireframe;
 
+    
     //
 
 public: 
@@ -146,6 +148,7 @@ public:
     //<rp 2014>
     static void getRigidBodies(MObject &node, MStringArray& rbds, std::set<boingRBNode*>&nodes);
     //</rp 2014>
+    static set<boing*> myRbNodes;
 
     
 protected:
@@ -155,8 +158,7 @@ protected:
     MObjectArray sEcallBackNodes;
     MObjectArray fEcallBackNodes;
 
-    static MStringArray procRbArray;
-    
+    //static MStringArray procRbArray;
     friend  class boingRbCmd;
     //</rp 2014>
     

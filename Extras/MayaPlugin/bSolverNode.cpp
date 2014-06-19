@@ -123,7 +123,9 @@ MObject     bSolverNode::ia_DBG_DrawConstraints;
 MObject     bSolverNode::ia_DBG_DrawConstraintLimits;
 MObject     bSolverNode::ia_DBG_FastWireframe;
 
-MStringArray    bSolverNode::procRbArray;
+//MStringArray    bSolverNode::procRbArray;
+
+set<boing*> bSolverNode::myRbNodes;
 
 float bSolverNode::collisionMarginOffset; //mb
 
@@ -165,6 +167,14 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     getRigidBodies(thisObject, rbs, nodes);
     std::set<boingRBNode*>::iterator it;
     
+    //debug boing - container
+    /*
+    std::vector<boing*>::iterator bit;
+    for (bit=myRbNodes.begin(); bit!=myRbNodes.end(); ++bit) {
+        cout<<"myRbNodes->get_name() : "<<(*bit)->get_name()<<endl;
+    }
+    */
+    
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
 
@@ -176,7 +186,7 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
             //remove the scale, since it's already included in the node transform
             vec3f scale;
             rb->collision_shape()->get_scale(scale);
-
+            
             glPushMatrix();
             glScalef(1/scale[0], 1/scale[1], 1/scale[2]);
             vec3f pos;
@@ -888,7 +898,6 @@ void bSolverNode::postConstructor()
 
 void* bSolverNode::creator()
 {
-    
 	return new bSolverNode();
 }
 
@@ -955,8 +964,8 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
 		rbNode->computeRigidBody(plug,data);
 	
 	rigid_body_t::pointer rb = rbNode->rigid_body();
-
-    procRbArray.append(fnNode.name());
+    
+    //procRbArray.append(fnNode.name());
     
     MObject transNode;
     getConnectedTransform(node, transNode);
@@ -1403,7 +1412,8 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
         solver_t::remove_rigid_body(rb);
     }
     */
-    procRbArray.clear();
+    myRbNodes.clear();
+    //procRbArray.clear();
     
     
 }

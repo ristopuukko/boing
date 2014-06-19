@@ -195,8 +195,10 @@ boingRbCmd::cmdSyntax()
     
     syntax.addFlag("-set", "-setAttr", MSyntax::kString);
     syntax.addFlag("-get", "-getAttr", MSyntax::kString);
+    syntax.addFlag("-add", "-addAttr", MSyntax::kString);
     syntax.addFlag("-cr", "-create", MSyntax::kString);
     syntax.addFlag("-del", "-delete", MSyntax::kString);
+    syntax.addFlag("-typ", "-type", MSyntax::kString);
     syntax.addFlag("-val", "-value", MSyntax::kDouble, MSyntax::kDouble, MSyntax::kDouble);
     
     return syntax;
@@ -232,6 +234,74 @@ boingRbCmd::doIt(const MArgList &args)
  }*/
 
 
+MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVector &vec) {
+    
+    cout<<"setting attribute : "<<attr<<" for rb "<<name<<endl;
+    
+    rigid_body_t::pointer rb = getPointerFromName(name);
+    
+    if (rb != 0)
+    {
+        float mass = rb->get_mass();
+        bool active = (mass>0.f);
+        if(active) {
+            if (attr=="velocity") {
+                vec3f vel;
+                vel = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
+                rb->set_linear_velocity(vel);
+            } else if (attr=="position") {
+                vec3f pos;
+                quatf rot;
+                rb->get_transform(pos, rot);
+                pos = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
+                rb->set_transform(pos, rot);
+            } else if (attr=="angularVelocity") {
+                vec3f av;
+                av = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
+                rb->set_angular_velocity(av);
+            }
+        }
+        
+        boing* b = static_cast<boing*>(rb->impl()->body()->getUserPointer());
+        float f = 1.1;
+        b->set_float(attr, f);
+    }
+    
+    return MS::kSuccess;
+    
+}
+
+MVector boingRbCmd::getBulletVectorAttribute(MString &name, MString &attr) {
+    
+    MVector vec;
+    
+    rigid_body_t::pointer rb = getPointerFromName(name);
+    
+    if (rb != 0) {
+        float mass = rb->get_mass();
+        bool active = (mass>0.f);
+        if(active) {
+            if (attr=="velocity") {
+                vec3f vel;
+                rb->get_linear_velocity(vel);
+                vec = MVector((double)vel[0], (double)vel[1], (double)vel[2]);
+            } else if (attr=="position") {
+                vec3f pos;
+                quatf rot;
+                rb->get_transform(pos, rot);
+                vec = MVector((double)pos[0], (double)pos[1], (double)pos[2]);
+            } else if (attr=="angularVelocity") {
+                vec3f av;
+                rb->get_angular_velocity(av);
+                vec = MVector((double)av[0], (double)av[1], (double)av[2]);
+            }
+        }
+    }
+    
+    return vec;
+    
+}
+
 MStatus boingRbCmd::redoIt()
 {
     //MGlobal::getActiveSelectionList(m_undoSelectionList)
@@ -244,9 +314,11 @@ MStatus boingRbCmd::redoIt()
      }*/
     isSetAttr = argParser->isFlagSet("-setAttr");
     isGetAttr = argParser->isFlagSet("-getAttr");
+    isAddAttr = argParser->isFlagSet("-addAttr");
     isCreate = argParser->isFlagSet("-create");
     isDelete = argParser->isFlagSet("-delete");
     isValue = argParser->isFlagSet("-value");
+    
     
     if (isSetAttr && isValue) {
         MString sAttr;
@@ -266,7 +338,22 @@ MStatus boingRbCmd::redoIt()
         //cout<<value<<endl;
         setResult(MS::kSuccess);
         
-    } else if ( isGetAttr) {
+    } /*else if ( isAddAttr) {
+        MString gAttr;
+        
+        argParser->getFlagArgument("addAttr", 0, gAttr);
+        
+        MString attrtype;
+        
+        argParser->getFlagArgument("-type", 0, attrtype);
+
+        rigid_body_t::pointer rb = getPointerFromName(gAttr);
+        boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
+        boing::attrs *attrs;
+        attrs->name = gAttr;
+        b->customAttributes.insert(b->customAttributes.end(), *attrs);
+        
+    } */ else if ( isGetAttr) {
         MString gAttr;
         argParser->getFlagArgument("getAttr", 0, gAttr);
         
@@ -289,9 +376,9 @@ MStatus boingRbCmd::redoIt()
             std::set<rigid_body_t::pointer>::iterator rit;
             for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
                 rigid_body_t::pointer rb = (*rit);
-                void *namePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
-                char *name = static_cast<char*>(namePtr);
-                result.append(name);
+                void *nodePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
+                boing *myRbNode = static_cast<boing *>(nodePtr);
+                result.append(myRbNode->get_name());
             }
             setResult(result);
         }
@@ -427,10 +514,17 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
     
     rigid_body_t::pointer m_rigid_body = solver_t::create_rigid_body(collision_shape);
     
-    char *rName = (char *)name.asChar();
-    bSolverNode::procRbArray.append(name);
-    void *namePtr = rName;
-    collision_shape->getBulletCollisionShape()->setUserPointer(namePtr);
+    //char *rName = (char *)name.asChar();
+    //bSolverNode::procRbArray.append(name);
+    //void *namePtr = rName;
+    
+    boing *myBoingNode = new boing();
+    
+    bSolverNode::myRbNodes.insert( bSolverNode::myRbNodes.end() , myBoingNode);
+
+    myBoingNode->set_name(name);
+    
+    collision_shape->getBulletCollisionShape()->setUserPointer(myBoingNode);
     
     m_rigid_body->set_transform(vec3f((float)pos.x, (float)pos.y, (float)pos.z),
                                 quatf((float)mrotation.w, (float)mrotation.x, (float)mrotation.y, (float)mrotation.z));
@@ -665,19 +759,13 @@ collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
 
 MStatus boingRbCmd::deleteRigidBody(MString &name) {
     
-    MStatus result = MS::kFailure;
-    
     rigid_body_t::pointer rb = getPointerFromName(name);
+    boing *b = static_cast<boing *>( rb->impl()->body()->getUserPointer() );
+    b->destroy();
     
     solver_t::remove_rigid_body(rb);
-    for(int i=0; i<bSolverNode::procRbArray.length(); i++){
-        if (bSolverNode::procRbArray[i] == name) {
-            result = bSolverNode::procRbArray.remove(i);
-            break;
-        }
-        
-    }
-    return result;
+    
+    return MS::kSuccess;
 }
 
 
@@ -697,68 +785,6 @@ MString boingRbCmd::checkAttribute(MString attr) {
     return result;
 }
 
-MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString attr, MVector vec) {
-    
-    cout<<"setting attribute : "<<attr<<" for rb "<<name<<endl;
-    
-    rigid_body_t::pointer rb = getPointerFromName(name);
-    if (rb != 0)
-    {
-        float mass = rb->get_mass();
-        bool active = (mass>0.f);
-        if(active) {
-            if (attr=="velocity") {
-                vec3f vel;
-                vel = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
-                rb->set_linear_velocity(vel);
-            } else if (attr=="position") {
-                vec3f pos;
-                quatf rot;
-                rb->get_transform(pos, rot);
-                pos = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
-                rb->set_transform(pos, rot);
-            } else if (attr=="angularVelocity") {
-                vec3f av;
-                av = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
-                rb->set_angular_velocity(av);
-            }
-        }
-    }
-    
-    return MS::kSuccess;
-    
-}
-
-MVector boingRbCmd::getBulletVectorAttribute(MString &name, MString attr) {
-    
-    MVector vec;
-    
-    rigid_body_t::pointer rb = getPointerFromName(name);
-    
-    if (rb != 0) {
-        float mass = rb->get_mass();
-        bool active = (mass>0.f);
-        if(active) {
-            if (attr=="velocity") {
-                vec3f vel;
-                rb->get_linear_velocity(vel);
-                vec = MVector((double)vel[0], (double)vel[1], (double)vel[2]);
-            } else if (attr=="position") {
-                vec3f pos;
-                quatf rot;
-                rb->get_transform(pos, rot);
-                vec = MVector((double)pos[0], (double)pos[1], (double)pos[2]);
-            } else if (attr=="angularVelocity") {
-                vec3f av;
-                rb->get_angular_velocity(av);
-                vec = MVector((double)av[0], (double)av[1], (double)av[2]);
-            }
-        }
-    }
-    
-    return vec;
-    
-}
 
 rigid_body_t::pointer boingRbCmd::getPointerFromName(MString &name)
 {
@@ -770,8 +796,10 @@ rigid_body_t::pointer boingRbCmd::getPointerFromName(MString &name)
     std::set<rigid_body_t::pointer>::iterator rit;
     for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
         rigid_body_t::pointer temprb = (*rit);
-        void *namePtr = temprb->collision_shape()->getBulletCollisionShape()->getUserPointer();
-        MString n = MString(static_cast<char*>(namePtr));
+        void *nodePtr = temprb->collision_shape()->getBulletCollisionShape()->getUserPointer();
+        boing *myBoingRb = static_cast<boing *>(nodePtr);
+        //MString n = MString(static_cast<char*>(namePtr));
+        MString n = myBoingRb->get_name();
         if (name == n) {
             rb = temprb;
             //cout<<"getPointerFromName -> rb : "<<rb<<endl;

@@ -1121,11 +1121,16 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     //cout<<"removing m_rigid_body"<<endl;
 	solver_t::remove_rigid_body(m_rigid_body);
     m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
-    const char *rName = MFnDependencyNode(thisObject).name().asChar();
-    void *namePtr = (void*)rName;
+    //const char *rName = MFnDependencyNode(thisObject).name().asChar();
+    //void *namePtr = (void*)rName;
     //cout<<"########### boingRbNode ###########"<<endl;
     //cout<<"setting user pointer : "<<rName<<endl;
-    m_collision_shape->getBulletCollisionShape()->setUserPointer(namePtr);
+    
+    boing *myBoingNode = new boing();
+    myBoingNode->set_name(MFnDependencyNode(thisObject).name().asChar());
+    
+    bSolverNode::myRbNodes.insert( bSolverNode::myRbNodes.end() , myBoingNode);
+    m_collision_shape->getBulletCollisionShape()->setUserPointer(myBoingNode);
     //cout<<"pointer value : "<<&rName<<endl;
     solver_t::add_rigid_body(m_rigid_body,name().asChar());
     

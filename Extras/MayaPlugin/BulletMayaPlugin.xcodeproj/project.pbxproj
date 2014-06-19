@@ -456,6 +456,8 @@
 		F906D33B1941031D0054663E /* bSolverCmd.h in Headers */ = {isa = PBXBuildFile; fileRef = F906D3371941031D0054663E /* bSolverCmd.h */; };
 		F906D33C1941031D0054663E /* bSolverCmd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F906D3381941031D0054663E /* bSolverCmd.cpp */; };
 		F94A488818DDC5BC007CFA3F /* dynamicaRbCmd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F94A488718DDC5BC007CFA3F /* dynamicaRbCmd.cpp */; };
+		F95F97D11952DA2B00B91B3B /* boing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F95F97CF1952DA2B00B91B3B /* boing.cpp */; };
+		F95F97D21952DA2B00B91B3B /* boing.h in Headers */ = {isa = PBXBuildFile; fileRef = F95F97D01952DA2B00B91B3B /* boing.h */; };
 		F986F649193F2A970040A399 /* boingRBNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F986F647193F2A970040A399 /* boingRBNode.cpp */; };
 		F986F64A193F2A970040A399 /* boingRBNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F986F648193F2A970040A399 /* boingRBNode.h */; };
 		F986F64D193F2E080040A399 /* boingRBCmds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F986F64B193F2E080040A399 /* boingRBCmds.cpp */; };
@@ -927,6 +929,8 @@
 		F906D3381941031D0054663E /* bSolverCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bSolverCmd.cpp; sourceTree = "<group>"; };
 		F91E78DC18D8806900526A5C /* AEdCallBackTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; name = AEdCallBackTemplate.mel; path = scripts/AEdCallBackTemplate.mel; sourceTree = "<group>"; };
 		F94A488718DDC5BC007CFA3F /* dynamicaRbCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = dynamicaRbCmd.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		F95F97CF1952DA2B00B91B3B /* boing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = boing.cpp; sourceTree = "<group>"; };
+		F95F97D01952DA2B00B91B3B /* boing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boing.h; sourceTree = "<group>"; };
 		F986F647193F2A970040A399 /* boingRBNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = boingRBNode.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F986F648193F2A970040A399 /* boingRBNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boingRBNode.h; sourceTree = "<group>"; };
 		F986F64B193F2E080040A399 /* boingRBCmds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = boingRBCmds.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -986,8 +990,14 @@
 				BC241BD4113DD50A0021293C /* bt_rigid_body.cpp */,
 				F9C54CB81948B9D0009537FE /* README */,
 				BC4342371117F51F00C9C8D7 /* sliderConstraintNode.h */,
+				F95F97CF1952DA2B00B91B3B /* boing.cpp */,
+				F95F97D01952DA2B00B91B3B /* boing.h */,
 				F906D3351941031D0054663E /* bSolverNode.cpp */,
 				F906D3361941031D0054663E /* bSolverNode.h */,
+				F986F64B193F2E080040A399 /* boingRBCmds.cpp */,
+				F986F64C193F2E080040A399 /* boingRBCmds.h */,
+				F986F647193F2A970040A399 /* boingRBNode.cpp */,
+				F986F648193F2A970040A399 /* boingRBNode.h */,
 				F906D3371941031D0054663E /* bSolverCmd.h */,
 				F906D3381941031D0054663E /* bSolverCmd.cpp */,
 				BC4342381117F51F00C9C8D7 /* sliderConstraintNode.cpp */,
@@ -1023,10 +1033,6 @@
 				BC4341D21117F4CF00C9C8D7 /* solver.cpp */,
 				BC4341D31117F4CF00C9C8D7 /* solver_impl.h */,
 				BC4341D41117F4CF00C9C8D7 /* shared_ptr.h */,
-				F986F647193F2A970040A399 /* boingRBNode.cpp */,
-				F986F648193F2A970040A399 /* boingRBNode.h */,
-				F986F64B193F2E080040A399 /* boingRBCmds.cpp */,
-				F986F64C193F2E080040A399 /* boingRBCmds.h */,
 				BC4341D91117F4CF00C9C8D7 /* rigid_body.h */,
 				BC4341DA1117F4CF00C9C8D7 /* rigid_body_impl.h */,
 				BC4341DB1117F4CF00C9C8D7 /* pluginMain.cpp */,
@@ -1889,6 +1895,7 @@
 				BC43417C1117F3C600C9C8D7 /* SpuContactResult.h in Headers */,
 				BC43417D1117F3C600C9C8D7 /* SpuConvexPenetrationDepthSolver.h in Headers */,
 				BC43417F1117F3C600C9C8D7 /* SpuGatheringCollisionTask.h in Headers */,
+				F95F97D21952DA2B00B91B3B /* boing.h in Headers */,
 				BC4341801117F3C600C9C8D7 /* SpuLocalSupport.h in Headers */,
 				BC4341821117F3C600C9C8D7 /* SpuMinkowskiPenetrationDepthSolver.h in Headers */,
 				BC4341831117F3C600C9C8D7 /* SpuPreferredPenetrationDirections.h in Headers */,
@@ -2086,6 +2093,7 @@
 				BC4340A91117F3C600C9C8D7 /* btConvexHullShape.cpp in Sources */,
 				BC4340AB1117F3C600C9C8D7 /* btConvexInternalShape.cpp in Sources */,
 				BC4340AD1117F3C600C9C8D7 /* btConvexPointCloudShape.cpp in Sources */,
+				F95F97D11952DA2B00B91B3B /* boing.cpp in Sources */,
 				BC4340AF1117F3C600C9C8D7 /* btConvexShape.cpp in Sources */,
 				BC4340B11117F3C600C9C8D7 /* btConvexTriangleMeshShape.cpp in Sources */,
 				BC4340B31117F3C600C9C8D7 /* btCylinderShape.cpp in Sources */,

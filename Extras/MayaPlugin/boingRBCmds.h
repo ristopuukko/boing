@@ -40,6 +40,7 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 
 #include "bSolverNode.h"
 #include "collision_shape.h"
+#include "boing.h"
 
 class createBoingRBCmd : public MPxCommand
 {
@@ -85,8 +86,8 @@ public:
     MObject nameToNode( MString name ) ;
     MPlug nameToNodePlug( MString attrName, MObject nodeObject );
     MStatus deleteRigidBody(MString &name);
-    MStatus setBulletVectorAttribute(MString &name, MString attr, MVector vec);
-    MVector getBulletVectorAttribute(MString &name, MString attr);
+    MStatus setBulletVectorAttribute(MString &name, MString &attr, MVector &vec);
+    MVector getBulletVectorAttribute(MString &name, MString &attr);
     MString checkAttribute(MString attr);
     MStringArray parseArguments(MString arg, MString token);
     collision_shape_t::pointer createCollisionShape(const MObject& node);
@@ -107,6 +108,7 @@ public:
 protected:
     bool    isSetAttr;
     bool    isGetAttr;
+    bool    isAddAttr;
     bool    isCreate;
     bool    isDelete;
     bool    isValue;
