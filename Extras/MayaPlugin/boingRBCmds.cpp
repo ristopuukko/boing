@@ -234,74 +234,6 @@ boingRbCmd::doIt(const MArgList &args)
  }*/
 
 
-MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVector &vec) {
-    
-    cout<<"setting attribute : "<<attr<<" for rb "<<name<<endl;
-    
-    rigid_body_t::pointer rb = getPointerFromName(name);
-    
-    if (rb != 0)
-    {
-        float mass = rb->get_mass();
-        bool active = (mass>0.f);
-        if(active) {
-            if (attr=="velocity") {
-                vec3f vel;
-                vel = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
-                rb->set_linear_velocity(vel);
-            } else if (attr=="position") {
-                vec3f pos;
-                quatf rot;
-                rb->get_transform(pos, rot);
-                pos = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
-                rb->set_transform(pos, rot);
-            } else if (attr=="angularVelocity") {
-                vec3f av;
-                av = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
-                rb->set_angular_velocity(av);
-            }
-        }
-        
-        boing* b = static_cast<boing*>(rb->impl()->body()->getUserPointer());
-        float f = 1.1;
-        b->set_float(attr, f);
-    }
-    
-    return MS::kSuccess;
-    
-}
-
-MVector boingRbCmd::getBulletVectorAttribute(MString &name, MString &attr) {
-    
-    MVector vec;
-    
-    rigid_body_t::pointer rb = getPointerFromName(name);
-    
-    if (rb != 0) {
-        float mass = rb->get_mass();
-        bool active = (mass>0.f);
-        if(active) {
-            if (attr=="velocity") {
-                vec3f vel;
-                rb->get_linear_velocity(vel);
-                vec = MVector((double)vel[0], (double)vel[1], (double)vel[2]);
-            } else if (attr=="position") {
-                vec3f pos;
-                quatf rot;
-                rb->get_transform(pos, rot);
-                vec = MVector((double)pos[0], (double)pos[1], (double)pos[2]);
-            } else if (attr=="angularVelocity") {
-                vec3f av;
-                rb->get_angular_velocity(av);
-                vec = MVector((double)av[0], (double)av[1], (double)av[2]);
-            }
-        }
-    }
-    
-    return vec;
-    
-}
-
 MStatus boingRbCmd::redoIt()
 {
     //MGlobal::getActiveSelectionList(m_undoSelectionList)
@@ -315,6 +247,7 @@ MStatus boingRbCmd::redoIt()
     isSetAttr = argParser->isFlagSet("-setAttr");
     isGetAttr = argParser->isFlagSet("-getAttr");
     isAddAttr = argParser->isFlagSet("-addAttr");
+    isType = argParser->isFlagSet("-type");
     isCreate = argParser->isFlagSet("-create");
     isDelete = argParser->isFlagSet("-delete");
     isValue = argParser->isFlagSet("-value");
@@ -333,35 +266,37 @@ MStatus boingRbCmd::redoIt()
         argParser->getFlagArgument("-value", 2, value.z);
         //cout<<"jobArgsArray[1] : "<<jobArgsArray[1]<<endl;
         MString attr = checkAttribute(jobArgsArray[1]);
+        if (attr.length()<1) {
+            attr = checkCustomAttribute(jobArgsArray[0], jobArgsArray[1]);
+        }
         setBulletVectorAttribute(jobArgsArray[0], attr, value);
         
         //cout<<value<<endl;
         setResult(MS::kSuccess);
         
-    } /*else if ( isAddAttr) {
-        MString gAttr;
-        
-        argParser->getFlagArgument("addAttr", 0, gAttr);
-        
+    } else if ( isAddAttr && isType ) {
+        MString aAttr;
+        argParser->getFlagArgument("addAttr", 0, aAttr);
+        MStringArray jobArgsArray = parseArguments(aAttr, ".");
+        cout<<jobArgsArray<<endl;
         MString attrtype;
-        
         argParser->getFlagArgument("-type", 0, attrtype);
-
-        rigid_body_t::pointer rb = getPointerFromName(gAttr);
-        boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-        boing::attrs *attrs;
-        attrs->name = gAttr;
-        b->customAttributes.insert(b->customAttributes.end(), *attrs);
+        cout<<attrtype<<endl;
         
-    } */ else if ( isGetAttr) {
+        rigid_body_t::pointer rb = getPointerFromName(jobArgsArray[0]);
+        boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
+        b->add_data(jobArgsArray[0], jobArgsArray[1]);
+        //b->boing::customAttributes.insert(boing::customAttributes.end(),atr);
+        
+    } else if ( isGetAttr) {
         MString gAttr;
         argParser->getFlagArgument("getAttr", 0, gAttr);
         
-        //cout<<gAttr<<endl;
+        cout<<gAttr<<endl;
         MStringArray jobArgsArray = parseArguments(gAttr, ".");
         
         MString attr = checkAttribute(jobArgsArray[1]);
-        //cout<<"attr = "<<attr<<endl;
+        cout<<"attr = "<<attr<<endl;
         if (attr!="name") {
             MVector result = getBulletVectorAttribute(jobArgsArray[0], attr);
             MDoubleArray dResult;
@@ -371,15 +306,16 @@ MStatus boingRbCmd::redoIt()
             setResult(dResult);
         } else {
             MStringArray result;
-            shared_ptr<solver_impl_t> solv = solver_t::get_solver();
-            std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
-            std::set<rigid_body_t::pointer>::iterator rit;
+            
+            shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+            std::vector<boing*> rbds = b_solv->get_all_nodes();
+            std::vector<boing*>::iterator rit;
             for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
-                rigid_body_t::pointer rb = (*rit);
-                void *nodePtr = rb->collision_shape()->getBulletCollisionShape()->getUserPointer();
-                boing *myRbNode = static_cast<boing *>(nodePtr);
-                result.append(myRbNode->get_name());
+                boing* b_ptr = (*rit);
+                cout<<"b_ptr->name : "<<b_ptr->name<<endl;
+                result.append(b_ptr->name);
             }
+            
             setResult(result);
         }
         
@@ -391,6 +327,7 @@ MStatus boingRbCmd::redoIt()
         int size = createArgs.length();
         MString inputShape;
         MString rbname = "dummyRb";
+        MVector av;
         MVector vel;
         MVector pos;
         MVector rot;
@@ -429,6 +366,15 @@ MStatus boingRbCmd::redoIt()
                               );
                 //cout<<"rotation = "<<rot<<endl;
                 
+            } else if (singleArg[0] == "av") {
+                //initialAngularVelocity
+                MStringArray avArray = parseArguments(singleArg[1], ",");
+                av = MVector(avArray[0].asDouble(),
+                             avArray[1].asDouble(),
+                             avArray[2].asDouble()
+                             );
+                //cout<<"initialAngularVelocity = "<<av<<endl;
+                
             } else {
                 cout<<"Unrecognized parameter : "<<singleArg[0]<<endl;
                 
@@ -437,7 +383,7 @@ MStatus boingRbCmd::redoIt()
         // create the collisionShape-node
         MObject node = nameToNode(inputShape);
         collision_shape_t::pointer collShape = createCollisionShape(node);
-        createRigidBody(collShape, node, rbname, vel, pos, rot);
+        createRigidBody(collShape, node, rbname, vel, pos, rot, av);
         
     } else if ( isDelete  ) {
         MString aArgument;
@@ -450,365 +396,7 @@ MStatus boingRbCmd::redoIt()
     return MS::kSuccess;
 }
 
-MStringArray boingRbCmd::parseArguments(MString arg, MString token) {
-    
-    MStringArray jobArgsArray;
-    MString stringBuffer;
-    for (unsigned int charIdx = 0; charIdx < arg.numChars(); charIdx++) {
-        MString ch = arg.substringW(charIdx, charIdx);
-        //cout<<"ch = "<<ch<<endl;
-        if (ch == token ) {
-            if (stringBuffer.length() > 0) {
-                jobArgsArray.append(stringBuffer);
-                //cout<<"jobArgsArray = "<<jobArgsArray<<endl;
-                stringBuffer.clear();
-            }
-        } else {
-            stringBuffer += ch;
-            //cout<<"stringBuffer = "<<stringBuffer<<endl;
-        }
-    }
-    jobArgsArray.append(stringBuffer);
-    
-    return jobArgsArray;
-}
 
-MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape,
-                                    MObject node,
-                                    MString name,
-                                    MVector vel,
-                                    MVector pos,
-                                    MVector rot)
-{
-    //MGlobal::getActiveSelectionList(m_undoSelectionList);
-    
-    
-    if (!name.length()) {
-        name = "boingRb1";
-    }
-    
-    double mscale[3] = {1,1,1};
-    MQuaternion mrotation = MEulerRotation(rot).asQuaternion();
-    
-    //collision_shape_t::pointer  collision_shape;
-    if(!collision_shape) {
-        //not connected to a collision shape, put a default one
-        collision_shape = solver_t::create_box_shape();
-    } else {
-        if ( !node.isNull() ) {
-            MFnDagNode fnDagNode(node);
-            //cout<<"node : "<<fnDagNode.partialPathName()<<endl;
-            MFnTransform fnTransform(fnDagNode.parent(0));
-            //cout<<"MFnTransform node : "<<fnTransform.partialPathName()<<endl;
-            if ( pos == MVector::zero ) {
-                pos = fnTransform.getTranslation(MSpace::kTransform);
-            }
-            if ( rot == MVector::zero ) {
-                fnTransform.getRotation(mrotation, MSpace::kTransform);
-            }
-            fnTransform.getScale(mscale);
-        }
-    }
-    
-    shared_ptr<solver_impl_t> solv = solver_t::get_solver();
-    
-    rigid_body_t::pointer m_rigid_body = solver_t::create_rigid_body(collision_shape);
-    
-    //char *rName = (char *)name.asChar();
-    //bSolverNode::procRbArray.append(name);
-    //void *namePtr = rName;
-    
-    boing *myBoingNode = new boing();
-    
-    bSolverNode::myRbNodes.insert( bSolverNode::myRbNodes.end() , myBoingNode);
-
-    myBoingNode->set_name(name);
-    
-    collision_shape->getBulletCollisionShape()->setUserPointer(myBoingNode);
-    
-    m_rigid_body->set_transform(vec3f((float)pos.x, (float)pos.y, (float)pos.z),
-                                quatf((float)mrotation.w, (float)mrotation.x, (float)mrotation.y, (float)mrotation.z));
-    
-    m_rigid_body->set_linear_velocity( vec3f((float)vel.x,(float)vel.y,(float)vel.z) );
-    
-    m_rigid_body->collision_shape()->set_scale(vec3f((float)mscale[0], (float)mscale[1], (float)mscale[2]));
-    
-    
-    float mass = 1.f;
-    m_rigid_body->set_mass(mass);
-    m_rigid_body->set_inertia((float)mass * m_rigid_body->collision_shape()->local_inertia());
-    
-    
-    //initialize those default values too
-    float restitution = 0.3f;
-    //MPlug(thisObject, rigidBodyNode::ia_restitution).getValue(restitution);
-    m_rigid_body->set_restitution(restitution);
-    float friction = 0.5f;
-    //MPlug(thisObject, rigidBodyNode::ia_friction).getValue(friction);
-    m_rigid_body->set_friction(friction);
-    float linDamp = 0.f;
-    //MPlug(thisObject, rigidBodyNode::ia_linearDamping).getValue(linDamp);
-    m_rigid_body->set_linear_damping(linDamp);
-    float angDamp = 0.2f;
-    //MPlug(thisObject, rigidBodyNode::ia_angularDamping).getValue(angDamp);
-    m_rigid_body->set_angular_damping(angDamp);
-
-    solver_t::add_rigid_body(m_rigid_body, name.asChar());
-
-    return MS::kSuccess;
-}
-
-
-collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
-{
-    
-    collision_shape_t::pointer collision_shape = 0;
-    
-    int type=0;
-    
-    switch(type) {
-        case 0:
-        {
-            //convex hull
-            {
-                //cout<<"going on creating a convex hull collision shape"<<endl;
-                if(node.hasFn(MFn::kMesh)) {
-                    MDagPath dagPath;
-                    MDagPath::getAPathTo(node, dagPath);
-                    MFnMesh fnMesh(dagPath);
-                    //cout<<"going on creating a convex hull from : "<<fnMesh.name()<<endl;
-                    MFloatPointArray mpoints;
-                    MFloatVectorArray mnormals;
-                    MIntArray mtrianglecounts;
-                    MIntArray mtrianglevertices;
-                    fnMesh.getPoints(mpoints, MSpace::kObject);
-                    fnMesh.getNormals(mnormals, MSpace::kObject);
-                    fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
-                    
-                    std::vector<vec3f> vertices(mpoints.length());
-                    std::vector<vec3f> normals(mpoints.length());
-                    std::vector<unsigned int> indices(mtrianglevertices.length());
-                    
-                    btAlignedObjectArray<btVector3> btVerts; //mb
-                    
-                    for(size_t i = 0; i < vertices.size(); ++i) {
-                        vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
-                        normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
-                        
-#if UPDATE_SHAPE //future collision margin adjust
-                        btVerts.push_back(btVector3(mpoints[i].x, mpoints[i].y, mpoints[i].z)); //mb
-#endif
-                    }
-                    for(size_t i = 0; i < indices.size(); ++i) {
-                        indices[i] = mtrianglevertices[i];
-                    }
-                    
-#if UPDATE_SHAPE //future collision margin adjust
-                    btAlignedObjectArray<btVector3> planeEquations;
-                    btGeometryUtil::getPlaneEquationsFromVertices(btVerts, planeEquations);
-                    
-                    btAlignedObjectArray<btVector3> shiftedPlaneEquations;
-                    for (int p=0;p<planeEquations.size();p++)
-                    {
-                        btVector3 plane = planeEquations[p];
-                        plane[3] += collisionShapeNode::collisionMarginOffset;
-                        shiftedPlaneEquations.push_back(plane);
-                    }
-                    
-                    btAlignedObjectArray<btVector3> shiftedVertices;
-                    btGeometryUtil::getVerticesFromPlaneEquations(shiftedPlaneEquations, shiftedVertices);
-                    
-                    std::vector<vec3f> shiftedVerticesVec3f(shiftedVertices.size());
-                    for(size_t i = 0; i < shiftedVertices.size(); ++i)
-                    {
-                        shiftedVerticesVec3f[i] = vec3f(shiftedVertices[i].getX(), shiftedVertices[i].getY(), shiftedVertices[i].getZ());
-                        //std::cout << "orig verts: " << vertices[i][0] << " " << vertices[i][1] << " " << vertices[i][2] << std::endl;
-                        //std::cout << "shft verts: " << shiftedVertices[i].getX() << " " << shiftedVertices[i].getY() << " " << shiftedVertices[i].getZ() << std::endl;
-                        //std::cout << std::endl;
-                    }
-                    
-                    collision_shape = solver_t::create_convex_hull_shape(&(shiftedVerticesVec3f[0]), shiftedVerticesVec3f.size(), &(normals[0]), &(indices[0]), indices.size());
-                    
-#endif
-                    
-#if UPDATE_SHAPE == 0
-                    collision_shape = solver_t::create_convex_hull_shape(&(vertices[0]), vertices.size(), &(normals[0]), &(indices[0]), indices.size()); //original
-#endif
-                }
-            }
-        }
-            
-            break;
-        case 1:
-        {
-            //mesh
-            {
-                if(node.hasFn(MFn::kMesh)) {
-                    MDagPath dagPath;
-                    MDagPath::getAPathTo(node, dagPath);
-                    MFnMesh fnMesh(dagPath);
-                    MFloatPointArray mpoints;
-                    MFloatVectorArray mnormals;
-                    MIntArray mtrianglecounts;
-                    MIntArray mtrianglevertices;
-                    fnMesh.getPoints(mpoints, MSpace::kObject);
-                    fnMesh.getNormals(mnormals, MSpace::kObject);
-                    fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
-                    
-                    std::vector<vec3f> vertices(mpoints.length());
-                    std::vector<vec3f> normals(mpoints.length());
-                    std::vector<unsigned int> indices(mtrianglevertices.length());
-                    
-                    for(size_t i = 0; i < vertices.size(); ++i) {
-                        vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
-                        normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
-                    }
-                    for(size_t i = 0; i < indices.size(); ++i) {
-                        indices[i] = mtrianglevertices[i];
-                    }
-                    bool dynamicMesh = true;
-                    collision_shape = solver_t::create_mesh_shape(&(vertices[0]), vertices.size(), &(normals[0]),
-                                                                  &(indices[0]), indices.size(),dynamicMesh);
-                }
-            }
-        }
-            break;
-        case 2:
-            //cylinder
-            break;
-        case 3:
-            //capsule
-            break;
-            
-        case 7:
-            //btBvhTriangleMeshShape
-        {
-            
-            if(node.hasFn(MFn::kMesh)) {
-                MDagPath dagPath;
-                MDagPath::getAPathTo(node, dagPath);
-                MFnMesh fnMesh(dagPath);
-                MFloatPointArray mpoints;
-                MFloatVectorArray mnormals;
-                MIntArray mtrianglecounts;
-                MIntArray mtrianglevertices;
-                fnMesh.getPoints(mpoints, MSpace::kObject);
-                fnMesh.getNormals(mnormals, MSpace::kObject);
-                fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
-                
-                std::vector<vec3f> vertices(mpoints.length());
-                std::vector<vec3f> normals(mpoints.length());
-                std::vector<unsigned int> indices(mtrianglevertices.length());
-                
-                for(size_t i = 0; i < vertices.size(); ++i) {
-                    vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
-                    normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
-                }
-                for(size_t i = 0; i < indices.size(); ++i) {
-                    indices[i] = mtrianglevertices[i];
-                }
-                bool dynamicMesh = false;
-                collision_shape = solver_t::create_mesh_shape(&(vertices[0]), vertices.size(), &(normals[0]),
-                                                              &(indices[0]), indices.size(),dynamicMesh);
-            }
-        }
-            break;
-        case 8:
-            //hacd convex decomposition
-        {
-            
-            {
-                if(node.hasFn(MFn::kMesh)) {
-                    MDagPath dagPath;
-                    MDagPath::getAPathTo(node, dagPath);
-                    MFnMesh fnMesh(dagPath);
-                    MFloatPointArray mpoints;
-                    MFloatVectorArray mnormals;
-                    MIntArray mtrianglecounts;
-                    MIntArray mtrianglevertices;
-                    fnMesh.getPoints(mpoints, MSpace::kObject);
-                    fnMesh.getNormals(mnormals, MSpace::kObject);
-                    fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
-                    
-                    std::vector<vec3f> vertices(mpoints.length());
-                    std::vector<vec3f> normals(mpoints.length());
-                    std::vector<unsigned int> indices(mtrianglevertices.length());
-                    
-                    for(size_t i = 0; i < vertices.size(); ++i) {
-                        vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
-                        normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
-                    }
-                    for(size_t i = 0; i < indices.size(); ++i) {
-                        indices[i] = mtrianglevertices[i];
-                    }
-                    bool dynamicMesh = false;
-                    collision_shape = solver_t::create_hacd_shape(&(vertices[0]), vertices.size(), &(normals[0]),
-                                                                  &(indices[0]), indices.size(),dynamicMesh);
-                }
-            }
-        }
-            break;
-        default:
-        {
-        }
-    }
-    
-    return collision_shape;
-}
-
-
-MStatus boingRbCmd::deleteRigidBody(MString &name) {
-    
-    rigid_body_t::pointer rb = getPointerFromName(name);
-    boing *b = static_cast<boing *>( rb->impl()->body()->getUserPointer() );
-    b->destroy();
-    
-    solver_t::remove_rigid_body(rb);
-    
-    return MS::kSuccess;
-}
-
-
-MString boingRbCmd::checkAttribute(MString attr) {
-    MString result;
-    
-    if (attr=="vel" || attr=="velocity") {
-        result = "velocity";
-    } else if (attr=="pos" || attr=="position") {
-        result = "position";
-    } else if ( attr=="av" || attr=="angularVelocity") {
-        result = "angularVelocity";
-    } else if ( attr=="n" || attr=="name") {
-        result = "name";
-    }
-    //cout<<"checkAttribute : "<<result<<endl;
-    return result;
-}
-
-
-rigid_body_t::pointer boingRbCmd::getPointerFromName(MString &name)
-{
-    
-    rigid_body_t::pointer rb = 0;
-    
-    shared_ptr<solver_impl_t> solv = solver_t::get_solver();
-    std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
-    std::set<rigid_body_t::pointer>::iterator rit;
-    for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
-        rigid_body_t::pointer temprb = (*rit);
-        void *nodePtr = temprb->collision_shape()->getBulletCollisionShape()->getUserPointer();
-        boing *myBoingRb = static_cast<boing *>(nodePtr);
-        //MString n = MString(static_cast<char*>(namePtr));
-        MString n = myBoingRb->get_name();
-        if (name == n) {
-            rb = temprb;
-            //cout<<"getPointerFromName -> rb : "<<rb<<endl;
-            break;
-        }
-    }
-    
-    return rb;
-}
 
 MObject boingRbCmd::nameToNode( MString name ) {
     MSelectionList selList;

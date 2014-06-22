@@ -123,11 +123,11 @@ MObject     bSolverNode::ia_DBG_DrawConstraints;
 MObject     bSolverNode::ia_DBG_DrawConstraintLimits;
 MObject     bSolverNode::ia_DBG_FastWireframe;
 
-//MStringArray    bSolverNode::procRbArray;
-
-set<boing*> bSolverNode::myRbNodes;
 
 float bSolverNode::collisionMarginOffset; //mb
+
+shared_ptr<bSolverNode> bSolverNode::m_bsolvernode;
+
 
 #define ATTR_POSITION "position"
 //#define ATTR_POSITION_TYPE VECTOR_ATTR
@@ -148,13 +148,62 @@ float bSolverNode::collisionMarginOffset; //mb
 
 
 
-static int getDbgDrawVal(const MObject& thisObj, const MObject& attr, int flag)
+int getDbgDrawVal(const MObject& thisObj, const MObject& attr, int flag)
 {
 	MPlug plug(thisObj, attr);
 	bool retVal = false;
 	plug.getValue(retVal);
 	return retVal ? (1 << flag) : 0;
 }
+
+shared_ptr<bSolverNode> bSolverNode::get_bsolver_node()
+{
+    return m_bsolvernode;
+}
+
+void bSolverNode::destroyNode(boing *b) {
+    erase_node(b);
+    delete b;
+}
+
+boing * bSolverNode::createNode(MString &name) {
+    boing *b = new boing(name);
+    node_ptr.push_back(b);
+    
+    return b;
+}
+
+void bSolverNode::erase_node(boing *b) {
+    std::vector<boing*>::iterator it;
+    for( it = node_ptr.begin(); it != node_ptr.end(); /* blank */ ) {
+        if( (*it)->name == b->name ) {
+            node_ptr.erase( it++ );       // Note the subtlety here
+            return;
+        }
+        else {
+            ++it;
+        }
+    }
+    
+}
+
+boing*  bSolverNode::get_node(MString &name) {
+    std::vector<boing*>::iterator it;
+    for( it = node_ptr.begin(); it != node_ptr.end(); ++it ) {
+        if( (*it)->name == name ) {
+            return (*it);
+        }
+    }
+    return NULL;
+}
+
+
+
+std::vector<boing*> bSolverNode::get_all_nodes() {
+    return node_ptr;
+}
+
+
 
 
 void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
@@ -169,9 +218,9 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     
     //debug boing - container
     /*
-    std::vector<boing*>::iterator bit;
+    std::set<boing>::iterator bit;
     for (bit=myRbNodes.begin(); bit!=myRbNodes.end(); ++bit) {
-        cout<<"myRbNodes->get_name() : "<<(*bit)->get_name()<<endl;
+        cout<<"myRbNodes->get_name() : "<<(*bit)->name<<endl;
     }
     */
     
@@ -873,6 +922,7 @@ MStatus bSolverNode::initialize()
     status = addAttribute(ia_contactData);
     MCHECKSTATUS(status, "adding ia_contactData attribute")
     
+    
     return MS::kSuccess;
 }
 
@@ -881,6 +931,8 @@ MStatus bSolverNode::initialize()
 bSolverNode::bSolverNode()
 {
     m_reInitialize = false;
+    m_bsolvernode.reset(this);
+
 }
 
 
@@ -965,7 +1017,11 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
 	
 	rigid_body_t::pointer rb = rbNode->rigid_body();
     
-    //procRbArray.append(fnNode.name());
+    //boing *b = new boing;
+    //b->name = fnNode.name();
+    //bSolverNode::myRbNodes.insert(b);
+    //std::cout<<"bSolverNode::myRbNodes.size() : "<<bSolverNode::myRbNodes.size()<<endl;
+    //std::cout<<"b->name  : "<<b->name<<endl;
     
     MObject transNode;
     getConnectedTransform(node, transNode);
@@ -991,13 +1047,13 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
         plgInitialValue.child(0).getValue(rot[0]);
         plgInitialValue.child(1).getValue(rot[1]);
         plgInitialValue.child(2).getValue(rot[2]);
-        
+
         vec3f vel;
         plgInitialValue.setAttribute(boingRBNode::ia_initialVelocity);
         plgInitialValue.child(0).getValue(vel[0]);
         plgInitialValue.child(1).getValue(vel[1]);
         plgInitialValue.child(2).getValue(vel[2]);
-        
+ 
         plgInitialValue.setAttribute(boingRBNode::ia_velocity);
         plgInitialValue.child(0).setValue(vel[0]);
         plgInitialValue.child(1).setValue(vel[1]);
@@ -1040,6 +1096,8 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
         rb->set_interpolation_transform(vec3f((float)mpos.x, (float)mpos.y, (float)mpos.z), quatf((float)mquat.w, (float)mquat.x, (float)mquat.y, (float)mquat.z));
         rb->set_kinematic(true);
     }
+    
+
 }
 
 
@@ -1400,21 +1458,6 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
     }
     
     solver_t::remove_all_rigid_bodies();
-    /*
-    std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
-	shared_ptr<solver_impl_t> solv = solver_t::get_solver();
-    btCollisionObjectArray btArray = ((bt_solver_t*)solv.get())->getCollisionObjectArray();
-    //cout<< "btArray.size()  : " <<btArray.size()<<endl;
-    std::set<rigid_body_t::pointer>::iterator it;
-    
-    for(it=rbds.begin(); it!=rbds.end(); ++it) {
-        rigid_body_t::pointer rb = (*it);
-        solver_t::remove_rigid_body(rb);
-    }
-    */
-    myRbNodes.clear();
-    //procRbArray.clear();
-    
     
 }
 

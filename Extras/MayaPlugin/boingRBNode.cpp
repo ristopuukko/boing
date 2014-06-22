@@ -1064,6 +1064,9 @@ void boingRBNode::destroyRigidBody()
 {
 	if (m_rigid_body)
 	{
+        boing *b_ptr = static_cast<boing *>( m_rigid_body->impl()->body()->getUserPointer() );
+        //b->destroy();
+        //bSolverNode::erase_node(b);
 		solver_t::remove_rigid_body(m_rigid_body);
 //		where to remove constraints?
 		m_rigid_body->remove_all_constraints();
@@ -1121,20 +1124,10 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     //cout<<"removing m_rigid_body"<<endl;
 	solver_t::remove_rigid_body(m_rigid_body);
     m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
-    //const char *rName = MFnDependencyNode(thisObject).name().asChar();
-    //void *namePtr = (void*)rName;
-    //cout<<"########### boingRbNode ###########"<<endl;
-    //cout<<"setting user pointer : "<<rName<<endl;
+    char * bname = (char*)(name().asChar());
+    solver_t::add_rigid_body(m_rigid_body, bname);
     
-    boing *myBoingNode = new boing();
-    myBoingNode->set_name(MFnDependencyNode(thisObject).name().asChar());
-    
-    bSolverNode::myRbNodes.insert( bSolverNode::myRbNodes.end() , myBoingNode);
-    m_collision_shape->getBulletCollisionShape()->setUserPointer(myBoingNode);
-    //cout<<"pointer value : "<<&rName<<endl;
-    solver_t::add_rigid_body(m_rigid_body,name().asChar());
-    
-// once at creation/load time : get transform from Maya transform node
+    // once at creation/load time : get transform from Maya transform node
     
     MPlugArray conn;
     
@@ -1147,7 +1140,12 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     
     MFnTransform fnTransform(fnDagNode.parent(0));
     MVector mtranslation = fnTransform.getTranslation(MSpace::kTransform);
+    MString name = MFnDependencyNode(thisObject).name();
+    shared_ptr<bSolverNode> bSolv = bSolverNode::get_bsolver_node();
+    boing* b_ptr = bSolv->createNode(name);
+    m_rigid_body->collision_shape()->getBulletCollisionShape()->setUserPointer(b_ptr);
 
+    
     MQuaternion mrotation;
     fnTransform.getRotation(mrotation, MSpace::kTransform);
 	double mscale[3];
@@ -1175,7 +1173,7 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
 
 
 	if (changedMassStatus)
-		solver_t::add_rigid_body(m_rigid_body, name().asChar());
+		solver_t::add_rigid_body(m_rigid_body, bname);
 
 	//initialize those default values too
 	float restitution = 0.f;

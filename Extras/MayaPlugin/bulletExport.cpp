@@ -152,11 +152,11 @@ shared_ptr<solver_impl_t> solv = solver_t::get_solver();
 		}
         if(fnNode.typeId() == sliderConstraintNode::typeId) 
 		{
-			//sliderConstraintNode *scNode = static_cast<sliderConstraintNode*>(dagNode.userNode());
+			sliderConstraintNode *scNode = static_cast<sliderConstraintNode*>(dagNode.userNode());
 		}
         if(fnNode.typeId() == sixdofConstraintNode::typeId) 
 		{
-			//sixdofConstraintNode *sdNode = static_cast<sixdofConstraintNode*>(dagNode.userNode());
+			sixdofConstraintNode *sdNode = static_cast<sixdofConstraintNode*>(dagNode.userNode());
 		}
 	}
 

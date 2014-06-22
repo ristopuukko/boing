@@ -47,7 +47,7 @@ Modified by Risto Puukko <risto.puukko@gmail.com>
 
 #include "solver.h"
 
-#include "boing.h"
+//#include "boing.h"
 
 
 class boingRBNode: public MPxNode

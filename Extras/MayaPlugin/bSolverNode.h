@@ -44,10 +44,12 @@ Modified by Dongsoo Han <dongsoo.han@amd.com>
 #include <maya/MStringArray.h>
 #include <vector>
 #include "mathUtils.h"
+#include "shared_ptr.h"
 #include "boingRBNode.h"
 //#include "boingRbCmd.h"
 #include "bCallBackNode.h"
 #include "boing.h"
+
 
 
 //using namespace std;
@@ -147,8 +149,21 @@ public:
 	static void updateAllRigidBodies();
     //<rp 2014>
     static void getRigidBodies(MObject &node, MStringArray& rbds, std::set<boingRBNode*>&nodes);
+    
+
+    boing* createNode(MString &name);
+    void destroyNode(boing *b);
+    void erase_node(boing *b);
+    boing*  get_node(MString &name);
+    std::vector<boing*> get_all_nodes();
+    
+    static shared_ptr<bSolverNode> get_bsolver_node();
+    
     //</rp 2014>
-    static set<boing*> myRbNodes;
+    
+private:
+
+    std::vector<boing*> node_ptr;
 
     
 protected:
@@ -158,8 +173,11 @@ protected:
     MObjectArray sEcallBackNodes;
     MObjectArray fEcallBackNodes;
 
+
     //static MStringArray procRbArray;
-    friend  class boingRbCmd;
+    friend  class boing;
+    friend  class boingRBNode;
+    
     //</rp 2014>
     
     
@@ -192,6 +210,7 @@ protected:
 protected:
     MTime m_prevTime;
 	btHashMap<btHashPtr, boingRBNode*> m_hashColObjectToRBNode;
+    static shared_ptr<bSolverNode> m_bsolvernode;
     
 //friend:
 //    dCallBack;
