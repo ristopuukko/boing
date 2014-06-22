@@ -1124,6 +1124,7 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     //cout<<"removing m_rigid_body"<<endl;
 	solver_t::remove_rigid_body(m_rigid_body);
     m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
+    MString rbname = name();
     char * bname = (char*)(name().asChar());
     solver_t::add_rigid_body(m_rigid_body, bname);
     
@@ -1136,21 +1137,24 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     
 	MFnDagNode fnDagNode(connObj);
     
-    MFnDependencyNode fnNode(thisObject);
+    //MFnDependencyNode fnNode(thisObject);
     
     MFnTransform fnTransform(fnDagNode.parent(0));
     MVector mtranslation = fnTransform.getTranslation(MSpace::kTransform);
     MString name = MFnDependencyNode(thisObject).name();
-    shared_ptr<bSolverNode> bSolv = bSolverNode::get_bsolver_node();
-    boing* b_ptr = bSolv->createNode(name);
-    m_rigid_body->collision_shape()->getBulletCollisionShape()->setUserPointer(b_ptr);
-
     
-    MQuaternion mrotation;
-    fnTransform.getRotation(mrotation, MSpace::kTransform);
+    //MQuaternion mrotation;
+    MEulerRotation mrotation;
+    fnTransform.getRotation(mrotation);//, MSpace::kTransform);
+    MVector rot = mrotation.asVector();
 	double mscale[3];
     fnTransform.getScale(mscale);
-	
+    
+    shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+    MVector zeroVec = MVector::zero;
+    b_solv->createNode(connObj, rbname, mtranslation, zeroVec, rot, zeroVec);
+    
+    /*
 	m_rigid_body->set_transform(vec3f((float)mtranslation.x, (float)mtranslation.y, (float)mtranslation.z),
 								quatf((float)mrotation.w, (float)mrotation.x, (float)mrotation.y, (float)mrotation.z));
     m_rigid_body->collision_shape()->set_scale(vec3f((float)mscale[0], (float)mscale[1], (float)mscale[2]));
@@ -1199,6 +1203,7 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
 	*/
 
 	//data.outputValue(ca_rigidBody).set(true);
+    
     data.setClean(plug);
 }
 

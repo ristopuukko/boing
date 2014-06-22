@@ -40,7 +40,7 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 
 #include "bSolverNode.h"
 #include "collision_shape.h"
-//#include "boing.h"
+#include "boing.h"
 
 class createBoingRBCmd : public MPxCommand
 {
@@ -59,7 +59,6 @@ public:
     bool isUndoable() const { return true; }
     bool hasSyntax() const { return true; }
 
-
 protected:
     MArgDatabase *m_argDatabase;
     MDGModifier *m_dgModifier;
@@ -77,6 +76,7 @@ public:
     
     static void *creator();
     static MSyntax cmdSyntax();
+    static MString typeName;
     
     MStatus doIt(const MArgList &i_mArgList);
     MStatus redoIt();
@@ -85,31 +85,16 @@ public:
     bool hasSyntax() const { return true; }
     MObject nameToNode( MString name ) ;
     MPlug nameToNodePlug( MString attrName, MObject nodeObject );
-    MStatus deleteRigidBody(MString &name);
-    MStatus setBulletVectorAttribute(MString &name, MString &attr, MVector &vec);
-    MVector getBulletVectorAttribute(MString &name, MString &attr);
     MString checkAttribute(MString &attr);
     MString checkCustomAttribute(MString &name, MString &attr);
     MStringArray parseArguments(MString arg, MString token);
-    collision_shape_t::pointer createCollisionShape(const MObject& node);
-    
-    MStatus createRigidBody(collision_shape_t::pointer  &collision_shape,
-                            MObject &node,
-                            MString &name,
-                            MVector &vel,
-                            MVector &pos,
-                            MVector &rot,
-                            MVector &av);
-    
-    MStatus deleteRigidBody();
-    
-    
-    static MString typeName;
+    MStatus setBulletVectorAttribute(MString &name, MString &attr, MVector &vec);
+    MVector getBulletVectorAttribute(MString &name, MString &attr);
 
 //private:
     
 protected:
-    
+    static rigid_body_t::pointer getPointerFromName(MString &name);
     bool    isSetAttr;
     bool    isGetAttr;
     bool    isAddAttr;
@@ -118,7 +103,6 @@ protected:
     bool    isValue;
     bool    isType;
     MArgParser *argParser;
-    static rigid_body_t::pointer getPointerFromName(MString &name);
 
 };
 

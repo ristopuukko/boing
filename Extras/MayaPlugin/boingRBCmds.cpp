@@ -254,6 +254,7 @@ MStatus boingRbCmd::redoIt()
     
     
     if (isSetAttr && isValue) {
+        
         MString sAttr;
         //MArgList argList;
         argParser->getFlagArgument("setAttr", 0, sAttr);
@@ -377,24 +378,175 @@ MStatus boingRbCmd::redoIt()
                 
             } else {
                 cout<<"Unrecognized parameter : "<<singleArg[0]<<endl;
-                
             }
         }
-        // create the collisionShape-node
+        // create boing node
+        shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
         MObject node = nameToNode(inputShape);
-        collision_shape_t::pointer collShape = createCollisionShape(node);
-        createRigidBody(collShape, node, rbname, vel, pos, rot, av);
+        b_solv->createNode(node, rbname, pos, vel, rot, av);
+        
         
     } else if ( isDelete  ) {
         MString aArgument;
         argParser->getFlagArgument("-delete", 0, aArgument);
         if (aArgument != "") {
-            deleteRigidBody(aArgument);
+            shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+            b_solv->destroyNode(b_solv->get_node(aArgument));
         }
     }
     
     return MS::kSuccess;
 }
+
+MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVector &vec) {
+    
+    cout<<"setting attribute : "<<attr<<" for rb "<<name<<endl;
+    
+    rigid_body_t::pointer rb = getPointerFromName(name);
+    
+    if (rb != 0)
+    {
+        float mass = rb->get_mass();
+        bool active = (mass>0.f);
+        if(active) {
+            if (attr=="velocity") {
+                vec3f vel;
+                vel = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
+                rb->set_linear_velocity(vel);
+            } else if (attr=="position") {
+                vec3f pos;
+                quatf rot;
+                rb->get_transform(pos, rot);
+                pos = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
+                rb->set_transform(pos, rot);
+            } else if (attr=="angularVelocity") {
+                vec3f av;
+                av = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
+                rb->set_angular_velocity(av);
+            } else { // set a custom attribute
+                boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
+                MString vecStr = "";
+                vecStr.set( vec.x );
+                
+                vecStr += MString(",");
+                vecStr += vec.y;
+                vecStr += MString(",");
+                vecStr += vec.z;
+                b->set_data(attr, vecStr);
+            }
+        }
+        
+    }
+    
+    return MS::kSuccess;
+    
+}
+
+MVector boingRbCmd::getBulletVectorAttribute(MString &name, MString &attr) {
+    
+    MVector vec;
+    
+    rigid_body_t::pointer rb = getPointerFromName(name);
+    
+    if (rb != 0) {
+        float mass = rb->get_mass();
+        bool active = (mass>0.f);
+        if(active) {
+            if (attr=="velocity") {
+                vec3f vel;
+                rb->get_linear_velocity(vel);
+                vec = MVector((double)vel[0], (double)vel[1], (double)vel[2]);
+            } else if (attr=="position") {
+                vec3f pos;
+                quatf rot;
+                rb->get_transform(pos, rot);
+                vec = MVector((double)pos[0], (double)pos[1], (double)pos[2]);
+            } else if (attr=="angularVelocity") {
+                vec3f av;
+                rb->get_angular_velocity(av);
+                vec = MVector((double)av[0], (double)av[1], (double)av[2]);
+            } else {
+                boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
+                MString vecStr = b->get_data(attr);
+                MStringArray vecArray = parseArguments(vecStr, ",");
+                vec = MVector(vecArray[0].asDouble(), vecArray[1].asDouble(), vecArray[2].asDouble());
+            }
+        }
+    }
+    
+    return vec;
+    
+}
+
+rigid_body_t::pointer boingRbCmd::getPointerFromName(MString &name)
+{
+    
+    rigid_body_t::pointer rb = 0;
+    
+    shared_ptr<solver_impl_t> solv = solver_t::get_solver();
+    std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
+    std::set<rigid_body_t::pointer>::iterator rit;
+    for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
+        rigid_body_t::pointer temprb = (*rit);
+        boing *myBoingRb = static_cast<boing *>(temprb->collision_shape()->getBulletCollisionShape()->getUserPointer());
+        //MString n = MString(static_cast<char*>(namePtr));
+        if (name == myBoingRb->name) {
+            rb = temprb;
+            //cout<<"getPointerFromName -> rb : "<<rb<<endl;
+            break;
+        }
+    }
+    
+    return rb;
+}
+MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr) {
+    MString result;
+    
+    rigid_body_t::pointer rb = getPointerFromName(name);
+    boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
+    result = b->get_data(attr);
+    return result;
+}
+
+MStringArray boingRbCmd::parseArguments(MString arg, MString token) {
+    
+    MStringArray jobArgsArray;
+    MString stringBuffer;
+    for (unsigned int charIdx = 0; charIdx < arg.numChars(); charIdx++) {
+        MString ch = arg.substringW(charIdx, charIdx);
+        //cout<<"ch = "<<ch<<endl;
+        if (ch == token ) {
+            if (stringBuffer.length() > 0) {
+                jobArgsArray.append(stringBuffer);
+                //cout<<"jobArgsArray = "<<jobArgsArray<<endl;
+                stringBuffer.clear();
+            }
+        } else {
+            stringBuffer += ch;
+            //cout<<"stringBuffer = "<<stringBuffer<<endl;
+        }
+    }
+    jobArgsArray.append(stringBuffer);
+    
+    return jobArgsArray;
+}
+
+MString boingRbCmd::checkAttribute(MString &attr) {
+    MString result;
+    
+    if (attr=="vel" || attr=="velocity") {
+        result = "velocity";
+    } else if (attr=="pos" || attr=="position") {
+        result = "position";
+    } else if ( attr=="av" || attr=="angularVelocity") {
+        result = "angularVelocity";
+    } else if ( attr=="n" || attr=="name") {
+        result = "name";
+    }
+    //cout<<"checkAttribute : "<<result<<endl;
+    return result;
+}
+
 
 
 

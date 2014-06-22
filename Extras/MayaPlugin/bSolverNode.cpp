@@ -87,6 +87,7 @@
 #include "soft_body_t.h"
 #include "bt_rigid_body.h"
 #include "bt_solver.h"
+#include "boing.h"
 
 #include <omp.h>
 
@@ -166,11 +167,11 @@ void bSolverNode::destroyNode(boing *b) {
     delete b;
 }
 
-boing * bSolverNode::createNode(MString &name) {
-    boing *b = new boing(name);
+MStatus bSolverNode::createNode(MObject &inputShape, MString &rbname, MVector &pos, MVector &vel, MVector &rot, MVector &av) {
+    boing *b = new boing(inputShape, rbname, pos, vel, rot, av);
     node_ptr.push_back(b);
-    
-    return b;
+
+    return MS::kSuccess;
 }
 
 void bSolverNode::erase_node(boing *b) {

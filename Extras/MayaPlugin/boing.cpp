@@ -9,20 +9,40 @@
 #include "boing.h"
 
 
-MString boing::name;
 collision_shape_t::pointer boing::m_collision_shape;
+MString boing::name;
+MString boing::MObject node;
+MVector boing::initial_velocity;
+MVector boing::initial_position;
+MVector boing::initial_rotation;
+MVector boing::initial_angularvelocity;
 
-
-boing::boing(MString value) {
-    name = value;
+boing::boing(MObject &inputShape,MString &inname, MVector &vel, MVector &pos, MVector &rot, MVector &av) {
+    std::cout<<"creating a new boing node : "<<name<<endl;
+    name = inname;
+    // initialize custom attribute arrays
     attrArray = MStringArray();
     dataArray = MStringArray();
-    std::cout<<"creating a new boing node : "<<name<<endl;
+    // MObject of the input shape
+    node = inputShape;
+    initial_velocity = vel;
+    initial_position = pos;
+    initial_rotation = rot;
+    initial_angularvelocity = av;
+    m_collision_shape = createCollisionShape(node);
+    createRigidBody();
     
-    createRigidBody(<#collision_shape_t::pointer &collision_shape#>, <#MObject &node#>, <#MString &name#>, <#MVector &vel#>, <#MVector &pos#>, <#MVector &rot#>, <#MVector &av#>)
 }
 
 boing::~boing() {}
+
+MObject boing::nameToNode( MString name ) {
+    MSelectionList selList;
+    selList.add( name );
+    MObject node;
+    selList.getDependNode( 0, node );
+    return node;
+}
 
 MString boing::get_data(MString &name) {
     for ( int i=0; i<attrArray.length();++i) {
@@ -47,147 +67,28 @@ void boing::set_data(MString &attr, MString &data) {
 }
 
 
-MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVector &vec) {
-    
-    cout<<"setting attribute : "<<attr<<" for rb "<<name<<endl;
-    
-    rigid_body_t::pointer rb = getPointerFromName(name);
-    
-    if (rb != 0)
-    {
-        float mass = rb->get_mass();
-        bool active = (mass>0.f);
-        if(active) {
-            if (attr=="velocity") {
-                vec3f vel;
-                vel = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
-                rb->set_linear_velocity(vel);
-            } else if (attr=="position") {
-                vec3f pos;
-                quatf rot;
-                rb->get_transform(pos, rot);
-                pos = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
-                rb->set_transform(pos, rot);
-            } else if (attr=="angularVelocity") {
-                vec3f av;
-                av = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
-                rb->set_angular_velocity(av);
-            } else { // set a custom attribute
-                boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-                MString vecStr = "";
-                vecStr.set( vec.x );
-                
-                vecStr += MString(",");
-                vecStr += vec.y;
-                vecStr += MString(",");
-                vecStr += vec.z;
-                b->set_data(attr, vecStr);
-            }
-        }
-        
-    }
-    
-    return MS::kSuccess;
-    
-}
-
-MVector boingRbCmd::getBulletVectorAttribute(MString &name, MString &attr) {
-    
-    MVector vec;
-    
-    rigid_body_t::pointer rb = getPointerFromName(name);
-    
-    if (rb != 0) {
-        float mass = rb->get_mass();
-        bool active = (mass>0.f);
-        if(active) {
-            if (attr=="velocity") {
-                vec3f vel;
-                rb->get_linear_velocity(vel);
-                vec = MVector((double)vel[0], (double)vel[1], (double)vel[2]);
-            } else if (attr=="position") {
-                vec3f pos;
-                quatf rot;
-                rb->get_transform(pos, rot);
-                vec = MVector((double)pos[0], (double)pos[1], (double)pos[2]);
-            } else if (attr=="angularVelocity") {
-                vec3f av;
-                rb->get_angular_velocity(av);
-                vec = MVector((double)av[0], (double)av[1], (double)av[2]);
-            } else {
-                boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-                MString vecStr = b->get_data(attr);
-                MStringArray vecArray = parseArguments(vecStr, ",");
-                vec = MVector(vecArray[0].asDouble(), vecArray[1].asDouble(), vecArray[2].asDouble());
-            }
-        }
-    }
-    
-    return vec;
-    
-}
-
-MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr) {
-    MString result;
-    
-    rigid_body_t::pointer rb = getPointerFromName(name);
-    boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-    result = b->get_data(attr);
-    return result;
-}
-
-MStringArray boingRbCmd::parseArguments(MString arg, MString token) {
-    
-    MStringArray jobArgsArray;
-    MString stringBuffer;
-    for (unsigned int charIdx = 0; charIdx < arg.numChars(); charIdx++) {
-        MString ch = arg.substringW(charIdx, charIdx);
-        //cout<<"ch = "<<ch<<endl;
-        if (ch == token ) {
-            if (stringBuffer.length() > 0) {
-                jobArgsArray.append(stringBuffer);
-                //cout<<"jobArgsArray = "<<jobArgsArray<<endl;
-                stringBuffer.clear();
-            }
-        } else {
-            stringBuffer += ch;
-            //cout<<"stringBuffer = "<<stringBuffer<<endl;
-        }
-    }
-    jobArgsArray.append(stringBuffer);
-    
-    return jobArgsArray;
-}
-
-MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape,
-                                    MObject &node,
-                                    MString &name,
-                                    MVector &vel,
-                                    MVector &pos,
-                                    MVector &rot,
-                                    MVector &av)
+void boingRbCmd::createRigidBody()
 {
     //MGlobal::getActiveSelectionList(m_undoSelectionList);
     
-    
     if (!name.length()) {
-        name = "boingRb1";
+        name = "procBoingRb1";
     }
     
     double mscale[3] = {1,1,1};
     MQuaternion mrotation = MEulerRotation(rot).asQuaternion();
     
     //collision_shape_t::pointer  collision_shape;
-    if(!collision_shape) {
+    if(!m_collision_shape) {
         //not connected to a collision shape, put a default one
-        collision_shape = solver_t::create_box_shape();
+        m_collision_shape = solver_t::create_box_shape();
     } else {
         if ( !node.isNull() ) {
             MFnDagNode fnDagNode(node);
             //cout<<"node : "<<fnDagNode.partialPathName()<<endl;
             MFnTransform fnTransform(fnDagNode.parent(0));
             //cout<<"MFnTransform node : "<<fnTransform.partialPathName()<<endl;
-            if ( pos == MVector::zero ) {
+            if ( initial_position == MVector::zero ) {
                 pos = fnTransform.getTranslation(MSpace::kTransform);
             }
             if ( rot == MVector::zero ) {
@@ -196,41 +97,46 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
             fnTransform.getScale(mscale);
         }
     }
-    
+
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     
-    rigid_body_t::pointer m_rigid_body = solver_t::create_rigid_body(collision_shape);
+    m_rigid_body = solver_t::create_rigid_body(collision_shape);
     
-    
-    
-    //char *rName = (char *)name.asChar();
-    //bSolverNode::procRbArray.append(name);
-    //void *namePtr = rName;
-    
-    
-    
-    //std::vector<boing> nodes = bSolverNode::get_nodes();
-    //std::cout<<"bSolverNode::bSolverNode::myRbNodes.size() : "<<nodes.size()<<endl;
-    //std::cout<<"b pointer  : "<<&b<<endl;
-    shared_ptr<bSolverNode> bSolv = bSolverNode::get_bsolver_node();
-    boing* b_ptr = bSolv->createNode(name);
-    std::cout<<"b_ptr->name  : "<<b_ptr->name<<endl;
-    m_rigid_body->collision_shape()->getBulletCollisionShape()->setUserPointer(b_ptr);
+    m_rigid_body->collision_shape()->getBulletCollisionShape()->setUserPointer((void *) &this);
     
     m_rigid_body->set_transform(vec3f((float)pos.x, (float)pos.y, (float)pos.z),
                                 quatf((float)mrotation.w, (float)mrotation.x, (float)mrotation.y, (float)mrotation.z));
     
-    m_rigid_body->set_linear_velocity( vec3f((float)vel.x,(float)vel.y,(float)vel.z) );
-    m_rigid_body->set_angular_velocity( vec3f((float)av.x,(float)av.y,(float)av.z) );
+    m_rigid_body->set_linear_velocity( vec3f((float)initial_velocity.x,(float)initial_velocity.y,(float)initial_velocity.z) );
+    m_rigid_body->set_angular_velocity( vec3f((float)initial_angularvelocity.x,(float)initial_angularvelocity.y,(float)initial_angularvelocity.z) );
     
     
     m_rigid_body->collision_shape()->set_scale(vec3f((float)mscale[0], (float)mscale[1], (float)mscale[2]));
     
-    
+    /*
     float mass = 1.f;
     m_rigid_body->set_mass(mass);
     m_rigid_body->set_inertia((float)mass * m_rigid_body->collision_shape()->local_inertia());
+    */
     
+	float mass = 0.f;
+	MPlug(node, boingRBNode::ia_mass).getValue(mass);
+    
+	float curMass = m_rigid_body->get_mass();
+	bool changedMassStatus= false;
+	if ((curMass > 0.f) != (mass > 0.f))
+	{
+		changedMassStatus = true;
+	}
+	if (changedMassStatus)
+		solver_t::remove_rigid_body(m_rigid_body);
+	
+	m_rigid_body->set_mass(mass);
+	m_rigid_body->set_inertia((float)mass * m_rigid_body->collision_shape()->local_inertia());
+    
+    
+	if (changedMassStatus)
+		solver_t::add_rigid_body(m_rigid_body, bname);
     
     //initialize those default values too
     float restitution = 0.3f;
@@ -246,9 +152,6 @@ MStatus boingRbCmd::createRigidBody(collision_shape_t::pointer  &collision_shape
     //MPlug(thisObject, rigidBodyNode::ia_angularDamping).getValue(angDamp);
     m_rigid_body->set_angular_damping(angDamp);
     
-    solver_t::add_rigid_body(m_rigid_body, name.asChar());
-    
-    return MS::kSuccess;
 }
 
 
@@ -463,41 +366,3 @@ MStatus boingRbCmd::deleteRigidBody(MString &name) {
 }
 
 
-MString boingRbCmd::checkAttribute(MString &attr) {
-    MString result;
-    
-    if (attr=="vel" || attr=="velocity") {
-        result = "velocity";
-    } else if (attr=="pos" || attr=="position") {
-        result = "position";
-    } else if ( attr=="av" || attr=="angularVelocity") {
-        result = "angularVelocity";
-    } else if ( attr=="n" || attr=="name") {
-        result = "name";
-    }
-    //cout<<"checkAttribute : "<<result<<endl;
-    return result;
-}
-
-
-rigid_body_t::pointer boingRbCmd::getPointerFromName(MString &name)
-{
-    
-    rigid_body_t::pointer rb = 0;
-    
-    shared_ptr<solver_impl_t> solv = solver_t::get_solver();
-    std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
-    std::set<rigid_body_t::pointer>::iterator rit;
-    for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
-        rigid_body_t::pointer temprb = (*rit);
-        boing *myBoingRb = static_cast<boing *>(temprb->collision_shape()->getBulletCollisionShape()->getUserPointer());
-        //MString n = MString(static_cast<char*>(namePtr));
-        if (name == myBoingRb->name) {
-            rb = temprb;
-            //cout<<"getPointerFromName -> rb : "<<rb<<endl;
-            break;
-        }
-    }
-    
-    return rb;
-}

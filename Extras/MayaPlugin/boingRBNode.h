@@ -154,9 +154,8 @@ protected:
     void computeOutputShape(const MPlug& plug, MDataBlock& data);
 	collision_shape_t::pointer createCollisionShape(const MObject& node);
 	collision_shape_t::pointer createCompositeShape(const MPlug& plgInShape);
-    
-protected:
 	float collisionMarginOffset;
+    friend class boing;
     
 private:
     collision_shape_t::pointer m_collision_shape;

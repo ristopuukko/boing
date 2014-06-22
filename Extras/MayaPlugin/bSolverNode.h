@@ -150,8 +150,7 @@ public:
     //<rp 2014>
     static void getRigidBodies(MObject &node, MStringArray& rbds, std::set<boingRBNode*>&nodes);
     
-
-    boing* createNode(MString &name);
+    MStatus createNode(MObject &inputShape, MString &rbname, MVector &pos, MVector &vel, MVector &rot, MVector &av);
     void destroyNode(boing *b);
     void erase_node(boing *b);
     boing*  get_node(MString &name);
