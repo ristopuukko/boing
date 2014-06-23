@@ -7,35 +7,57 @@
 //
 
 #include "boing.h"
+#include "collision_shape.h"
+#include "boingRBNode.h"
+
 
 collision_shape_t::pointer boing::m_collision_shape;
 MString boing::name;
+MString boing::typeName;
 MObject boing::node;
-MVector boing::initial_velocity;
-MVector boing::initial_position;
-MVector boing::initial_rotation;
-MVector boing::initial_angularvelocity;
+MVector boing::m_initial_velocity;
+MVector boing::m_initial_position;
+MVector boing::m_initial_rotation;
+MVector boing::m_initial_angularvelocity;
+MVector boing::m_vel;
+MVector boing::m_pos;
+MVector boing::m_rot;
+MVector boing::m_av;
+float boing::m_mass;
+MStringArray boing::attrArray;
+MStringArray boing::dataArray;
+int boing::count;
 
-boing::boing(MObject &inputShape,MString &inname, MVector &vel, MVector &pos, MVector &rot, MVector &av):
-name(inname),
-attrArray( MStringArray() ),
-dataArray( MStringArray() ),
-node(inputShape),
-initial_velocity(vel),
-initial_position(pos),
-initial_rotation(rot),
-initial_angularvelocity(av),
-m_collision_shape(createCollisionShape(node)),
-m_collision_shape=0,
-m_rigid_body=0
+rigid_body_t::pointer boing::m_rigid_body;
+
+
+boing::boing(MObject &inputShape,MString &inname, MString &inTypeName, MVector &pos, MVector &vel, MVector &rot, MVector &av, float &mass)
 {
-    std::cout<<"creating a new boing node : "<<name<<endl;
+    node = inputShape;
+    name = inname;
+    typeName = inTypeName;
+    m_initial_velocity = vel;
+    m_initial_position = pos;
+    m_initial_rotation = rot;
+    m_initial_angularvelocity = av;
+    m_mass = mass;
+    attrArray = MStringArray();
+    dataArray = MStringArray();
+    m_collision_shape = createCollisionShape(node);
+    cout<<"m_collision_shape : "<<m_collision_shape<<endl;
+    std::cout<<"creating a new (boing::boing) boing node : "<<inname<<" type "<<inTypeName<<"from node "<<MFnDependencyNode(inputShape).name()<<" in pos "<<m_initial_position<<" vel "<<m_initial_velocity<<" rotation "<<m_initial_rotation<<" and av "<<m_initial_angularvelocity<<endl;
+    count++;
+    std::cout<<"count = "<<count<<std::endl;
     createRigidBody();
 }
 
 boing::~boing() {
     m_collision_shape=0;
     m_rigid_body=0;
+}
+
+void * boing::getPointer() {
+    return (void *) this;
 }
 
 MObject boing::nameToNode( MString name ) {
@@ -76,10 +98,11 @@ void boing::createRigidBody()
     if (!name.length()) {
         name = "procBoingRb1";
     }
+    std::cout<<"name in  boing::createRigidBody() "<<name<<endl;
     
     double mscale[3] = {1,1,1};
-    MQuaternion mrotation = MEulerRotation(rot).asQuaternion();
-    
+    MQuaternion mrotation = MEulerRotation(m_initial_rotation).asQuaternion();
+
     //collision_shape_t::pointer  collision_shape;
     if(!m_collision_shape) {
         //not connected to a collision shape, put a default one
@@ -90,10 +113,10 @@ void boing::createRigidBody()
             //cout<<"node : "<<fnDagNode.partialPathName()<<endl;
             MFnTransform fnTransform(fnDagNode.parent(0));
             //cout<<"MFnTransform node : "<<fnTransform.partialPathName()<<endl;
-            if ( initial_position == MVector::zero ) {
-                pos = fnTransform.getTranslation(MSpace::kTransform);
+            if ( m_initial_position == MVector::zero ) {
+                m_initial_position = fnTransform.getTranslation(MSpace::kTransform);
             }
-            if ( rot == MVector::zero ) {
+            if ( m_initial_rotation == MVector::zero ) {
                 fnTransform.getRotation(mrotation, MSpace::kTransform);
             }
             fnTransform.getScale(mscale);
@@ -102,15 +125,13 @@ void boing::createRigidBody()
 
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     
-    m_rigid_body = solver_t::create_rigid_body(collision_shape);
+    m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
     
-    m_rigid_body->collision_shape()->getBulletCollisionShape()->setUserPointer((void *) &this);
-    
-    m_rigid_body->set_transform(vec3f((float)pos.x, (float)pos.y, (float)pos.z),
+    m_rigid_body->set_transform(vec3f((float)m_initial_position.x, (float)m_initial_position.y, (float)m_initial_position.z),
                                 quatf((float)mrotation.w, (float)mrotation.x, (float)mrotation.y, (float)mrotation.z));
     
-    m_rigid_body->set_linear_velocity( vec3f((float)initial_velocity.x,(float)initial_velocity.y,(float)initial_velocity.z) );
-    m_rigid_body->set_angular_velocity( vec3f((float)initial_angularvelocity.x,(float)initial_angularvelocity.y,(float)initial_angularvelocity.z) );
+    m_rigid_body->set_linear_velocity( vec3f((float)m_initial_velocity.x,(float)m_initial_velocity.y,(float)m_initial_velocity.z) );
+    m_rigid_body->set_angular_velocity( vec3f((float)m_initial_angularvelocity.x,(float)m_initial_angularvelocity.y,(float)m_initial_angularvelocity.z) );
     
     
     m_rigid_body->collision_shape()->set_scale(vec3f((float)mscale[0], (float)mscale[1], (float)mscale[2]));
@@ -121,24 +142,26 @@ void boing::createRigidBody()
     m_rigid_body->set_inertia((float)mass * m_rigid_body->collision_shape()->local_inertia());
     */
     
-	float mass = 0.f;
-	MPlug(node, boingRBNode::ia_mass).getValue(mass);
+	//float mass = 0.f;
+    if (typeName == boingRBNode::typeName) {
+        MPlug(node, boingRBNode::ia_mass).getValue(m_mass);
+    }
     
 	float curMass = m_rigid_body->get_mass();
 	bool changedMassStatus= false;
-	if ((curMass > 0.f) != (mass > 0.f))
+	if ((curMass > 0.f) != (m_mass > 0.f))
 	{
 		changedMassStatus = true;
 	}
 	if (changedMassStatus)
 		solver_t::remove_rigid_body(m_rigid_body);
 	
-	m_rigid_body->set_mass(mass);
-	m_rigid_body->set_inertia((float)mass * m_rigid_body->collision_shape()->local_inertia());
+	m_rigid_body->set_mass(m_mass);
+	m_rigid_body->set_inertia((float)m_mass * m_rigid_body->collision_shape()->local_inertia());
     
     
 	if (changedMassStatus)
-		solver_t::add_rigid_body(m_rigid_body, bname);
+		solver_t::add_rigid_body(m_rigid_body, name.asChar());
     
     //initialize those default values too
     float restitution = 0.3f;
@@ -153,6 +176,11 @@ void boing::createRigidBody()
     float angDamp = 0.2f;
     //MPlug(thisObject, rigidBodyNode::ia_angularDamping).getValue(angDamp);
     m_rigid_body->set_angular_damping(angDamp);
+
+    m_rigid_body->impl()->body()->setUserPointer((void*) this);
+    std::cout<<this<<std::endl;
+
+    
     
 }
 
@@ -352,6 +380,29 @@ collision_shape_t::pointer boing::createCollisionShape(const MObject& node)
     }
     
     return collision_shape;
+}
+
+
+rigid_body_t::pointer boing::getPointerFromName(MString &name)
+{
+    
+    rigid_body_t::pointer rb = 0;
+    
+    shared_ptr<solver_impl_t> solv = solver_t::get_solver();
+    std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
+    std::set<rigid_body_t::pointer>::iterator rit;
+    for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
+        rigid_body_t::pointer temprb = (*rit);
+        boing *myBoingRb = static_cast<boing *>(temprb->collision_shape()->getBulletCollisionShape()->getUserPointer());
+        //MString n = MString(static_cast<char*>(namePtr));
+        if (name == myBoingRb->name) {
+            rb = temprb;
+            //cout<<"getPointerFromName -> rb : "<<rb<<endl;
+            break;
+        }
+    }
+    
+    return rb;
 }
 
 

@@ -138,11 +138,6 @@ void	btCollisionWorld::addCollisionObject(btCollisionObject* collisionObject,sho
 		collisionFilterMask,
 		m_dispatcher1,0
 		))	;
-
-
-
-
-
 }
 
 

@@ -181,6 +181,7 @@ void solver_t::add_rigid_body(rigid_body_t::pointer& rb,const char* name)
     if(rb) {
         if(m_rigid_bodies.find(rb) == m_rigid_bodies.end()) {
             m_rigid_bodies.insert(rb);
+            std::cout<<"solver_t::add_rigid_body name : "<<name<<std::endl;
             m_impl->add_rigid_body(rb->impl(),name);
         }
     }

@@ -51,7 +51,7 @@ Modified by Dongsoo Han <dongsoo.han@amd.com>
 #include "boing.h"
 
 
-
+class boing;
 //using namespace std;
 
 class bSolverNode : public MPxLocatorNode
@@ -150,7 +150,7 @@ public:
     //<rp 2014>
     static void getRigidBodies(MObject &node, MStringArray& rbds, std::set<boingRBNode*>&nodes);
     
-    static MStatus createNode(MObject &inputShape, MString &rbname, MVector &pos, MVector &vel, MVector &rot, MVector &av);
+    static MStatus createNode(MObject &inputShape, MString &rbname, MString &inTypeName, MVector &pos, MVector &vel, MVector &rot, MVector &av, float &mass);
     void destroyNode(boing *b);
     void erase_node(boing *b);
     boing*  get_node(MString &name);
@@ -159,7 +159,7 @@ public:
     static shared_ptr<bSolverNode> get_bsolver_node();
     
     //</rp 2014>
-    static std::vector<char *> node_name_ptr;
+    static MStringArray node_name_ptr;
 
     static std::vector<boing*> node_ptr;
     

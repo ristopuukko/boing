@@ -306,16 +306,27 @@ MStatus boingRbCmd::redoIt()
             setResult(dResult);
         } else {
             MStringArray result;
-            
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+            for ( int i=0; i<b_solv->node_name_ptr.length(); i++) {
+                result.append(b_solv->node_name_ptr[i]);
+                std::cout<<" -> "<<b_solv->node_name_ptr[i].asChar()<<std::endl;
+            }
             std::vector<boing*> rbds = b_solv->get_all_nodes();
             std::vector<boing*>::iterator rit;
             for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
-                boing* b_ptr = (*rit);
-                cout<<"b_ptr->name : "<<b_ptr->name<<endl;
-                result.append(b_ptr->name);
+                //boing* b_ptr = (*rit);
+                std::cout<<"(*rit) : "<<(*rit)<<std::endl;
+                std::cout<<"(*rit)->getPointer() : "<<(*rit)->getPointer()<<std::endl;
+                std::cout<<"(*rit)->name : "<<(*rit)->name<<std::endl;
+                //result.append(b_ptr->name);
+                if ( rbds.size() > ((*rit)->count - 1) ) {
+                    std::cout<<"count = "<<(*rit)->count<<std::endl;
+                }
             }
+
             
+
+
             setResult(result);
         }
         
@@ -382,8 +393,9 @@ MStatus boingRbCmd::redoIt()
         // create boing node
         shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
         MObject node = nameToNode(inputShape);
-        b_solv->createNode(node, rbname, pos, vel, rot, av);
-        
+        float mass = 1.0f;
+        MString tname = "boing";
+        b_solv->createNode(node, rbname, tname, pos, vel, rot, av, mass);
         
     } else if ( isDelete  ) {
         MString aArgument;
@@ -498,12 +510,14 @@ rigid_body_t::pointer boingRbCmd::getPointerFromName(MString &name)
     
     return rb;
 }
+
+
 MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr) {
     MString result;
     
     rigid_body_t::pointer rb = getPointerFromName(name);
     boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-    //result = b->get_data(attr);
+    result = b->get_data(attr);
     return result;
 }
 

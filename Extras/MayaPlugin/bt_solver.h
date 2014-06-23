@@ -188,7 +188,6 @@ public:
         bt_rigid_body_t* bt_body = static_cast<bt_rigid_body_t*>(rb);
 		bt_body->body()->setActivationState(DISABLE_DEACTIVATION);
         m_dynamicsWorld->addRigidBody(bt_body->body());
-        
     }
 
 	/** \brief	Add a soft body to the existing "physics world" of this solver.

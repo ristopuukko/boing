@@ -1126,7 +1126,7 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
     MString rbname = name();
     char * bname = (char*)(name().asChar());
-    solver_t::add_rigid_body(m_rigid_body, bname);
+    //solver_t::add_rigid_body(m_rigid_body, bname);
     
     // once at creation/load time : get transform from Maya transform node
     
@@ -1150,9 +1150,24 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
 	double mscale[3];
     fnTransform.getScale(mscale);
     
+    
+    MPlug ilv(thisObject, boingRBNode::ia_initialVelocity);
+	MDataHandle hInitLinVel= ilv.asMDataHandle();
+    MVector initLinVel = hInitLinVel.asVector();
+    MPlug iav(thisObject, boingRBNode::ia_initialSpin);
+	MDataHandle hInitAngVel= iav.asMDataHandle();
+    MVector initAngVel = hInitAngVel.asVector();
+	//float3 &initLinVel= hInitLinVel.asFloat3();
+	//vec3f lv(initLinVel[0],initLinVel[1],initLinVel[2]);
+	//m_rigid_body->set_linear_velocity(lv);
+
+	float mass = 0.f;
+	MPlug(thisObject, boingRBNode::ia_mass).getValue(mass);
+    
+    //MVector zeroVec = MVector::zero;
     shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-    MVector zeroVec = MVector::zero;
-    b_solv->createNode(connObj, rbname, mtranslation, zeroVec, rot, zeroVec);
+    std::cout<<"calling createNode from boingRBNode computeRigidBody."<<endl;
+    b_solv->createNode(connObj, rbname, typeName, mtranslation, initLinVel, rot, initAngVel, mass);
     
     /*
 	m_rigid_body->set_transform(vec3f((float)mtranslation.x, (float)mtranslation.y, (float)mtranslation.z),
