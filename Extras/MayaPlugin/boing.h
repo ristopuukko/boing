@@ -11,13 +11,17 @@
 #include <maya/MItDependencyNodes.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnDagNode.h>
-#include <maya/MObject.h>
 #include <maya/MPlug.h>
 #include <maya/MPlugArray.h>
 #include <maya/MDoubleArray.h>
+#include <maya/MObject.h>
 #include <maya/MString.h>
 #include <maya/MStringArray.h>
 #include <maya/MVector.h>
+#include <maya/MFloatVectorArray.h>
+#include <maya/MFloatPointArray.h>
+#include <maya/MFnMesh.h>
+#include <maya/MSelectionList.h>
 #include <vector>
 #include <set>
 #include <iostream>
@@ -39,11 +43,11 @@ public:
     boing(MObject &node, MString &name, MVector &vel, MVector &pos, MVector &rot, MVector &av);
     virtual ~boing();
 
-    virtual MString get_data(MString &name);
-    virtual void add_data(MString &attr, MString &data);
-    virtual void set_data(MString &attr, MString &data);
+    static MString get_data(MString &name);
+    static void add_data(MString &attr, MString &data);
+    static void set_data(MString &attr, MString &data);
     
-    MStatus deleteRigidBody(MString &name);
+    static MStatus deleteRigidBody(MString &name);
     collision_shape_t::pointer createCollisionShape(const MObject& node);
     void createRigidBody();
     
@@ -51,7 +55,9 @@ public:
     MObject nameToNode( MString name ) ;
   
     //MStatus set_bullet_attribute();
-    MString name;
+    static MString name;
+    friend class bSolverNode;
+    friend class boingRbCmd;
     
 private:
     static MObject node;
@@ -64,8 +70,7 @@ private:
     static collision_shape_t::pointer m_collision_shape;
     static rigid_body_t::pointer m_rigid_body;
     
-protected:
-    friend class bSolverNode;
+//protected:
     
 };
 

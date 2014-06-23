@@ -45,7 +45,6 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
 
-
 MString createBoingRBCmd::typeName("createBoingRb");
 
 createBoingRBCmd::createBoingRBCmd()
@@ -284,9 +283,9 @@ MStatus boingRbCmd::redoIt()
         argParser->getFlagArgument("-type", 0, attrtype);
         cout<<attrtype<<endl;
         
-        rigid_body_t::pointer rb = getPointerFromName(jobArgsArray[0]);
-        boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-        b->add_data(jobArgsArray[0], jobArgsArray[1]);
+        //rigid_body_t::pointer rb = getPointerFromName(jobArgsArray[0]);
+        //boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
+        //b->add_data(jobArgsArray[0], jobArgsArray[1]);
         //b->boing::customAttributes.insert(boing::customAttributes.end(),atr);
         
     } else if ( isGetAttr) {
@@ -423,7 +422,7 @@ MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVect
                 vec3f av;
                 av = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
                 rb->set_angular_velocity(av);
-            } else { // set a custom attribute
+            } /*else { // set a custom attribute
                 boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
                 MString vecStr = "";
                 vecStr.set( vec.x );
@@ -433,7 +432,7 @@ MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVect
                 vecStr += MString(",");
                 vecStr += vec.z;
                 b->set_data(attr, vecStr);
-            }
+            }*/
         }
         
     }
@@ -465,12 +464,12 @@ MVector boingRbCmd::getBulletVectorAttribute(MString &name, MString &attr) {
                 vec3f av;
                 rb->get_angular_velocity(av);
                 vec = MVector((double)av[0], (double)av[1], (double)av[2]);
-            } else {
+            } /*else {
                 boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
                 MString vecStr = b->get_data(attr);
                 MStringArray vecArray = parseArguments(vecStr, ",");
                 vec = MVector(vecArray[0].asDouble(), vecArray[1].asDouble(), vecArray[2].asDouble());
-            }
+            }*/
         }
     }
     
@@ -504,7 +503,7 @@ MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr) {
     
     rigid_body_t::pointer rb = getPointerFromName(name);
     boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-    result = b->get_data(attr);
+    //result = b->get_data(attr);
     return result;
 }
 

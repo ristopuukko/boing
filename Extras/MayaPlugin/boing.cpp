@@ -8,33 +8,35 @@
 
 #include "boing.h"
 
-
 collision_shape_t::pointer boing::m_collision_shape;
 MString boing::name;
-MString boing::MObject node;
+MObject boing::node;
 MVector boing::initial_velocity;
 MVector boing::initial_position;
 MVector boing::initial_rotation;
 MVector boing::initial_angularvelocity;
 
-boing::boing(MObject &inputShape,MString &inname, MVector &vel, MVector &pos, MVector &rot, MVector &av) {
+boing::boing(MObject &inputShape,MString &inname, MVector &vel, MVector &pos, MVector &rot, MVector &av):
+name(inname),
+attrArray( MStringArray() ),
+dataArray( MStringArray() ),
+node(inputShape),
+initial_velocity(vel),
+initial_position(pos),
+initial_rotation(rot),
+initial_angularvelocity(av),
+m_collision_shape(createCollisionShape(node)),
+m_collision_shape=0,
+m_rigid_body=0
+{
     std::cout<<"creating a new boing node : "<<name<<endl;
-    name = inname;
-    // initialize custom attribute arrays
-    attrArray = MStringArray();
-    dataArray = MStringArray();
-    // MObject of the input shape
-    node = inputShape;
-    initial_velocity = vel;
-    initial_position = pos;
-    initial_rotation = rot;
-    initial_angularvelocity = av;
-    m_collision_shape = createCollisionShape(node);
     createRigidBody();
-    
 }
 
-boing::~boing() {}
+boing::~boing() {
+    m_collision_shape=0;
+    m_rigid_body=0;
+}
 
 MObject boing::nameToNode( MString name ) {
     MSelectionList selList;
@@ -67,7 +69,7 @@ void boing::set_data(MString &attr, MString &data) {
 }
 
 
-void boingRbCmd::createRigidBody()
+void boing::createRigidBody()
 {
     //MGlobal::getActiveSelectionList(m_undoSelectionList);
     
@@ -155,7 +157,7 @@ void boingRbCmd::createRigidBody()
 }
 
 
-collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
+collision_shape_t::pointer boing::createCollisionShape(const MObject& node)
 {
     
     collision_shape_t::pointer collision_shape = 0;
@@ -353,7 +355,7 @@ collision_shape_t::pointer boingRbCmd::createCollisionShape(const MObject& node)
 }
 
 
-MStatus boingRbCmd::deleteRigidBody(MString &name) {
+MStatus boing::deleteRigidBody(MString &name) {
     
     rigid_body_t::pointer rb = getPointerFromName(name);
     //boing *b = static_cast<boing *>( rb->impl()->body()->getUserPointer() );

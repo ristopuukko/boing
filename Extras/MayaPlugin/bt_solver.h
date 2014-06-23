@@ -297,7 +297,7 @@ private:
     btConstraintSolver*               m_solver;
     btDefaultCollisionConfiguration*  m_collisionConfiguration;
     btCollisionDispatcher*            m_dispatcher;
-    btSoftRigidDynamicsWorld*          m_dynamicsWorld;	
+    btSoftRigidDynamicsWorld*         m_dynamicsWorld;	
 
 public:
 	btHashMap<btHashPtr,const char*>	m_nameMap;

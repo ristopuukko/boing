@@ -129,6 +129,9 @@ float bSolverNode::collisionMarginOffset; //mb
 
 shared_ptr<bSolverNode> bSolverNode::m_bsolvernode;
 
+std::vector<char*> bSolverNode::node_name_ptr;
+std::vector<boing*> bSolverNode::node_ptr;
+
 
 #define ATTR_POSITION "position"
 //#define ATTR_POSITION_TYPE VECTOR_ATTR
@@ -168,9 +171,10 @@ void bSolverNode::destroyNode(boing *b) {
 }
 
 MStatus bSolverNode::createNode(MObject &inputShape, MString &rbname, MVector &pos, MVector &vel, MVector &rot, MVector &av) {
+    
     boing *b = new boing(inputShape, rbname, pos, vel, rot, av);
     node_ptr.push_back(b);
-
+    node_name_ptr.push_back((char*)(rbname.asChar()));
     return MS::kSuccess;
 }
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -266,7 +266,6 @@
 		BC43414A1117F3C600C9C8D7 /* btSimpleDynamicsWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC433FBB1117F3C600C9C8D7 /* btSimpleDynamicsWorld.cpp */; };
 		BC43414B1117F3C600C9C8D7 /* btSimpleDynamicsWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = BC433FBC1117F3C600C9C8D7 /* btSimpleDynamicsWorld.h */; };
 		BC43414C1117F3C600C9C8D7 /* Bullet-C-API.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC433FBD1117F3C600C9C8D7 /* Bullet-C-API.cpp */; };
-		BC43414D1117F3C600C9C8D7 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = BC433FBF1117F3C600C9C8D7 /* Makefile */; };
 		BC43414E1117F3C600C9C8D7 /* Jamfile in Sources */ = {isa = PBXBuildFile; fileRef = BC433FC01117F3C600C9C8D7 /* Jamfile */; };
 		BC43414F1117F3C600C9C8D7 /* btRaycastVehicle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC433FC21117F3C600C9C8D7 /* btRaycastVehicle.cpp */; };
 		BC4341501117F3C600C9C8D7 /* btRaycastVehicle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC433FC31117F3C600C9C8D7 /* btRaycastVehicle.h */; };
@@ -351,7 +350,6 @@
 		BC43419F1117F3C600C9C8D7 /* btSoftSoftCollisionAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = BC43401F1117F3C600C9C8D7 /* btSoftSoftCollisionAlgorithm.h */; };
 		BC4341A01117F3C600C9C8D7 /* btSparseSDF.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4340201117F3C600C9C8D7 /* btSparseSDF.h */; };
 		BC4341A11117F3C600C9C8D7 /* Jamfile in Sources */ = {isa = PBXBuildFile; fileRef = BC4340221117F3C600C9C8D7 /* Jamfile */; };
-		BC4341A21117F3C600C9C8D7 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = BC4340251117F3C600C9C8D7 /* Makefile */; };
 		BC4341A31117F3C600C9C8D7 /* Jamfile in Sources */ = {isa = PBXBuildFile; fileRef = BC4340261117F3C600C9C8D7 /* Jamfile */; };
 		BC4341A41117F3C600C9C8D7 /* btAabbUtil2.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4340281117F3C600C9C8D7 /* btAabbUtil2.h */; };
 		BC4341A51117F3C600C9C8D7 /* btAlignedAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4340291117F3C600C9C8D7 /* btAlignedAllocator.cpp */; };
@@ -381,7 +379,6 @@
 		BC4341BD1117F3C600C9C8D7 /* btTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4340411117F3C600C9C8D7 /* btTransform.h */; };
 		BC4341BE1117F3C600C9C8D7 /* btTransformUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4340421117F3C600C9C8D7 /* btTransformUtil.h */; };
 		BC4341BF1117F3C600C9C8D7 /* btVector3.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4340431117F3C600C9C8D7 /* btVector3.h */; };
-		BC4341C01117F3C600C9C8D7 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = BC4340461117F3C600C9C8D7 /* Makefile */; };
 		BC4341C11117F3C600C9C8D7 /* Jamfile in Sources */ = {isa = PBXBuildFile; fileRef = BC4340471117F3C600C9C8D7 /* Jamfile */; };
 		BC4341C21117F3C600C9C8D7 /* cl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC43404A1117F3C600C9C8D7 /* cl.h */; };
 		BC4341C31117F3C600C9C8D7 /* cl_gl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC43404B1117F3C600C9C8D7 /* cl_gl.h */; };
@@ -2026,9 +2023,10 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = 8A7F05F1086863A70064D097 /* Build configuration list for PBXProject "BulletMayaPlugin" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -2160,7 +2158,6 @@
 				BC4341481117F3C600C9C8D7 /* btRigidBody.cpp in Sources */,
 				BC43414A1117F3C600C9C8D7 /* btSimpleDynamicsWorld.cpp in Sources */,
 				BC43414C1117F3C600C9C8D7 /* Bullet-C-API.cpp in Sources */,
-				BC43414D1117F3C600C9C8D7 /* Makefile in Sources */,
 				BC43414E1117F3C600C9C8D7 /* Jamfile in Sources */,
 				BC43414F1117F3C600C9C8D7 /* btRaycastVehicle.cpp in Sources */,
 				BC4341521117F3C600C9C8D7 /* btWheelInfo.cpp in Sources */,
@@ -2195,14 +2192,12 @@
 				F986F649193F2A970040A399 /* boingRBNode.cpp in Sources */,
 				BC43419E1117F3C600C9C8D7 /* btSoftSoftCollisionAlgorithm.cpp in Sources */,
 				BC4341A11117F3C600C9C8D7 /* Jamfile in Sources */,
-				BC4341A21117F3C600C9C8D7 /* Makefile in Sources */,
 				BC4341A31117F3C600C9C8D7 /* Jamfile in Sources */,
 				BC4341A51117F3C600C9C8D7 /* btAlignedAllocator.cpp in Sources */,
 				BC4341A81117F3C600C9C8D7 /* btConvexHull.cpp in Sources */,
 				BC4341AB1117F3C600C9C8D7 /* btGeometryUtil.cpp in Sources */,
 				BC4341B61117F3C600C9C8D7 /* btQuickprof.cpp in Sources */,
 				BC4341BA1117F3C600C9C8D7 /* btSerializer.cpp in Sources */,
-				BC4341C01117F3C600C9C8D7 /* Makefile in Sources */,
 				BC4341C11117F3C600C9C8D7 /* Jamfile in Sources */,
 				BC4342041117F4CF00C9C8D7 /* solver.cpp in Sources */,
 				BC43420D1117F4CF00C9C8D7 /* pluginMain.cpp in Sources */,
@@ -2311,6 +2306,7 @@
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
 				LIBRARY_STYLE = BUNDLE;
 				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lOpenMaya",
 					"-lFoundation",
