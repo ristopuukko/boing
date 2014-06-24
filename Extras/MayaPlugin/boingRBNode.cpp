@@ -1204,8 +1204,6 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
 
     bSolverNode::m_custom_data *d = new bSolverNode::m_custom_data;
     
-    bSolverNode::node_name_ptr.append( rbname );
-    
     d->node = thisObject;
     d->name = rbname;
     d->typeName = typeName;

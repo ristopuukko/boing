@@ -308,8 +308,8 @@ MStatus boingRbCmd::redoIt()
             MStringArray result;
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             MStringArray names = b_solv->get_all_names();
-            //std::cout<<"getdatalength() : "<<b_solv->getdatalength()<<std::endl;
-            //std::cout<<"names.length() : "<<names.length()<<std::endl;
+            std::cout<<"names : "<<names<<std::endl;
+            std::cout<<"b_solv->getdatalength() : "<<b_solv->getdatalength()<<std::endl;
             for(int i=0; i < names.length(); i++) {
                 bSolverNode::m_custom_data *data = b_solv->getdata(names[i]);
                 if ( NULL != data) {
@@ -392,7 +392,7 @@ MStatus boingRbCmd::redoIt()
     } else if ( isDelete  ) {
         MString aArgument;
         argParser->getFlagArgument("-delete", 0, aArgument);
-        std::cout<<"delete aArgument "<<aArgument<<std::endl;
+        //std::cout<<"delete aArgument "<<aArgument<<std::endl;
         if (aArgument != "") {
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             b_solv->deletedata(aArgument);

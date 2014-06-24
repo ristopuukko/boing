@@ -128,7 +128,6 @@ MObject     bSolverNode::ia_DBG_FastWireframe;
 float bSolverNode::collisionMarginOffset; //mb
 
 shared_ptr<bSolverNode> bSolverNode::m_bsolvernode;
-MStringArray bSolverNode::node_name_ptr;
 
 
 #define ATTR_POSITION "position"
@@ -450,7 +449,6 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
 
     m_custom_data *data = new m_custom_data;
     
-    node_name_ptr.append( rbname );
     data->node = inputShape;
     data->name = rbname;
     data->typeName = inTypeName;
@@ -464,23 +462,18 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     data->m_collision_shape = collision_shape;
     data->m_rigid_body = m_rigid_body;
     data->m_rigid_body->impl()->body()->setUserPointer((void*) data);
-    const void *n = (const void *)rbname.asChar();
-    m_hashNameToData.insert(n, data);
+    //const void *n = (const void *)rbname.asChar();
+    insertData(rbname, data);
+    //m_hashNameToData.insert(n, data);
 
     return MS::kSuccess;
     
 }
-
+/*
 void bSolverNode::delete_all_names() {
     node_name_ptr.clear();
 }
-
-
-MStringArray bSolverNode::get_all_names() {
-    return node_name_ptr;
-}
-
-
+*/
 
 void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
                          M3dView::DisplayStyle style,
@@ -1784,9 +1777,7 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
 		}
     }
     
-    
     deleteAllData();
-    delete_all_names();
     solver_t::remove_all_rigid_bodies();
     
 }
@@ -2354,12 +2345,34 @@ void bSolverNode::applyFields(MPlugArray &rbConnections, float dt)
 	}
 }
 
-void bSolverNode::deletedata(MString &name)
+void bSolverNode::deletedata(MString name)
 {
+    for ( int i=0; i<m_hashNameToData.size(); i++ ) {
+        m_custom_data** data = m_hashNameToData.getAtIndex(i);
+        if ((*data)->name == name) {
+            std::cout<<(*data)->name<<std::endl;
+            m_hashNameToData.remove(((const void*)(name.asChar())));
+            solver_t::remove_rigid_body((*data)->m_rigid_body);
+            return;
+        }
+    }
+    
+    /*
     m_custom_data** data = m_hashNameToData.find((const void*)name.asChar());
-    if (NULL != data)
+    if (NULL != (*data)) {
+        std::cout<<(*data)->name<<std::endl;
+        solver_t::remove_rigid_body((*data)->m_rigid_body);
         m_hashNameToData.remove((const void*)name.asChar());
+    }
+    */
 }
+
+boingRBNode* bSolverNode::getboingRBNode(btCollisionObject* btColObj)
+{
+	boingRBNode** nodePtr = m_hashColObjectToRBNode.find((const void*)btColObj);
+	return *nodePtr;
+}
+
 int bSolverNode::getdatalength()
 {
     return m_hashNameToData.size();
@@ -2375,11 +2388,18 @@ void bSolverNode::insertData(MString n, m_custom_data *data)
     m_hashNameToData.insert((const void *)n.asChar(), data);
 }
 
-boingRBNode* bSolverNode::getboingRBNode(btCollisionObject* btColObj)
-{
-	boingRBNode** nodePtr = m_hashColObjectToRBNode.find((const void*)btColObj);
-	return *nodePtr;
+MStringArray bSolverNode::get_all_names() {
+    MStringArray result;
+    //btHashMap<btHashPtr, m_custom_data*>::getAtIndex(<#int index#>)
+    for ( int i=0; i<m_hashNameToData.size(); i++ ) {
+        m_custom_data** data = m_hashNameToData.getAtIndex(i);
+        result.append((*data)->name);
+    }
+    //custom_data** data = m_hashNameToData.find((const void*)name.asChar());
+    //std::cout<<result<<std::endl;
+    return result;
 }
+
 
 bSolverNode::m_custom_data* bSolverNode::getdata(MString &name)
 {

@@ -156,16 +156,15 @@ public:
     //void erase_node(boing *b);
     //boing*  get_node(MString &name);
     //std::vector<boing*> get_all_nodes();
-    static MStringArray get_all_names();
-    static void delete_all_names();
-    static void set_name(char *new_name);
+    //static void delete_all_names();
+    //static void set_name(char *new_name);
     
     static shared_ptr<bSolverNode> get_bsolver_node();
     //</rp 2014>
 
     
 private:
-    static MStringArray node_name_ptr;
+    //static MStringArray node_name_ptr;
     void updateRigidBodies();
 
 protected:
@@ -231,8 +230,9 @@ public:
     int getdatalength();
     m_custom_data *getdata(MString &name);
     void insertData(MString n, m_custom_data *data);
-    void deletedata(MString &name);
+    void deletedata(MString name);
     void deleteAllData();
+    MStringArray get_all_names();
 
     
     friend  class boingRBNode;
