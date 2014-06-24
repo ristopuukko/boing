@@ -161,7 +161,6 @@ public:
     static void set_name(char *new_name);
     
     static shared_ptr<bSolverNode> get_bsolver_node();
-    
     //</rp 2014>
 
     
@@ -179,7 +178,6 @@ protected:
 
     //static MStringArray procRbArray;
     //friend  class boing;
-    friend  class boingRBNode;
     
     //</rp 2014>
     
@@ -232,8 +230,13 @@ public:
     };
     int getdatalength();
     m_custom_data *getdata(MString &name);
+    void insertData(MString n, m_custom_data *data);
     void deletedata(MString &name);
     void deleteAllData();
+
+    
+    friend  class boingRBNode;
+
 protected:
     MTime m_prevTime;
 	btHashMap<btHashPtr, boingRBNode*> m_hashColObjectToRBNode;

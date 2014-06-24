@@ -63,7 +63,7 @@ Modified by Risto Puukko <risto.puukko@gmail.com>
 #include <iterator>
 #include <vector>
 #include <assert.h>
-
+#include <shared_ptr.h>
 #include "LinearMath/btGeometryUtil.h"
 
 #define UPDATE_SHAPE 0 //future collision margin adjust
@@ -1122,11 +1122,10 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     }
 	
     //cout<<"removing m_rigid_body"<<endl;
-	//solver_t::remove_rigid_body(m_rigid_body);
-    //m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
+	solver_t::remove_rigid_body(m_rigid_body);
+    m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
+    solver_t::add_rigid_body(m_rigid_body,name().asChar());
     MString rbname = name();
-    char * bname = (char*)(name().asChar());
-    //solver_t::add_rigid_body(m_rigid_body, bname);
     
     // once at creation/load time : get transform from Maya transform node
     
@@ -1143,10 +1142,11 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     MVector mtranslation = fnTransform.getTranslation(MSpace::kTransform);
     MString name = MFnDependencyNode(thisObject).name();
     
-    //MQuaternion mrotation;
-    MEulerRotation mrotation;
-    fnTransform.getRotation(mrotation);//, MSpace::kTransform);
-    MVector rot = mrotation.asVector();
+    MQuaternion mrotation;
+    MEulerRotation eurotation;
+    fnTransform.getRotation(mrotation, MSpace::kTransform);
+    fnTransform.getRotation(eurotation);//, MSpace::kTransform);
+    MVector rot = eurotation.asVector();
 	double mscale[3];
     fnTransform.getScale(mscale);
     
@@ -1161,20 +1161,14 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
 	//vec3f lv(initLinVel[0],initLinVel[1],initLinVel[2]);
 	//m_rigid_body->set_linear_velocity(lv);
 
-	float mass = 0.f;
-	MPlug(thisObject, boingRBNode::ia_mass).getValue(mass);
     
-    //MVector zeroVec = MVector::zero;
-    shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-    std::cout<<"calling createNode from boingRBNode computeRigidBody."<<endl;
-    b_solv->createNode(connObj, rbname, typeName, mtranslation, initLinVel, rot, initAngVel, mass);
-    
-    /*
 	m_rigid_body->set_transform(vec3f((float)mtranslation.x, (float)mtranslation.y, (float)mtranslation.z),
 								quatf((float)mrotation.w, (float)mrotation.x, (float)mrotation.y, (float)mrotation.z));
     m_rigid_body->collision_shape()->set_scale(vec3f((float)mscale[0], (float)mscale[1], (float)mscale[2]));
 
-
+    m_rigid_body->set_linear_velocity(vec3f((float)initLinVel.x,(float)initLinVel.y,(float)initLinVel.z));
+    m_rigid_body->set_angular_velocity(vec3f((float)initAngVel.x,(float)initAngVel.y,(float)initAngVel.z));
+    
 	float mass = 0.f;
 	MPlug(thisObject, boingRBNode::ia_mass).getValue(mass);
 
@@ -1192,7 +1186,7 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
 
 
 	if (changedMassStatus)
-		solver_t::add_rigid_body(m_rigid_body, bname);
+		solver_t::add_rigid_body(m_rigid_body, (const char*)rbname.asChar());
 
 	//initialize those default values too
 	float restitution = 0.f;
@@ -1208,16 +1202,27 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
 	MPlug(thisObject, boingRBNode::ia_angularDamping).getValue(angDamp);
 	m_rigid_body->set_angular_damping(angDamp);
 
-	/*
-	//this is not necessary, initialize linear/angular velocity (spin) is already set at initRigidBodyArray in bSolverNode.cpp
-	MPlug ilv(thisObject, boingRBNode::ia_initialVelocity);
-	MDataHandle hInitLinVel= ilv.asMDataHandle();
-	float3 &initLinVel= hInitLinVel.asFloat3();
-	vec3f lv(initLinVel[0],initLinVel[1],initLinVel[2]);
-	m_rigid_body->set_linear_velocity(lv);
-	*/
+    bSolverNode::m_custom_data *d = new bSolverNode::m_custom_data;
+    
+    bSolverNode::node_name_ptr.append( rbname );
+    
+    d->node = thisObject;
+    d->name = rbname;
+    d->typeName = typeName;
+    d->m_initial_velocity = initLinVel;
+    d->m_initial_position = mtranslation;
+    d->m_initial_rotation = rot;
+    d->m_initial_angularvelocity = initAngVel;
+    d->m_mass = mass;
+    d->attrArray = MStringArray();
+    d->dataArray = MStringArray();
+    d->m_collision_shape = m_collision_shape;
+    d->m_rigid_body = m_rigid_body;
+    d->m_rigid_body->impl()->body()->setUserPointer((void*) d);
+    shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+    b_solv.get()->insertData(rbname, d);
 
-	//data.outputValue(ca_rigidBody).set(true);
+	data.outputValue(ca_rigidBody).set(true);
     
     data.setClean(plug);
 }
@@ -1363,6 +1368,7 @@ void boingRBNode::computeRigidBodyParam(const MPlug& plug, MDataBlock& data)
     double mass = data.inputValue(ia_mass).asDouble();
 
 	bool changedMassStatus= false;
+    
 	float curMass = m_rigid_body->get_mass();
 	if ((curMass > 0.f) != (mass > 0.f))
 	{
@@ -1436,14 +1442,16 @@ void boingRBNode::updateShape(const MPlug& plug, MDataBlock& data, float& collis
 
 rigid_body_t::pointer boingRBNode::rigid_body()
 {
- //   std::cout << "boingRBNode::rigid_body" << std::endl;
 
     MObject thisObject(thisMObject());
     MObject update;
+    //std::cout<<"going to boingRBNode::computeRigidBody."<<std::endl;
     MPlug(thisObject, ca_rigidBody).getValue(update);
+    //std::cout<<"going to boingRBNode::computeRigidBodyParam."<<std::endl;
     MPlug(thisObject, ca_rigidBodyParam).getValue(update);
-
+    
     return m_rigid_body;
+    
 } 
 
 void boingRBNode::update()
@@ -1480,7 +1488,7 @@ void boingRBNode::clearContactInfo()
 
 	// contactPosition
 	MPlug plugContactPosition(thisObject, boingRBNode::oa_contactPosition);
-	bool isArray = plugContactPosition.isArray();
+	//bool isArray = plugContactPosition.isArray();
 				
 	MVectorArray vectorArray;
 	vectorArray.clear();

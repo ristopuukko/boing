@@ -363,17 +363,93 @@ collision_shape_t::pointer bSolverNode::createCollisionShape(const MObject& node
 
 MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTypeName, MVector pos, MVector vel, MVector rot, MVector av, float mass) {
     
-    std::cout<<"bSolverNode creating new boing : "<<rbname<<" with node "<<MFnDependencyNode(inputShape).name()<<endl;
+    //std::cout<<"bSolverNode creating new boing : "<<rbname<<" with node "<<MFnDependencyNode(inputShape).name()<<endl;
 
+
+    
+    if (rbname.length()<1) {
+        rbname = "procBoingRb1";
+    }
+
+    //std::cout<<"name in  bSolverNode::createRigidBody() "<<rbname<<endl;
+    
+    double mscale[3] = {1,1,1};
+    MQuaternion mrotation = MEulerRotation(rot).asQuaternion();
+    
+    collision_shape_t::pointer collision_shape = createCollisionShape(inputShape);
+    if(!collision_shape) {
+        //not connected to a collision shape, put a default one
+        collision_shape = solver_t::create_box_shape();
+    } else {
+        if ( !inputShape.isNull() ) {
+            MFnDagNode fnDagNode(inputShape);
+            //cout<<"node : "<<fnDagNode.partialPathName()<<endl;
+            MFnTransform fnTransform(fnDagNode.parent(0));
+            //cout<<"MFnTransform node : "<<fnTransform.partialPathName()<<endl;
+            if ( pos == MVector::zero ) {
+                pos = fnTransform.getTranslation(MSpace::kTransform);
+            }
+            if ( rot == MVector::zero ) {
+                fnTransform.getRotation(mrotation, MSpace::kTransform);
+            }
+            fnTransform.getScale(mscale);
+        }
+    }
+    shared_ptr<solver_impl_t> solv = solver_t::get_solver();
+    //cout<<"removing m_rigid_body"<<endl;
+    //solver_t::remove_rigid_body(m_rigid_body);
+    rigid_body_t::pointer m_rigid_body = solver_t::create_rigid_body(collision_shape);
+    solver_t::add_rigid_body(m_rigid_body,rbname.asChar());
+    
+    m_rigid_body->set_transform(vec3f((float)pos.x, (float)pos.y, (float)pos.z),
+                                quatf((float)mrotation.w, (float)mrotation.x, (float)mrotation.y, (float)mrotation.z));
+    
+    m_rigid_body->set_linear_velocity( vec3f((float)vel.x,(float)vel.y,(float)vel.z) );
+    m_rigid_body->set_angular_velocity( vec3f((float)av.x,(float)av.y,(float)av.z) );
+    
+    
+    m_rigid_body->collision_shape()->set_scale(vec3f((float)mscale[0], (float)mscale[1], (float)mscale[2]));
+    
+    
+    m_rigid_body->set_mass(mass);
+    m_rigid_body->set_inertia((float)mass * m_rigid_body->collision_shape()->local_inertia());
+    
+    
+    //if (MFnDependencyNode(inputShape).typeName() == "boing") {
+    //    MPlug(inputShape, boingRBNode::ia_mass).getValue(mass);
+    //}
+    
+	float curMass = m_rigid_body->get_mass();
+	bool changedMassStatus= false;
+	if ((curMass > 0.f) != (mass > 0.f))
+	{
+		changedMassStatus = true;
+	}
+	if (changedMassStatus)
+		solver_t::remove_rigid_body(m_rigid_body);
+	
+    
+	if (changedMassStatus)
+		solver_t::add_rigid_body(m_rigid_body, rbname.asChar());
+
+    
+    //initialize those default values too
+    float restitution = 0.3f;
+    //MPlug(thisObject, rigidBodyNode::ia_restitution).getValue(restitution);
+    m_rigid_body->set_restitution(restitution);
+    float friction = 0.5f;
+    //MPlug(thisObject, rigidBodyNode::ia_friction).getValue(friction);
+    m_rigid_body->set_friction(friction);
+    float linDamp = 0.f;
+    //MPlug(thisObject, rigidBodyNode::ia_linearDamping).getValue(linDamp);
+    m_rigid_body->set_linear_damping(linDamp);
+    float angDamp = 0.2f;
+    //MPlug(thisObject, rigidBodyNode::ia_angularDamping).getValue(angDamp);
+    m_rigid_body->set_angular_damping(angDamp);
+    
 
     m_custom_data *data = new m_custom_data;
     
-    if (rbname.length()) {
-        rbname = "procBoingRb1";
-    }
-    const void *n = (const void *)rbname.asChar();
-    m_hashNameToData.insert(n, data);
-
     node_name_ptr.append( rbname );
     data->node = inputShape;
     data->name = rbname;
@@ -385,89 +461,12 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     data->m_mass = mass;
     data->attrArray = MStringArray();
     data->dataArray = MStringArray();
-    data->m_collision_shape = createCollisionShape(data->node);
-
-    std::cout<<"name in  boing::createRigidBody() "<<data->name<<endl;
-    
-    double mscale[3] = {1,1,1};
-    MQuaternion mrotation = MEulerRotation(data->m_initial_rotation).asQuaternion();
-    
-    //collision_shape_t::pointer  collision_shape;
-    if(!data->m_collision_shape) {
-        //not connected to a collision shape, put a default one
-        data->m_collision_shape = solver_t::create_box_shape();
-    } else {
-        if ( !data->node.isNull() ) {
-            MFnDagNode fnDagNode(data->node);
-            //cout<<"node : "<<fnDagNode.partialPathName()<<endl;
-            MFnTransform fnTransform(fnDagNode.parent(0));
-            //cout<<"MFnTransform node : "<<fnTransform.partialPathName()<<endl;
-            if ( data->m_initial_position == MVector::zero ) {
-                data->m_initial_position = fnTransform.getTranslation(MSpace::kTransform);
-            }
-            if ( data->m_initial_rotation == MVector::zero ) {
-                fnTransform.getRotation(mrotation, MSpace::kTransform);
-            }
-            fnTransform.getScale(mscale);
-        }
-    }
-    shared_ptr<solver_impl_t> solv = solver_t::get_solver();
-    //cout<<"removing m_rigid_body"<<endl;
-	//solver_t::remove_rigid_body(data->m_rigid_body);
-    data->m_rigid_body = solver_t::create_rigid_body(data->m_collision_shape);
-    
-    data->m_rigid_body->set_transform(vec3f((float)data->m_initial_position.x, (float)data->m_initial_position.y, (float)data->m_initial_position.z),
-                                quatf((float)mrotation.w, (float)mrotation.x, (float)mrotation.y, (float)mrotation.z));
-    
-    data->m_rigid_body->set_linear_velocity( vec3f((float)data->m_initial_velocity.x,(float)data->m_initial_velocity.y,(float)data->m_initial_velocity.z) );
-    data->m_rigid_body->set_angular_velocity( vec3f((float)data->m_initial_angularvelocity.x,(float)data->m_initial_angularvelocity.y,(float)data->m_initial_angularvelocity.z) );
-    
-    
-    data->m_rigid_body->collision_shape()->set_scale(vec3f((float)mscale[0], (float)mscale[1], (float)mscale[2]));
-    
-    
-    //float mass = 1.f;
-    data->m_rigid_body->set_mass(data->m_mass);
-    data->m_rigid_body->set_inertia((float)data->m_mass * data->m_rigid_body->collision_shape()->local_inertia());
-    
-    
-	//float tempmass = 0.f;
-    /*
-    if (data->typeName == boingRBNode::typeName) {
-        MPlug(data->node, boingRBNode::ia_mass).getValue(data->m_mass);
-    }
-    
-    
-	float curMass = data->m_rigid_body->get_mass();
-	bool changedMassStatus= false;
-	if ((curMass > 0.f) != (data->m_mass > 0.f))
-	{
-		changedMassStatus = true;
-	}
-	if (changedMassStatus)
-		solver_t::remove_rigid_body(data->m_rigid_body);
-	*/
-    
-	//if (changedMassStatus)
-	//	solver_t::add_rigid_body(data->m_rigid_body, data->name.asChar());
-
-    
-    //initialize those default values too
-    float restitution = 0.3f;
-    //MPlug(thisObject, rigidBodyNode::ia_restitution).getValue(restitution);
-    data->m_rigid_body->set_restitution(restitution);
-    float friction = 0.5f;
-    //MPlug(thisObject, rigidBodyNode::ia_friction).getValue(friction);
-    data->m_rigid_body->set_friction(friction);
-    float linDamp = 0.f;
-    //MPlug(thisObject, rigidBodyNode::ia_linearDamping).getValue(linDamp);
-    data->m_rigid_body->set_linear_damping(linDamp);
-    float angDamp = 0.2f;
-    //MPlug(thisObject, rigidBodyNode::ia_angularDamping).getValue(angDamp);
-    data->m_rigid_body->set_angular_damping(angDamp);
-    
+    data->m_collision_shape = collision_shape;
+    data->m_rigid_body = m_rigid_body;
     data->m_rigid_body->impl()->body()->setUserPointer((void*) data);
-    
+    const void *n = (const void *)rbname.asChar();
+    m_hashNameToData.insert(n, data);
+
     return MS::kSuccess;
     
 }
@@ -511,14 +510,16 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     updateRigidBodies();
     
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
-    std::cout<<"solver_t::get_rigid_bodies() count "<<rbds.size()<<endl;
     
+    //std::cout<<"solver_t::get_rigid_bodies() count "<<rbds.size()<<endl;
+    
+    //std::set<boingRBNode*>::iterator it;
     std::set<rigid_body_t::pointer>::iterator it;
     
+    
     for(it=rbds.begin(); it!=rbds.end(); ++it) {
+        //rigid_body_t::pointer rb = (*it)->rigid_body();
         rigid_body_t::pointer rb = (*it);
-        //rb->update();
-        //std::cout<<(static_cast<boing*>(rb->impl()->body()->getCollisionShape()->getUserPointer()))->name<<endl;
         if(rb) {
             //remove the scale, since it's already included in the node transform
             vec3f scale;
@@ -570,14 +571,14 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
 }
 
 void bSolverNode::updateRigidBodies() {
-
+    
     MObject thisNode = thisMObject();
     MItDependencyGraph dgIt(thisNode);
     for ( ; !dgIt.isDone(); dgIt.next() ) {
         MFnDependencyNode dgFn(dgIt.thisNode());
         
         if (dgFn.typeName() == "boingRb") {
-            //cout<<"adding boingRb :"<<dgFn.userNode()->name()<<endl;
+            //cout<<"updating boingRb :"<<dgFn.userNode()->name()<<endl;
             //rbds.append(dgFn.userNode()->name());
             boingRBNode *rbNode = static_cast<boingRBNode*>(dgFn.userNode());
             //nodes.insert(rbNode);
@@ -585,8 +586,7 @@ void bSolverNode::updateRigidBodies() {
             rbNode->update();
         }
     }
-
-    MStringArray names = get_all_names();
+        MStringArray names = get_all_names();
     for( int i=0 ; i<names.length(); i++ ) {
         m_custom_data* data = getdata(names[i]);
         MFnDependencyNode fnNode(data->node);
@@ -1283,8 +1283,8 @@ bool bSolverNode::setInternalValueInContext( const  MPlug & plug, const  MDataHa
 
 MStatus bSolverNode::compute(const MPlug& plug, MDataBlock& data)
 {
-    std::cout << "Calling bSolverNode::compute \n";
-	std::cout << "Plug: " << plug.name().asChar() << std::endl;
+    //std::cout << "Calling bSolverNode::compute \n";
+	//std::cout << "Plug: " << plug.name().asChar() << std::endl;
     
 	if(plug == oa_rigidBodies) {
         computeRigidBodies(plug, data);
@@ -1333,17 +1333,13 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
     //cout<<"bSolverNode::initRigidBody fnNode() : "<<fnNode.name()<<endl;
     
     boingRBNode *rbNode = static_cast<boingRBNode*>(fnNode.userNode());
-    
-	if (m_reInitialize)
+    //std::cout<<"rbNode->name() : "<<rbNode->name().asChar()<<std::endl;
+    //std::cout<<"rbNode->className() : "<<rbNode->className()<<std::endl;
+    //std::cout<<"m_reInitialize : "<<m_reInitialize<<std::endl;
+	if ( m_reInitialize )
 		rbNode->computeRigidBody(plug,data);
 	
 	rigid_body_t::pointer rb = rbNode->rigid_body();
-    
-    //boing *b = new boing;
-    //b->name = fnNode.name();
-    //bSolverNode::myRbNodes.insert(b);
-    //std::cout<<"bSolverNode::myRbNodes.size() : "<<bSolverNode::myRbNodes.size()<<endl;
-    //std::cout<<"b->name  : "<<b->name<<endl;
     
     MObject transNode;
     getConnectedTransform(node, transNode);
@@ -1355,6 +1351,7 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
     plgMass.getValue(mass);
     if(mass > 0.f)
 	{
+        //std::cout<<fnNode.name()<<" is active."<<std::endl;
         //active rigid body, set the world transform from the initial* attributes
         MObject obj;
         
@@ -1389,9 +1386,16 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
         
         MEulerRotation meuler(deg2rad(rot[0]), deg2rad(rot[1]), deg2rad(rot[2]));
         MQuaternion mquat = meuler.asQuaternion();
+        //std::cout<<" rb pointer : "<<rb<<std::endl;
+        
+        //std::cout<<" setting transform."<<std::endl;
+        
         rb->set_transform(pos, quatf((float)mquat.w, (float)mquat.x, (float)mquat.y, (float)mquat.z));
+        //std::cout<<" setting velocity."<<std::endl;
         rb->set_linear_velocity(vel);
+        //std::cout<<" setting spin."<<std::endl;
         rb->set_angular_velocity(spin);
+        //std::cout<<" setting kinematic to false."<<std::endl;
         rb->set_kinematic(false);
         
         MPlug plgPosition(node, boingRBNode::ia_position);
@@ -1411,6 +1415,7 @@ void bSolverNode::initRigidBody(const MPlug& plug, MObject& node, MDataBlock& da
         //fnTransform.setTranslation(MVector(pos[0], pos[1], pos[2]), MSpace::kTransform);
     } else {
         //passive rigid body, get the world trasform from from the shape node
+        //std::cout<<fnNode.name()<<" is passive."<<std::endl;
         MQuaternion mquat;
         fnTransform.getRotation(mquat);
         MVector mpos(fnTransform.getTranslation(MSpace::kTransform));
@@ -1790,8 +1795,8 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
 //init the rigid bodies to it's first frame configuration
 void bSolverNode::initRigidBodies(const MPlug& plug, MPlugArray &rbConnections, MDataBlock& data)
 {
-	std::cout << "Initializing rigid bodies" << std::endl;
-	bSolverNode::collisionMarginOffset = data.inputValue(bSolverNode::ia_collisionMargin).asFloat(); //mb
+	//std::cout << "Initializing rigid bodies" << std::endl;
+	//bSolverNode::collisionMarginOffset = data.inputValue(bSolverNode::ia_collisionMargin).asFloat(); //mb
     
     for(size_t i = 0; i < rbConnections.length(); ++i)
 	{
@@ -2351,7 +2356,8 @@ void bSolverNode::applyFields(MPlugArray &rbConnections, float dt)
 
 void bSolverNode::deletedata(MString &name)
 {
-    if ( NULL != getdata(name) )
+    m_custom_data** data = m_hashNameToData.find((const void*)name.asChar());
+    if (NULL != data)
         m_hashNameToData.remove((const void*)name.asChar());
 }
 int bSolverNode::getdatalength()
@@ -2359,10 +2365,14 @@ int bSolverNode::getdatalength()
     return m_hashNameToData.size();
 }
 
-
 void bSolverNode::deleteAllData()
 {
     m_hashNameToData.clear();
+}
+
+void bSolverNode::insertData(MString n, m_custom_data *data)
+{
+    m_hashNameToData.insert((const void *)n.asChar(), data);
 }
 
 boingRBNode* bSolverNode::getboingRBNode(btCollisionObject* btColObj)
@@ -2373,7 +2383,7 @@ boingRBNode* bSolverNode::getboingRBNode(btCollisionObject* btColObj)
 
 bSolverNode::m_custom_data* bSolverNode::getdata(MString &name)
 {
-    std::cout<<"m_hashNameToData.size() : "<<m_hashNameToData.size()<<std::endl;
+    //std::cout<<"m_hashNameToData.size() : "<<m_hashNameToData.size()<<std::endl;
     m_custom_data** data = m_hashNameToData.find((const void*)name.asChar());
     return *data;
 }
@@ -2455,7 +2465,7 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
         solver_t::set_split_impulse(splitImpulseEnabled);
         m_prevTime = time;
     } else {
-		std::cout  << "time.value() : " << time.value() << std::endl;
+		//std::cout  << "time.value() : " << time.value() << std::endl;
 		isStartTime = false;
         double delta_frames = (time - m_prevTime).value();
         bool playback = MConditionMessage::getConditionState("playingBack");

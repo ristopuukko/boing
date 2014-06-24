@@ -292,11 +292,11 @@ MStatus boingRbCmd::redoIt()
         MString gAttr;
         argParser->getFlagArgument("getAttr", 0, gAttr);
         
-        cout<<gAttr<<endl;
+        //cout<<gAttr<<endl;
         MStringArray jobArgsArray = parseArguments(gAttr, ".");
         
         MString attr = checkAttribute(jobArgsArray[1]);
-        cout<<"attr = "<<attr<<endl;
+        //cout<<"attr = "<<attr<<endl;
         if (attr!="name") {
             MVector result = getBulletVectorAttribute(jobArgsArray[0], attr);
             MDoubleArray dResult;
@@ -308,13 +308,13 @@ MStatus boingRbCmd::redoIt()
             MStringArray result;
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             MStringArray names = b_solv->get_all_names();
-            std::cout<<"getdatalength() : "<<b_solv->getdatalength()<<std::endl;
-            std::cout<<"names.length() : "<<names.length()<<std::endl;
+            //std::cout<<"getdatalength() : "<<b_solv->getdatalength()<<std::endl;
+            //std::cout<<"names.length() : "<<names.length()<<std::endl;
             for(int i=0; i < names.length(); i++) {
                 bSolverNode::m_custom_data *data = b_solv->getdata(names[i]);
                 if ( NULL != data) {
-                    std::cout<<"data->name : "<<data->name<<std::endl;
-                    std::cout<<"data->m_initial_position: "<<data->m_initial_position<<std::endl;
+                    //std::cout<<"data->name : "<<data->name<<std::endl;
+                    //std::cout<<"data->m_initial_position: "<<data->m_initial_position<<std::endl;
                     result.append(data->name);
                 }
             }
@@ -392,6 +392,7 @@ MStatus boingRbCmd::redoIt()
     } else if ( isDelete  ) {
         MString aArgument;
         argParser->getFlagArgument("-delete", 0, aArgument);
+        std::cout<<"delete aArgument "<<aArgument<<std::endl;
         if (aArgument != "") {
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             b_solv->deletedata(aArgument);

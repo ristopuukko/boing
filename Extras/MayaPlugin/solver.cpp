@@ -134,7 +134,7 @@ mesh_shape_t::pointer solver_t::create_mesh_shape(vec3f const* vertices, size_t 
 
 rigid_body_t::pointer solver_t::create_rigid_body(collision_shape_t::pointer& cs)
 {
-    std::cout<<"creating a rigid body in solver_t."<< std::endl;
+    //std::cout<<"creating a rigid body in solver_t."<< std::endl;
     return rigid_body_t::pointer(new rigid_body_t(m_impl->create_rigid_body(cs->impl()), cs));
 }
 
@@ -182,7 +182,7 @@ void solver_t::add_rigid_body(rigid_body_t::pointer& rb,const char* name)
     if(rb) {
         if(m_rigid_bodies.find(rb) == m_rigid_bodies.end()) {
             m_rigid_bodies.insert(rb);
-            std::cout<<"solver_t::add_rigid_body name : "<<name<<std::endl;
+            //std::cout<<"solver_t::add_rigid_body name : "<<name<<std::endl;
             m_impl->add_rigid_body(rb->impl(),name);
         }
     }
@@ -205,6 +205,7 @@ void solver_t::remove_rigid_body(rigid_body_t::pointer& rb)
 {
     if(rb) {
         if(m_rigid_bodies.find(rb) != m_rigid_bodies.end()) {
+            //std::cout<<"solver_t::remove_rigid_body "<<rb->impl()<<std::endl;
             m_impl->remove_rigid_body(rb->impl());
             m_rigid_bodies.erase(rb);
         }
