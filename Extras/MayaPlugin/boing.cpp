@@ -31,7 +31,7 @@ int boing::count;
 rigid_body_t::pointer boing::m_rigid_body;
 
 
-boing::boing(MObject &inputShape,MString &inname, MString &inTypeName, MVector &pos, MVector &vel, MVector &rot, MVector &av, float &mass)
+boing::boing(MObject inputShape,MString inname, MString inTypeName, MVector pos, MVector vel, MVector rot, MVector av, float mass)
 {
     node = inputShape;
     name = inname;
@@ -44,12 +44,16 @@ boing::boing(MObject &inputShape,MString &inname, MString &inTypeName, MVector &
     attrArray = MStringArray();
     dataArray = MStringArray();
     m_collision_shape = createCollisionShape(node);
-    cout<<"m_collision_shape : "<<m_collision_shape<<endl;
-    std::cout<<"creating a new (boing::boing) boing node : "<<inname<<" type "<<inTypeName<<"from node "<<MFnDependencyNode(inputShape).name()<<" in pos "<<m_initial_position<<" vel "<<m_initial_velocity<<" rotation "<<m_initial_rotation<<" and av "<<m_initial_angularvelocity<<endl;
+    /*cout<<"m_collision_shape : "<<m_collision_shape<<endl;
+    std::cout<<"creating a new (boing::boing) boing node : "<<inname<<" type "<<inTypeName<<"from node "<<MFnDependencyNode(inputShape).name()<<" in pos "<<m_initial_position<<" vel "<<m_initial_velocity<<" rotation "<<m_initial_rotation<<" and av "<<m_initial_angularvelocity<<endl;*/
     count++;
     std::cout<<"count = "<<count<<std::endl;
     createRigidBody();
+
 }
+
+
+
 
 boing::~boing() {
     m_collision_shape=0;
@@ -178,8 +182,6 @@ void boing::createRigidBody()
     m_rigid_body->set_angular_damping(angDamp);
 
     m_rigid_body->impl()->body()->setUserPointer((void*) this);
-    std::cout<<this<<std::endl;
-
     
     
 }

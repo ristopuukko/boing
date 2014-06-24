@@ -1064,7 +1064,7 @@ void boingRBNode::destroyRigidBody()
 {
 	if (m_rigid_body)
 	{
-        boing *b_ptr = static_cast<boing *>( m_rigid_body->impl()->body()->getUserPointer() );
+        //boing *b_ptr = static_cast<boing *>( m_rigid_body->impl()->body()->getUserPointer() );
         //b->destroy();
         //bSolverNode::erase_node(b);
 		solver_t::remove_rigid_body(m_rigid_body);

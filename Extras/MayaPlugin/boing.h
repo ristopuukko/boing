@@ -41,7 +41,7 @@ class boing
 {
 public:
     
-    boing(MObject &node, MString &name, MString &inTypeName, MVector &vel, MVector &pos, MVector &rot, MVector &av, float &mass);
+    boing(MObject node, MString name, MString inTypeName, MVector vel, MVector pos, MVector rot, MVector av, float &mass);
     virtual ~boing();
 
     static MString get_data(MString &name);

@@ -63,7 +63,9 @@ void	btRigidBody::setupRigidBody(const btRigidBody::btRigidBodyConstructionInfo&
 	m_additionalLinearDampingThresholdSqr = constructionInfo.m_additionalLinearDampingThresholdSqr;
 	m_additionalAngularDampingThresholdSqr = constructionInfo.m_additionalAngularDampingThresholdSqr;
 	m_additionalAngularDampingFactor = constructionInfo.m_additionalAngularDampingFactor;
-
+    //rp 2014
+    //m_custom_attr_data = 0;
+    // \rp 2014
 	if (m_optionalMotionState)
 	{
 		m_optionalMotionState->getWorldTransform(m_worldTransform);

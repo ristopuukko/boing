@@ -48,10 +48,10 @@ Modified by Dongsoo Han <dongsoo.han@amd.com>
 #include "boingRBNode.h"
 //#include "boingRbCmd.h"
 #include "bCallBackNode.h"
-#include "boing.h"
+//#include "boing.h"
 
 
-class boing;
+//class boing;
 //using namespace std;
 
 class bSolverNode : public MPxLocatorNode
@@ -150,18 +150,24 @@ public:
     //<rp 2014>
     static void getRigidBodies(MObject &node, MStringArray& rbds, std::set<boingRBNode*>&nodes);
     
-    static MStatus createNode(MObject &inputShape, MString &rbname, MString &inTypeName, MVector &pos, MVector &vel, MVector &rot, MVector &av, float &mass);
-    void destroyNode(boing *b);
-    void erase_node(boing *b);
-    boing*  get_node(MString &name);
-    std::vector<boing*> get_all_nodes();
+    MStatus createNode(MObject, MString, MString, MVector, MVector, MVector, MVector, float);
+    collision_shape_t::pointer createCollisionShape(const MObject& node);
+    //void destroyNode(boing *b);
+    //void erase_node(boing *b);
+    //boing*  get_node(MString &name);
+    //std::vector<boing*> get_all_nodes();
+    static MStringArray get_all_names();
+    static void set_name(char *new_name);
     
     static shared_ptr<bSolverNode> get_bsolver_node();
     
     //</rp 2014>
     static MStringArray node_name_ptr;
+    //static std::vector<boing*> node_ptr;
 
-    static std::vector<boing*> node_ptr;
+    
+private:
+    static std::vector<char*> char_array;
     
 protected:
     //<rp 2014>
@@ -172,7 +178,7 @@ protected:
 
 
     //static MStringArray procRbArray;
-    friend  class boing;
+    //friend  class boing;
     friend  class boingRBNode;
     
     //</rp 2014>
@@ -184,7 +190,7 @@ protected:
         quatf m_q0;
         quatf m_q1;
     };
-
+    
 	void deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections, MDataBlock& data);
     void computeRigidBodies(const MPlug& plug, MDataBlock& data);
 	void computeSoftBodies(const MPlug& plug, MDataBlock& data);
@@ -204,9 +210,34 @@ protected:
 
 	boingRBNode* getboingRBNode(btCollisionObject* btColObj);
 
+public:
+    struct m_custom_data {
+        MString name;
+        MString typeName;
+        int count;
+        MObject node;
+        MVector m_initial_velocity;
+        MVector m_initial_position;
+        MVector m_initial_rotation;
+        MVector m_initial_angularvelocity;
+        MVector m_vel;
+        MVector m_pos;
+        MVector m_rot;
+        MVector m_av;
+        float m_mass;
+        MStringArray attrArray;
+        MStringArray dataArray;
+        collision_shape_t::pointer m_collision_shape ;
+        rigid_body_t::pointer m_rigid_body ;
+    };
+
+    m_custom_data *getdata(MString &name);
+    void deletedata(MString &name);
+    void deleteAllData();
 protected:
     MTime m_prevTime;
 	btHashMap<btHashPtr, boingRBNode*> m_hashColObjectToRBNode;
+	btHashMap<btHashPtr, m_custom_data*> m_hashNameToData;
     static shared_ptr<bSolverNode> m_bsolvernode;
     
 //friend:

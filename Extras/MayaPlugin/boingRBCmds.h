@@ -40,7 +40,7 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 
 #include "bSolverNode.h"
 #include "collision_shape.h"
-#include "boing.h"
+//#include "boing.h"
 
 class createBoingRBCmd : public MPxCommand
 {

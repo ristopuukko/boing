@@ -20,6 +20,10 @@ subject to the following restrictions:
 #include "LinearMath/btTransform.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
+//rp2014
+#include "LinearMath/btHashMap.h"
+//\rp2014
+
 
 class btCollisionShape;
 class btMotionState;
@@ -83,7 +87,10 @@ class btRigidBody  : public btCollisionObject
 
 	btScalar		m_linearSleepingThreshold;
 	btScalar		m_angularSleepingThreshold;
-
+//rp 2014
+    //btHashMap<btHashPtr, const char*>       m_custom_attr_data;
+//\rp 2014
+    
 	//m_optionalMotionState allows to automatic synchronize the world transform for active objects
 	btMotionState*	m_optionalMotionState;
 

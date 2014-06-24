@@ -44,6 +44,7 @@
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnStringData.h>
 #include <maya/MFnStringArrayData.h>
+#include <maya/MFloatVectorArray.h>
 #include <maya/MPlugArray.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MEulerRotation.h>
@@ -129,7 +130,8 @@ float bSolverNode::collisionMarginOffset; //mb
 shared_ptr<bSolverNode> bSolverNode::m_bsolvernode;
 
 MStringArray bSolverNode::node_name_ptr;
-std::vector<boing*> bSolverNode::node_ptr;
+//std::vector<boing*> bSolverNode::node_ptr;
+std::vector<char*> bSolverNode::char_array;
 
 
 #define ATTR_POSITION "position"
@@ -150,7 +152,6 @@ std::vector<boing*> bSolverNode::node_ptr;
 
 
 
-
 int getDbgDrawVal(const MObject& thisObj, const MObject& attr, int flag)
 {
 	MPlug plug(thisObj, attr);
@@ -163,7 +164,7 @@ shared_ptr<bSolverNode> bSolverNode::get_bsolver_node()
 {
     return m_bsolvernode;
 }
-
+/*
 void bSolverNode::destroyNode(boing *b) {
     std::cout<<"deleting node "<<b<<endl;
     assert(b!=0);
@@ -171,29 +172,326 @@ void bSolverNode::destroyNode(boing *b) {
     b = NULL;
     //erase_node(b);
 }
+*/
 
-MStatus bSolverNode::createNode(MObject &inputShape, MString &rbname, MString &inTypeName, MVector &pos, MVector &vel, MVector &rot, MVector &av, float &mass) {
+void bSolverNode::set_name(char * new_name) {
+    char_array.push_back(new_name);
+}
+
+collision_shape_t::pointer bSolverNode::createCollisionShape(const MObject& node)
+{
+    
+    collision_shape_t::pointer collision_shape = 0;
+    
+    int type=0;
+    
+    switch(type) {
+        case 0:
+        {
+            //convex hull
+            {
+                //cout<<"going on creating a convex hull collision shape"<<endl;
+                if(node.hasFn(MFn::kMesh)) {
+                    MDagPath dagPath;
+                    MDagPath::getAPathTo(node, dagPath);
+                    MFnMesh fnMesh(dagPath);
+                    //cout<<"going on creating a convex hull from : "<<fnMesh.name()<<endl;
+                    MFloatPointArray mpoints;
+                    MFloatVectorArray mnormals;
+                    MIntArray mtrianglecounts;
+                    MIntArray mtrianglevertices;
+                    fnMesh.getPoints(mpoints, MSpace::kObject);
+                    fnMesh.getNormals(mnormals, MSpace::kObject);
+                    fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
+                    
+                    std::vector<vec3f> vertices(mpoints.length());
+                    std::vector<vec3f> normals(mpoints.length());
+                    std::vector<unsigned int> indices(mtrianglevertices.length());
+                    
+                    btAlignedObjectArray<btVector3> btVerts; //mb
+                    
+                    for(size_t i = 0; i < vertices.size(); ++i) {
+                        vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
+                        normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
+                        
+#if UPDATE_SHAPE //future collision margin adjust
+                        btVerts.push_back(btVector3(mpoints[i].x, mpoints[i].y, mpoints[i].z)); //mb
+#endif
+                    }
+                    for(size_t i = 0; i < indices.size(); ++i) {
+                        indices[i] = mtrianglevertices[i];
+                    }
+                    
+#if UPDATE_SHAPE //future collision margin adjust
+                    btAlignedObjectArray<btVector3> planeEquations;
+                    btGeometryUtil::getPlaneEquationsFromVertices(btVerts, planeEquations);
+                    
+                    btAlignedObjectArray<btVector3> shiftedPlaneEquations;
+                    for (int p=0;p<planeEquations.size();p++)
+                    {
+                        btVector3 plane = planeEquations[p];
+                        plane[3] += collisionShapeNode::collisionMarginOffset;
+                        shiftedPlaneEquations.push_back(plane);
+                    }
+                    
+                    btAlignedObjectArray<btVector3> shiftedVertices;
+                    btGeometryUtil::getVerticesFromPlaneEquations(shiftedPlaneEquations, shiftedVertices);
+                    
+                    std::vector<vec3f> shiftedVerticesVec3f(shiftedVertices.size());
+                    for(size_t i = 0; i < shiftedVertices.size(); ++i)
+                    {
+                        shiftedVerticesVec3f[i] = vec3f(shiftedVertices[i].getX(), shiftedVertices[i].getY(), shiftedVertices[i].getZ());
+                        //std::cout << "orig verts: " << vertices[i][0] << " " << vertices[i][1] << " " << vertices[i][2] << std::endl;
+                        //std::cout << "shft verts: " << shiftedVertices[i].getX() << " " << shiftedVertices[i].getY() << " " << shiftedVertices[i].getZ() << std::endl;
+                        //std::cout << std::endl;
+                    }
+                    
+                    collision_shape = solver_t::create_convex_hull_shape(&(shiftedVerticesVec3f[0]), shiftedVerticesVec3f.size(), &(normals[0]), &(indices[0]), indices.size());
+                    
+#endif
+                    
+#if UPDATE_SHAPE == 0
+                    collision_shape = solver_t::create_convex_hull_shape(&(vertices[0]), vertices.size(), &(normals[0]), &(indices[0]), indices.size()); //original
+#endif
+                }
+            }
+        }
+            
+            break;
+        case 1:
+        {
+            //mesh
+            {
+                if(node.hasFn(MFn::kMesh)) {
+                    MDagPath dagPath;
+                    MDagPath::getAPathTo(node, dagPath);
+                    MFnMesh fnMesh(dagPath);
+                    MFloatPointArray mpoints;
+                    MFloatVectorArray mnormals;
+                    MIntArray mtrianglecounts;
+                    MIntArray mtrianglevertices;
+                    fnMesh.getPoints(mpoints, MSpace::kObject);
+                    fnMesh.getNormals(mnormals, MSpace::kObject);
+                    fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
+                    
+                    std::vector<vec3f> vertices(mpoints.length());
+                    std::vector<vec3f> normals(mpoints.length());
+                    std::vector<unsigned int> indices(mtrianglevertices.length());
+                    
+                    for(size_t i = 0; i < vertices.size(); ++i) {
+                        vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
+                        normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
+                    }
+                    for(size_t i = 0; i < indices.size(); ++i) {
+                        indices[i] = mtrianglevertices[i];
+                    }
+                    bool dynamicMesh = true;
+                    collision_shape = solver_t::create_mesh_shape(&(vertices[0]), vertices.size(), &(normals[0]),
+                                                                  &(indices[0]), indices.size(),dynamicMesh);
+                }
+            }
+        }
+            break;
+        case 2:
+            //cylinder
+            break;
+        case 3:
+            //capsule
+            break;
+            
+        case 7:
+            //btBvhTriangleMeshShape
+        {
+            
+            if(node.hasFn(MFn::kMesh)) {
+                MDagPath dagPath;
+                MDagPath::getAPathTo(node, dagPath);
+                MFnMesh fnMesh(dagPath);
+                MFloatPointArray mpoints;
+                MFloatVectorArray mnormals;
+                MIntArray mtrianglecounts;
+                MIntArray mtrianglevertices;
+                fnMesh.getPoints(mpoints, MSpace::kObject);
+                fnMesh.getNormals(mnormals, MSpace::kObject);
+                fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
+                
+                std::vector<vec3f> vertices(mpoints.length());
+                std::vector<vec3f> normals(mpoints.length());
+                std::vector<unsigned int> indices(mtrianglevertices.length());
+                
+                for(size_t i = 0; i < vertices.size(); ++i) {
+                    vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
+                    normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
+                }
+                for(size_t i = 0; i < indices.size(); ++i) {
+                    indices[i] = mtrianglevertices[i];
+                }
+                bool dynamicMesh = false;
+                collision_shape = solver_t::create_mesh_shape(&(vertices[0]), vertices.size(), &(normals[0]),
+                                                              &(indices[0]), indices.size(),dynamicMesh);
+            }
+        }
+            break;
+        case 8:
+            //hacd convex decomposition
+        {
+            
+            {
+                if(node.hasFn(MFn::kMesh)) {
+                    MDagPath dagPath;
+                    MDagPath::getAPathTo(node, dagPath);
+                    MFnMesh fnMesh(dagPath);
+                    MFloatPointArray mpoints;
+                    MFloatVectorArray mnormals;
+                    MIntArray mtrianglecounts;
+                    MIntArray mtrianglevertices;
+                    fnMesh.getPoints(mpoints, MSpace::kObject);
+                    fnMesh.getNormals(mnormals, MSpace::kObject);
+                    fnMesh.getTriangles(mtrianglecounts, mtrianglevertices);
+                    
+                    std::vector<vec3f> vertices(mpoints.length());
+                    std::vector<vec3f> normals(mpoints.length());
+                    std::vector<unsigned int> indices(mtrianglevertices.length());
+                    
+                    for(size_t i = 0; i < vertices.size(); ++i) {
+                        vertices[i] = vec3f(mpoints[i].x, mpoints[i].y, mpoints[i].z);
+                        normals[i] = vec3f(mnormals[i].x, mnormals[i].y, mnormals[i].z);
+                    }
+                    for(size_t i = 0; i < indices.size(); ++i) {
+                        indices[i] = mtrianglevertices[i];
+                    }
+                    bool dynamicMesh = false;
+                    collision_shape = solver_t::create_hacd_shape(&(vertices[0]), vertices.size(), &(normals[0]),
+                                                                  &(indices[0]), indices.size(),dynamicMesh);
+                }
+            }
+        }
+            break;
+        default:
+        {
+        }
+    }
+    
+    return collision_shape;
+}
+
+
+
+MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTypeName, MVector pos, MVector vel, MVector rot, MVector av, float mass) {
     
     std::cout<<"bSolverNode creating new boing : "<<rbname<<" with node "<<MFnDependencyNode(inputShape).name()<<endl;
+
+    m_custom_data *data = new m_custom_data;
     node_name_ptr.append( rbname );
-    boing *b = new boing(inputShape, rbname, inTypeName, pos, vel, rot, av, mass);
-    std::cout<<"b : "<<std::endl;
-    std::cout<<b->name<<std::endl;
-    std::cout<<b->typeName<<std::endl;
-    std::cout<<b->m_initial_position<<std::endl;
-    std::cout<<b->m_initial_rotation<<std::endl;
-    std::cout<<b->m_initial_velocity<<std::endl;
-    std::cout<<b->m_initial_angularvelocity<<std::endl;
+    data->node = inputShape;
+    data->name = rbname;
+    data->typeName = inTypeName;
+    data->m_initial_velocity = vel;
+    data->m_initial_position = pos;
+    data->m_initial_rotation = rot;
+    data->m_initial_angularvelocity = av;
+    data->m_mass = mass;
+    data->attrArray = MStringArray();
+    data->dataArray = MStringArray();
+    data->m_collision_shape = createCollisionShape(data->node);
+
     
-    node_ptr.push_back(b);
-    std::cout<<"node_ptr.count() : "<<node_ptr.size()<<std::endl;
+    if (!data->name.length()) {
+        data->name = "procBoingRb1";
+    }
+    std::cout<<"name in  boing::createRigidBody() "<<data->name<<endl;
+    
+    double mscale[3] = {1,1,1};
+    MQuaternion mrotation = MEulerRotation(data->m_initial_rotation).asQuaternion();
+    
+    //collision_shape_t::pointer  collision_shape;
+    if(!data->m_collision_shape) {
+        //not connected to a collision shape, put a default one
+        data->m_collision_shape = solver_t::create_box_shape();
+    } else {
+        if ( !data->node.isNull() ) {
+            MFnDagNode fnDagNode(data->node);
+            //cout<<"node : "<<fnDagNode.partialPathName()<<endl;
+            MFnTransform fnTransform(fnDagNode.parent(0));
+            //cout<<"MFnTransform node : "<<fnTransform.partialPathName()<<endl;
+            if ( data->m_initial_position == MVector::zero ) {
+                data->m_initial_position = fnTransform.getTranslation(MSpace::kTransform);
+            }
+            if ( data->m_initial_rotation == MVector::zero ) {
+                fnTransform.getRotation(mrotation, MSpace::kTransform);
+            }
+            fnTransform.getScale(mscale);
+        }
+    }
+    
+    shared_ptr<solver_impl_t> solv = solver_t::get_solver();
+    
+    data->m_rigid_body = solver_t::create_rigid_body(data->m_collision_shape);
+    
+    data->m_rigid_body->set_transform(vec3f((float)data->m_initial_position.x, (float)data->m_initial_position.y, (float)data->m_initial_position.z),
+                                quatf((float)mrotation.w, (float)mrotation.x, (float)mrotation.y, (float)mrotation.z));
+    
+    data->m_rigid_body->set_linear_velocity( vec3f((float)data->m_initial_velocity.x,(float)data->m_initial_velocity.y,(float)data->m_initial_velocity.z) );
+    data->m_rigid_body->set_angular_velocity( vec3f((float)data->m_initial_angularvelocity.x,(float)data->m_initial_angularvelocity.y,(float)data->m_initial_angularvelocity.z) );
+    
+    
+    data->m_rigid_body->collision_shape()->set_scale(vec3f((float)mscale[0], (float)mscale[1], (float)mscale[2]));
+    
+    /*
+     float mass = 1.f;
+     m_rigid_body->set_mass(mass);
+     m_rigid_body->set_inertia((float)mass * m_rigid_body->collision_shape()->local_inertia());
+     */
+    
+	//float tempmass = 0.f;
+    if (data->typeName == boingRBNode::typeName) {
+        MPlug(data->node, boingRBNode::ia_mass).getValue(data->m_mass);
+    }
+    
+    
+	float curMass = data->m_rigid_body->get_mass();
+	bool changedMassStatus= false;
+	if ((curMass > 0.f) != (data->m_mass > 0.f))
+	{
+		changedMassStatus = true;
+	}
+	if (changedMassStatus)
+		solver_t::remove_rigid_body(data->m_rigid_body);
+	
+	data->m_rigid_body->set_mass(data->m_mass);
+	data->m_rigid_body->set_inertia((float)data->m_mass * data->m_rigid_body->collision_shape()->local_inertia());
+    
+    
+	if (changedMassStatus)
+		solver_t::add_rigid_body(data->m_rigid_body, data->name.asChar());
+
+    
+    //initialize those default values too
+    float restitution = 0.3f;
+    //MPlug(thisObject, rigidBodyNode::ia_restitution).getValue(restitution);
+    data->m_rigid_body->set_restitution(restitution);
+    float friction = 0.5f;
+    //MPlug(thisObject, rigidBodyNode::ia_friction).getValue(friction);
+    data->m_rigid_body->set_friction(friction);
+    float linDamp = 0.f;
+    //MPlug(thisObject, rigidBodyNode::ia_linearDamping).getValue(linDamp);
+    data->m_rigid_body->set_linear_damping(linDamp);
+    float angDamp = 0.2f;
+    //MPlug(thisObject, rigidBodyNode::ia_angularDamping).getValue(angDamp);
+    data->m_rigid_body->set_angular_damping(angDamp);
+    
+    data->m_rigid_body->impl()->body()->setUserPointer((void*) data);
+    
+    const void *n = (const void *)rbname.asChar();
+    m_hashNameToData.insert(n, data);
+    
     return MS::kSuccess;
     
 }
-
+/*
 void bSolverNode::erase_node(boing *b) {
     std::vector<boing*>::iterator it;
-    for( it = node_ptr.begin(); it != node_ptr.end(); /* blank */ ) {
+    for( it = node_ptr.begin(); it != node_ptr.end();  blank  ) {
         std::cout<<" erasing node "<<(*it)->name<<endl;
         //if( (*it)->name == b->name ) {
             node_ptr.erase(it++); // Note the subtlety here
@@ -204,8 +502,8 @@ void bSolverNode::erase_node(boing *b) {
         //}
     }
     
-}
-
+}*/
+/*
 boing*  bSolverNode::get_node(MString &name) {
     std::vector<boing*>::iterator it;
     for( it = node_ptr.begin(); it != node_ptr.end(); ++it ) {
@@ -221,7 +519,10 @@ boing*  bSolverNode::get_node(MString &name) {
 std::vector<boing*> bSolverNode::get_all_nodes() {
     return node_ptr;
 }
-
+*/
+MStringArray bSolverNode::get_all_names() {
+    return node_name_ptr;
+}
 
 
 
@@ -235,19 +536,28 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     getRigidBodies(thisObject, rbs, nodes);
     
     //debug boing - container
-    //std::vector<boing*>::iterator bit;
-    //for (bit=node_ptr.begin(); bit!=node_ptr.end(); ++bit) {
-    //  cout<<"node_ptr->name : "<<(*bit)->name<<endl;
-    //}
-    
+    //std::vector<*>::iterator bit;
+    /*
+    for (int i=0; i<node_name_ptr.length(); i++) {
+        m_custom_data *data = getdata(node_name_ptr[i]);
+        std::cout<<"data->name : "<<data->name<<std::endl;
+        std::cout<<"data->typeName"<<data->typeName<<std::endl;
+        std::cout<<"data->m_initial_position"<<data->m_initial_position<<std::endl;
+        std::cout<<"data->m_initial_rotation"<<data->m_initial_rotation<<std::endl;
+        std::cout<<"data->m_initial_velocity"<<data->m_initial_velocity<<std::endl;
+        std::cout<<"data->m_initial_angularvelocity"<<data->m_initial_angularvelocity<<std::endl;
+
+    }
+    */
     //shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
     //std::cout<<"solver_t::get_rigid_bodies() count "<<rbds.size()<<endl;
     
     std::set<rigid_body_t::pointer>::iterator it;
-
+    
     for(it=rbds.begin(); it!=rbds.end(); ++it) {
         rigid_body_t::pointer rb = (*it);
+        //rb->update();
         //std::cout<<(static_cast<boing*>(rb->impl()->body()->getCollisionShape()->getUserPointer()))->name<<endl;
         if(rb) {
             //remove the scale, since it's already included in the node transform
@@ -1476,14 +1786,8 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
     }
     
     
-    //shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-    //std::vector<boing*> del_nodes = b_solv->get_all_nodes();
-    
-    std::vector<boing*>::iterator it;
-    for( it = node_ptr.begin(); it!=node_ptr.end(); ++it) {
-        destroyNode((*it));
-    }
-    
+    //shared_ptr<bSolverNode> b_solv = get_bsolver_node();
+    deleteAllData();
 
     solver_t::remove_all_rigid_bodies();
     
@@ -2052,10 +2356,29 @@ void bSolverNode::applyFields(MPlugArray &rbConnections, float dt)
 	}
 }
 
+void bSolverNode::deletedata(MString &name) {
+    m_hashNameToData.remove((const void*)name.asChar());
+}
+
+void bSolverNode::deleteAllData() {
+    m_hashNameToData.clear();
+}
+
 boingRBNode* bSolverNode::getboingRBNode(btCollisionObject* btColObj)
 {
 	boingRBNode** nodePtr = m_hashColObjectToRBNode.find((const void*)btColObj);
 	return *nodePtr;
+}
+
+bSolverNode::m_custom_data* bSolverNode::getdata(MString &name)
+{
+    if ( m_hashNameToData.size() > 0 ) {
+        m_custom_data** data = m_hashNameToData.find((const void*)name.asChar());
+        return *data;
+    } else {
+        m_custom_data * ret = NULL;
+        return ret;
+    }
 }
 
 /*

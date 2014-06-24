@@ -307,25 +307,15 @@ MStatus boingRbCmd::redoIt()
         } else {
             MStringArray result;
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-            for ( int i=0; i<b_solv->node_name_ptr.length(); i++) {
-                result.append(b_solv->node_name_ptr[i]);
-                std::cout<<" -> "<<b_solv->node_name_ptr[i].asChar()<<std::endl;
-            }
-            std::vector<boing*> rbds = b_solv->get_all_nodes();
-            std::vector<boing*>::iterator rit;
-            for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
-                //boing* b_ptr = (*rit);
-                std::cout<<"(*rit) : "<<(*rit)<<std::endl;
-                std::cout<<"(*rit)->getPointer() : "<<(*rit)->getPointer()<<std::endl;
-                std::cout<<"(*rit)->name : "<<(*rit)->name<<std::endl;
-                //result.append(b_ptr->name);
-                if ( rbds.size() > ((*rit)->count - 1) ) {
-                    std::cout<<"count = "<<(*rit)->count<<std::endl;
+            MStringArray names = b_solv->get_all_names();
+            for(int i=0; i < names.length(); i++) {
+                bSolverNode::m_custom_data *data = b_solv->getdata(names[i]);
+                if (data) {
+                    std::cout<<"data->name : "<<data->name<<std::endl;
+                    std::cout<<"data->m_initial_position: "<<data->m_initial_position<<std::endl;
+                    result.append(data->name);
                 }
             }
-
-            
-
 
             setResult(result);
         }
@@ -402,7 +392,7 @@ MStatus boingRbCmd::redoIt()
         argParser->getFlagArgument("-delete", 0, aArgument);
         if (aArgument != "") {
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-            b_solv->destroyNode(b_solv->get_node(aArgument));
+            b_solv->deletedata(aArgument);
         }
     }
     
@@ -496,16 +486,22 @@ rigid_body_t::pointer boingRbCmd::getPointerFromName(MString &name)
     
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
-    std::set<rigid_body_t::pointer>::iterator rit;
-    for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
-        rigid_body_t::pointer temprb = (*rit);
-        boing *myBoingRb = static_cast<boing *>(temprb->collision_shape()->getBulletCollisionShape()->getUserPointer());
-        //MString n = MString(static_cast<char*>(namePtr));
-        if (name == myBoingRb->name) {
-            rb = temprb;
-            //cout<<"getPointerFromName -> rb : "<<rb<<endl;
-            break;
-        }
+    shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+    
+    //std::set<rigid_body_t::pointer>::iterator rit;
+    for( int i=0; i<b_solv->node_name_ptr.length(); i++) {
+    //for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
+        //rigid_body_t::pointer temprb = (*rit);
+        bSolverNode::m_custom_data * data = b_solv->getdata(b_solv->node_name_ptr[i]);
+        if (data) {
+            //boing *myBoingRb = static_cast<boing *>(temprb->collision_shape()->getBulletCollisionShape()->getUserPointer());
+            //MString n = MString(static_cast<char*>(namePtr));
+            if (name == data->name) {
+                rb = data->m_rigid_body;
+                //cout<<"getPointerFromName -> rb : "<<rb<<endl;
+                break;
+            }
+        } 
     }
     
     return rb;
@@ -516,8 +512,8 @@ MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr) {
     MString result;
     
     rigid_body_t::pointer rb = getPointerFromName(name);
-    boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-    result = b->get_data(attr);
+    //boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
+    //result = b->get_data(attr);
     return result;
 }
 
