@@ -134,6 +134,7 @@ mesh_shape_t::pointer solver_t::create_mesh_shape(vec3f const* vertices, size_t 
 
 rigid_body_t::pointer solver_t::create_rigid_body(collision_shape_t::pointer& cs)
 {
+    std::cout<<"creating a rigid body in solver_t."<< std::endl;
     return rigid_body_t::pointer(new rigid_body_t(m_impl->create_rigid_body(cs->impl()), cs));
 }
 

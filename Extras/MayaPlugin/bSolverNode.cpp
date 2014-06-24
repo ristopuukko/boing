@@ -365,7 +365,15 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     
     std::cout<<"bSolverNode creating new boing : "<<rbname<<" with node "<<MFnDependencyNode(inputShape).name()<<endl;
 
+
     m_custom_data *data = new m_custom_data;
+    
+    if (rbname.length()) {
+        rbname = "procBoingRb1";
+    }
+    const void *n = (const void *)rbname.asChar();
+    m_hashNameToData.insert(n, data);
+
     node_name_ptr.append( rbname );
     data->node = inputShape;
     data->name = rbname;
@@ -379,10 +387,6 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     data->dataArray = MStringArray();
     data->m_collision_shape = createCollisionShape(data->node);
 
-    
-    if (!data->name.length()) {
-        data->name = "procBoingRb1";
-    }
     std::cout<<"name in  boing::createRigidBody() "<<data->name<<endl;
     
     double mscale[3] = {1,1,1};
@@ -409,10 +413,7 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     }
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     //cout<<"removing m_rigid_body"<<endl;
-	solver_t::remove_rigid_body(m_rigid_body);
-    m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
-    
-    
+	//solver_t::remove_rigid_body(data->m_rigid_body);
     data->m_rigid_body = solver_t::create_rigid_body(data->m_collision_shape);
     
     data->m_rigid_body->set_transform(vec3f((float)data->m_initial_position.x, (float)data->m_initial_position.y, (float)data->m_initial_position.z),
@@ -424,13 +425,14 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     
     data->m_rigid_body->collision_shape()->set_scale(vec3f((float)mscale[0], (float)mscale[1], (float)mscale[2]));
     
-    /*
-     float mass = 1.f;
-     m_rigid_body->set_mass(mass);
-     m_rigid_body->set_inertia((float)mass * m_rigid_body->collision_shape()->local_inertia());
-     */
+    
+    //float mass = 1.f;
+    data->m_rigid_body->set_mass(data->m_mass);
+    data->m_rigid_body->set_inertia((float)data->m_mass * data->m_rigid_body->collision_shape()->local_inertia());
+    
     
 	//float tempmass = 0.f;
+    /*
     if (data->typeName == boingRBNode::typeName) {
         MPlug(data->node, boingRBNode::ia_mass).getValue(data->m_mass);
     }
@@ -444,13 +446,10 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
 	}
 	if (changedMassStatus)
 		solver_t::remove_rigid_body(data->m_rigid_body);
-	
-	data->m_rigid_body->set_mass(data->m_mass);
-	data->m_rigid_body->set_inertia((float)data->m_mass * data->m_rigid_body->collision_shape()->local_inertia());
+	*/
     
-    
-	if (changedMassStatus)
-		solver_t::add_rigid_body(data->m_rigid_body, data->name.asChar());
+	//if (changedMassStatus)
+	//	solver_t::add_rigid_body(data->m_rigid_body, data->name.asChar());
 
     
     //initialize those default values too
@@ -468,11 +467,6 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     data->m_rigid_body->set_angular_damping(angDamp);
     
     data->m_rigid_body->impl()->body()->setUserPointer((void*) data);
-    
-    const void *n = (const void *)rbname.asChar();
-    m_hashNameToData.insert(n, data);
-    
-    data->node->
     
     return MS::kSuccess;
     
@@ -514,6 +508,8 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     }
     */
     //shared_ptr<solver_impl_t> solv = solver_t::get_solver();
+    updateRigidBodies();
+    
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
     std::cout<<"solver_t::get_rigid_bodies() count "<<rbds.size()<<endl;
     
@@ -573,6 +569,40 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     //view.endGL();
 }
 
+void bSolverNode::updateRigidBodies() {
+
+    MObject thisNode = thisMObject();
+    MItDependencyGraph dgIt(thisNode);
+    for ( ; !dgIt.isDone(); dgIt.next() ) {
+        MFnDependencyNode dgFn(dgIt.thisNode());
+        
+        if (dgFn.typeName() == "boingRb") {
+            //cout<<"adding boingRb :"<<dgFn.userNode()->name()<<endl;
+            //rbds.append(dgFn.userNode()->name());
+            boingRBNode *rbNode = static_cast<boingRBNode*>(dgFn.userNode());
+            //nodes.insert(rbNode);
+            //cout<<"nodes.size() : "<<nodes.size()<<endl;
+            rbNode->update();
+        }
+    }
+
+    MStringArray names = get_all_names();
+    for( int i=0 ; i<names.length(); i++ ) {
+        m_custom_data* data = getdata(names[i]);
+        MFnDependencyNode fnNode(data->node);
+        if (fnNode.typeName() == "boingRb") {
+            MPlug plgCollisionShape(data->node, boingRBNode::ia_collisionShape);
+            MObject update;
+            //force evaluation of the shape
+            plgCollisionShape.getValue(update);
+            MPlug(data->node, boingRBNode::ca_rigidBody).getValue(update);
+            MPlug(data->node, boingRBNode::ca_rigidBodyParam).getValue(update);
+            MPlug(data->node, boingRBNode::ca_solver).getValue(update);
+            MPlug(data->node, boingRBNode::worldMatrix).elementByLogicalIndex(0).getValue(update);
+        }
+    }
+}
+
 void bSolverNode::getRigidBodies(MObject &node, MStringArray& rbds, std::set<boingRBNode*>&nodes) {
     
 	MStatus stat;
@@ -589,9 +619,9 @@ void bSolverNode::getRigidBodies(MObject &node, MStringArray& rbds, std::set<boi
         
         if (dgFn.typeName() == "boingRb") {
             //cout<<"adding boingRb :"<<dgFn.userNode()->name()<<endl;
-            rbds.append(dgFn.userNode()->name());
+            //rbds.append(dgFn.userNode()->name());
             boingRBNode *rbNode = static_cast<boingRBNode*>(dgFn.userNode());
-            nodes.insert(rbNode);
+            //nodes.insert(rbNode);
             //cout<<"nodes.size() : "<<nodes.size()<<endl;
             rbNode->update();
         }

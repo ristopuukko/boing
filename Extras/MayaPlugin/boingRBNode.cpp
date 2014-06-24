@@ -427,7 +427,7 @@ boingRBNode::~boingRBNode()
 
 void boingRBNode::nodeRemoved(MObject& node, void *clientData)
 {
-   // std::cout << "boingRBNode::nodeRemoved" << std::endl;
+    std::cout << "boingRBNode::nodeRemoved" << std::endl;
     MFnDependencyNode fnNode(node);
     solver_t::remove_rigid_body(static_cast<boingRBNode*>(fnNode.userNode())->m_rigid_body);
 }
@@ -1122,8 +1122,8 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     }
 	
     //cout<<"removing m_rigid_body"<<endl;
-	solver_t::remove_rigid_body(m_rigid_body);
-    m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
+	//solver_t::remove_rigid_body(m_rigid_body);
+    //m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
     MString rbname = name();
     char * bname = (char*)(name().asChar());
     //solver_t::add_rigid_body(m_rigid_body, bname);

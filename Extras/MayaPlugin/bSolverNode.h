@@ -167,7 +167,8 @@ public:
     
 private:
     static MStringArray node_name_ptr;
-    
+    void updateRigidBodies();
+
 protected:
     //<rp 2014>
     MObjectArray fScallBackNodes;
