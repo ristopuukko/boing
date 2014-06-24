@@ -57,7 +57,7 @@ MAYA_LIB=-L$(MAYA_LOCATION)/Maya.app/Contents/MacOS -lOpenMaya -lFoundation -Wl,
 
 SOURCES = bt_solver.cpp pluginMain.cpp bulletExport.cpp  boingRBNode.cpp bCallBackNode.cpp \
 	  convex_decomposition_hacd.cpp solver.cpp bt_rigid_body.cpp bSolverNode.cpp bSolverCmd.cpp boingRbCmds.cpp \
-	  pdbIO.cpp drawUtils.cpp dSoftBodyCmd.cpp softBodyNode.cpp soft_body_impl_t.cpp soft_body_t.cpp bt_soft_body.cpp constraint/dHingeConstraintCmd.cpp	constraint/dSliderConstraintCmd.cpp boing.cpp \
+	  pdbIO.cpp drawUtils.cpp dSoftBodyCmd.cpp softBodyNode.cpp soft_body_impl_t.cpp soft_body_t.cpp bt_soft_body.cpp constraint/dHingeConstraintCmd.cpp	constraint/dSliderConstraintCmd.cpp \
 	constraint/hingeConstraintNode.cpp	constraint/sixdofConstraintNode.cpp constraint/dNailConstraintCmd.cpp \
 	constraint/dsixdofConstraintCmd.cpp	constraint/nailConstraintNode.cpp	constraint/sliderConstraintNode.cpp \
 	$(HACD)/hacdHACD.cpp \
@@ -194,7 +194,7 @@ SOURCES = bt_solver.cpp pluginMain.cpp bulletExport.cpp  boingRBNode.cpp bCallBa
 HEADERS = box_shape.h             bt_sphere_shape.h         bSolverNode.h         rigid_body_impl.h \
 	box_shape_impl.h        collision_shape.h         mathUtils.h           boingRBNode.h \
 	bt_box_shape.h          collision_shape_impl.h    mayaUtils.h           solver.h \
-	bt_collision_shape.h    mesh_shape.h              solver_impl.h         boing.h \
+	bt_collision_shape.h    mesh_shape.h              solver_impl.h         \
 	bt_convex_hull_shape.h  convex_hull_shape.h       mesh_shape_impl.h     sphere_shape.h \
 	bt_mesh_shape.h         convex_hull_shape_impl.h  plane_shape.h         sphere_shape_impl.h \
 	bt_plane_shape.h        plane_shape_impl.h \

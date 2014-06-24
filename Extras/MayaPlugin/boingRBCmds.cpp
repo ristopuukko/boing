@@ -308,9 +308,11 @@ MStatus boingRbCmd::redoIt()
             MStringArray result;
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             MStringArray names = b_solv->get_all_names();
+            std::cout<<"getdatalength() : "<<b_solv->getdatalength()<<std::endl;
+            std::cout<<"names.length() : "<<names.length()<<std::endl;
             for(int i=0; i < names.length(); i++) {
                 bSolverNode::m_custom_data *data = b_solv->getdata(names[i]);
-                if (data) {
+                if ( NULL != data) {
                     std::cout<<"data->name : "<<data->name<<std::endl;
                     std::cout<<"data->m_initial_position: "<<data->m_initial_position<<std::endl;
                     result.append(data->name);
@@ -487,18 +489,12 @@ rigid_body_t::pointer boingRbCmd::getPointerFromName(MString &name)
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
     shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-    
-    //std::set<rigid_body_t::pointer>::iterator rit;
-    for( int i=0; i<b_solv->node_name_ptr.length(); i++) {
-    //for(rit=rbds.begin(); rit!=rbds.end(); ++rit) {
-        //rigid_body_t::pointer temprb = (*rit);
-        bSolverNode::m_custom_data * data = b_solv->getdata(b_solv->node_name_ptr[i]);
-        if (data) {
-            //boing *myBoingRb = static_cast<boing *>(temprb->collision_shape()->getBulletCollisionShape()->getUserPointer());
-            //MString n = MString(static_cast<char*>(namePtr));
+    MStringArray names = b_solv->get_all_names();
+    for( int i=0; i<names.length(); i++) {
+        bSolverNode::m_custom_data * data = b_solv->getdata(names[i]);
+        if (NULL != data) {
             if (name == data->name) {
                 rb = data->m_rigid_body;
-                //cout<<"getPointerFromName -> rb : "<<rb<<endl;
                 break;
             }
         } 
@@ -508,12 +504,29 @@ rigid_body_t::pointer boingRbCmd::getPointerFromName(MString &name)
 }
 
 
-MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr) {
-    MString result;
+MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr)
+{
+
+    MString result = "";
     
-    rigid_body_t::pointer rb = getPointerFromName(name);
-    //boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-    //result = b->get_data(attr);
+    shared_ptr<solver_impl_t> solv = solver_t::get_solver();
+    std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
+    shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+    MStringArray names = b_solv->get_all_names();
+    for( int i=0; i<names.length(); i++) {
+        bSolverNode::m_custom_data * data = b_solv->getdata(names[i]);
+        if (NULL != data) {
+            if (name == data->name) {
+                for (int j=0; j<data->attrArray.length(); i++) {
+                    if ( data->attrArray[i] == attr ) {
+                        result = data->dataArray[i];
+                        return result;
+                    }
+                }
+            }
+        }
+    }
+
     return result;
 }
 

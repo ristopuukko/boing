@@ -128,10 +128,7 @@ MObject     bSolverNode::ia_DBG_FastWireframe;
 float bSolverNode::collisionMarginOffset; //mb
 
 shared_ptr<bSolverNode> bSolverNode::m_bsolvernode;
-
 MStringArray bSolverNode::node_name_ptr;
-//std::vector<boing*> bSolverNode::node_ptr;
-std::vector<char*> bSolverNode::char_array;
 
 
 #define ATTR_POSITION "position"
@@ -163,19 +160,6 @@ int getDbgDrawVal(const MObject& thisObj, const MObject& attr, int flag)
 shared_ptr<bSolverNode> bSolverNode::get_bsolver_node()
 {
     return m_bsolvernode;
-}
-/*
-void bSolverNode::destroyNode(boing *b) {
-    std::cout<<"deleting node "<<b<<endl;
-    assert(b!=0);
-    delete b;
-    b = NULL;
-    //erase_node(b);
-}
-*/
-
-void bSolverNode::set_name(char * new_name) {
-    char_array.push_back(new_name);
 }
 
 collision_shape_t::pointer bSolverNode::createCollisionShape(const MObject& node)
@@ -423,8 +407,11 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
             fnTransform.getScale(mscale);
         }
     }
-    
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
+    //cout<<"removing m_rigid_body"<<endl;
+	solver_t::remove_rigid_body(m_rigid_body);
+    m_rigid_body = solver_t::create_rigid_body(m_collision_shape);
+    
     
     data->m_rigid_body = solver_t::create_rigid_body(data->m_collision_shape);
     
@@ -485,41 +472,17 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     const void *n = (const void *)rbname.asChar();
     m_hashNameToData.insert(n, data);
     
+    data->node->
+    
     return MS::kSuccess;
     
 }
-/*
-void bSolverNode::erase_node(boing *b) {
-    std::vector<boing*>::iterator it;
-    for( it = node_ptr.begin(); it != node_ptr.end();  blank  ) {
-        std::cout<<" erasing node "<<(*it)->name<<endl;
-        //if( (*it)->name == b->name ) {
-            node_ptr.erase(it++); // Note the subtlety here
-        //    return;
-        //}
-        //else {
-        //    ++it;
-        //}
-    }
-    
-}*/
-/*
-boing*  bSolverNode::get_node(MString &name) {
-    std::vector<boing*>::iterator it;
-    for( it = node_ptr.begin(); it != node_ptr.end(); ++it ) {
-        if( (*it)->name == name ) {
-            return (*it);
-        }
-    }
-    return NULL;
+
+void bSolverNode::delete_all_names() {
+    node_name_ptr.clear();
 }
 
 
-
-std::vector<boing*> bSolverNode::get_all_nodes() {
-    return node_ptr;
-}
-*/
 MStringArray bSolverNode::get_all_names() {
     return node_name_ptr;
 }
@@ -530,11 +493,12 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
                          M3dView::DisplayStyle style,
                          M3dView::DisplayStatus status )
 {
+    /*
     MStringArray rbs;
     std::set<boingRBNode *>nodes;
 	MObject thisObject(thisMObject());
     getRigidBodies(thisObject, rbs, nodes);
-    
+    */
     //debug boing - container
     //std::vector<*>::iterator bit;
     /*
@@ -551,7 +515,7 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     */
     //shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
-    //std::cout<<"solver_t::get_rigid_bodies() count "<<rbds.size()<<endl;
+    std::cout<<"solver_t::get_rigid_bodies() count "<<rbds.size()<<endl;
     
     std::set<rigid_body_t::pointer>::iterator it;
     
@@ -1786,9 +1750,8 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
     }
     
     
-    //shared_ptr<bSolverNode> b_solv = get_bsolver_node();
     deleteAllData();
-
+    delete_all_names();
     solver_t::remove_all_rigid_bodies();
     
 }
@@ -2356,11 +2319,19 @@ void bSolverNode::applyFields(MPlugArray &rbConnections, float dt)
 	}
 }
 
-void bSolverNode::deletedata(MString &name) {
-    m_hashNameToData.remove((const void*)name.asChar());
+void bSolverNode::deletedata(MString &name)
+{
+    if ( NULL != getdata(name) )
+        m_hashNameToData.remove((const void*)name.asChar());
+}
+int bSolverNode::getdatalength()
+{
+    return m_hashNameToData.size();
 }
 
-void bSolverNode::deleteAllData() {
+
+void bSolverNode::deleteAllData()
+{
     m_hashNameToData.clear();
 }
 
@@ -2372,13 +2343,9 @@ boingRBNode* bSolverNode::getboingRBNode(btCollisionObject* btColObj)
 
 bSolverNode::m_custom_data* bSolverNode::getdata(MString &name)
 {
-    if ( m_hashNameToData.size() > 0 ) {
-        m_custom_data** data = m_hashNameToData.find((const void*)name.asChar());
-        return *data;
-    } else {
-        m_custom_data * ret = NULL;
-        return ret;
-    }
+    std::cout<<"m_hashNameToData.size() : "<<m_hashNameToData.size()<<std::endl;
+    m_custom_data** data = m_hashNameToData.find((const void*)name.asChar());
+    return *data;
 }
 
 /*
@@ -2458,7 +2425,7 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
         solver_t::set_split_impulse(splitImpulseEnabled);
         m_prevTime = time;
     } else {
-		// std::cout  << time.value() << std::endl;
+		std::cout  << "time.value() : " << time.value() << std::endl;
 		isStartTime = false;
         double delta_frames = (time - m_prevTime).value();
         bool playback = MConditionMessage::getConditionState("playingBack");
@@ -2516,6 +2483,7 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
                     
 					btCollisionWorld* pCollisionWorld = dynamicsWorld->getCollisionWorld();
 					int numManifolds = pCollisionWorld->getDispatcher()->getNumManifolds();
+                    std::cout<<"numManifolds : "<<numManifolds<<std::endl;
 #pragma omp for
 					for ( int i=0;i<numManifolds;i++)
 					{

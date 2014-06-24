@@ -157,17 +157,16 @@ public:
     //boing*  get_node(MString &name);
     //std::vector<boing*> get_all_nodes();
     static MStringArray get_all_names();
+    static void delete_all_names();
     static void set_name(char *new_name);
     
     static shared_ptr<bSolverNode> get_bsolver_node();
     
     //</rp 2014>
-    static MStringArray node_name_ptr;
-    //static std::vector<boing*> node_ptr;
 
     
 private:
-    static std::vector<char*> char_array;
+    static MStringArray node_name_ptr;
     
 protected:
     //<rp 2014>
@@ -230,7 +229,7 @@ public:
         collision_shape_t::pointer m_collision_shape ;
         rigid_body_t::pointer m_rigid_body ;
     };
-
+    int getdatalength();
     m_custom_data *getdata(MString &name);
     void deletedata(MString &name);
     void deleteAllData();
