@@ -582,7 +582,7 @@ void bSolverNode::updateRigidBodies() {
     
     shared_ptr<bSolverNode> b_solv = get_bsolver_node();
     MStringArray names = b_solv->get_all_keys();
-    std::cout<<"keys length() in bSolverNode::updateRigidBodies() : "<<names.length()<<std::endl;
+    //std::cout<<"keys length() in bSolverNode::updateRigidBodies() : "<<names.length()<<std::endl;
     
     for( int i=0 ; i<names.length(); i++ ) {
         m_custom_data* data = getdata(names[i]);
@@ -2352,14 +2352,13 @@ void bSolverNode::applyFields(MPlugArray &rbConnections, float dt)
 
 void bSolverNode::deletedata(MString name)
 {
-    //for ( int i=0; i<m_hashNameToData.size(); i++ ) {
-    std::cout<<"deleting data : "<<name<<" and the length before is : "<<m_hashNameToData.size()<<std::endl;
+    //std::cout<<"deleting data : "<<name<<" and the length before is : "<<m_hashNameToData.size()<<std::endl;
     m_custom_data** data = m_hashNameToData.find((const btHashString) name.asChar());
     if ( NULL != *data) {
         solver_t::remove_rigid_body((*data)->m_rigid_body);
     }
     m_hashNameToData.remove((const btHashString) name.asChar());
-    std::cout<<"deleting data : "<<name<<" and the length after is : "<<m_hashNameToData.size()<<std::endl;
+    //std::cout<<"deleting data : "<<name<<" and the length after is : "<<m_hashNameToData.size()<<std::endl;
 }
 
 boingRBNode* bSolverNode::getboingRBNode(btCollisionObject* btColObj)
@@ -2378,11 +2377,10 @@ MStatus bSolverNode::delete_key(MString &key, int index)
     MStatus status = MS::kFailure;
     
     if (-1 != index) {
-        //btHashMap<btHashPtr, m_custom_data*> tempdata = m_hashNameToData;
-        std::cout<<"deleting key : "<<keyArray[index]<<std::endl;
-        std::cout<<"keyArray size before : "<<keyArray.length()<<std::endl;
+        //std::cout<<"deleting key : "<<keyArray[index]<<std::endl;
+        //std::cout<<"keyArray size before : "<<keyArray.length()<<std::endl;
         keyArray.remove(index);
-        std::cout<<"keyArray size after : "<<keyArray.length()<<std::endl;
+        //std::cout<<"keyArray size after : "<<keyArray.length()<<std::endl;
         status = MS::kSuccess;
     } else {
         for(int i=0; i<keyArray.length(); ++i) {

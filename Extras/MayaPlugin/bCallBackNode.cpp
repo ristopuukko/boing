@@ -18,7 +18,7 @@ Written by: Risto Puukko <risto.puukko@gmail.com>
 
 
 MTypeId bCallBackNode::typeId(0x100329);
-MString bCallBackNode::typeName("dCallBack");
+MString bCallBackNode::typeName("bCallBack");
 
 MObject bCallBackNode::ia_enabled;
 MObject bCallBackNode::ia_script;

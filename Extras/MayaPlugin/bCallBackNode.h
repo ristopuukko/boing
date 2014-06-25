@@ -6,8 +6,8 @@
 
 //bCallBackNode.h
 
-#ifndef DYN_DCALLBACKNODE_H
-#define DYN_DCALLBACKNODE_H
+#ifndef DYN_BCALLBACKNODE_H
+#define DYN_BCALLBACKNODE_H
 
 #include <maya/MString.h>
 #include <maya/MTypeId.h>

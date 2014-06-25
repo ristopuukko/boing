@@ -2294,7 +2294,10 @@
 					_BOOL,
 					REQUIRE_IOSTREAM,
 				);
-				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
+				HEADER_SEARCH_PATHS = (
+					"/opt/local/lib/gcc48/gcc/x86_64-apple-darwin12/4.8.1/include",
+					"$(MAYA_DIRECTORY)/devkit/include/",
+				);
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
 				LIBRARY_STYLE = BUNDLE;
 				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
@@ -2322,7 +2325,10 @@
 					_BOOL,
 					REQUIRE_IOSTREAM,
 				);
-				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
+				HEADER_SEARCH_PATHS = (
+					"/opt/local/lib/gcc48/gcc/x86_64-apple-darwin12/4.8.1/include",
+					"$(MAYA_DIRECTORY)/devkit/include/",
+				);
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
 				LIBRARY_STYLE = BUNDLE;
 				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
@@ -2349,7 +2355,10 @@
 					_BOOL,
 					REQUIRE_IOSTREAM,
 				);
-				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
+				HEADER_SEARCH_PATHS = (
+					"/opt/local/lib/gcc48/gcc/x86_64-apple-darwin12/4.8.1/include",
+					"$(MAYA_DIRECTORY)/devkit/include/",
+				);
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
 				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
 				OTHER_LDFLAGS = (
