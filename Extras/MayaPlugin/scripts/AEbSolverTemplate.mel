@@ -18,11 +18,14 @@ not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
  
 Written by: Nicola Candussi <nicola@fluidinteractive.com>
+ 
+update to boing by: Risto Puukko
+ 
 */
 
-//AEdSolverTemplate.mel
+//AEbSolverTemplate.mel
 
-global proc AEdSolverTemplate( string $nodeName )
+global proc AEbSolverTemplate( string $nodeName )
 {
 	
     editorTemplate -beginScrollLayout;

@@ -20,9 +20,9 @@ not be misrepresented as being the original software.
 Written by: Nicola Candussi <nicola@fluidinteractive.com>
 */
 
-//AEdRigidBodyTemplate.mel
+//AEboingRbTemplate.mel
 
-global proc AEdRigidBodyTemplate( string $nodeName )
+global proc AEboingRbTemplate( string $nodeName )
 {
 	
     editorTemplate -beginScrollLayout;
