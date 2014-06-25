@@ -250,7 +250,7 @@ protected:
     static shared_ptr<bSolverNode> m_bsolvernode;
     
 //friend:
-//    dCallBack;
+//    bCallBack;
     
 };
 

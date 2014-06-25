@@ -500,7 +500,7 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
     }
     */
     //shared_ptr<solver_impl_t> solv = solver_t::get_solver();
-    updateRigidBodies();
+    //updateRigidBodies();
     
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
     
@@ -565,6 +565,7 @@ void bSolverNode::drawBoingRb( M3dView & view, const MDagPath &path,
 
 void bSolverNode::updateRigidBodies() {
     
+    /*
     MObject thisNode = thisMObject();
     MItDependencyGraph dgIt(thisNode);
     for ( ; !dgIt.isDone(); dgIt.next() ) {
@@ -579,14 +580,15 @@ void bSolverNode::updateRigidBodies() {
             rbNode->update();
         }
     }
-    
+    */
     shared_ptr<bSolverNode> b_solv = get_bsolver_node();
     MStringArray names = b_solv->get_all_keys();
-    //std::cout<<"keys length() in bSolverNode::updateRigidBodies() : "<<names.length()<<std::endl;
+    std::cout<<"keys length() in bSolverNode::updateRigidBodies() : "<<names.length()<<std::endl;
     
     for( int i=0 ; i<names.length(); i++ ) {
         m_custom_data* data = getdata(names[i]);
         MFnDependencyNode fnNode(data->node);
+        std::cout<<"updateRigidBodies() "<<fnNode.name()<<std::endl;
         if (fnNode.typeName() == "boingRb") {
             MPlug plgCollisionShape(data->node, boingRBNode::ia_collisionShape);
             MObject update;
@@ -795,7 +797,7 @@ void bSolverNode::traverseCallBacks() {
         //cout<<obj.apiTypeStr()<<endl;
         if ( (obj.apiType() == MFn::kPluginTransformNode )) {
             MFnDependencyNode fNode(obj);
-            if (fNode.typeName() == "dCallBack") {
+            if (fNode.typeName() == "bCallBack") {
                 MPlug eplug(obj, fNode.attribute("Enable") );
                 bool enable;
                 eplug.getValue(enable);
@@ -842,7 +844,12 @@ void	bSolverNode::draw(	M3dView & view, const MDagPath & path,
 {
     
     //cout<<"bSolver Draw()"<<endl;
-    
+    //force update of the solver on creation
+    MPlug plgRigidBodies(thisMObject(), oa_rigidBodies);
+    bool update;
+    plgRigidBodies.getValue(update);
+
+    //updateRigidBodies();
     view.beginGL();
     
     glPushAttrib( GL_ALL_ATTRIB_BITS );
@@ -1791,7 +1798,7 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
 //init the rigid bodies to it's first frame configuration
 void bSolverNode::initRigidBodies(const MPlug& plug, MPlugArray &rbConnections, MDataBlock& data)
 {
-	//std::cout << "Initializing rigid bodies" << std::endl;
+	std::cout << "Initializing rigid bodies" << std::endl;
 	//bSolverNode::collisionMarginOffset = data.inputValue(bSolverNode::ia_collisionMargin).asFloat(); //mb
     
     for(size_t i = 0; i < rbConnections.length(); ++i)
@@ -2364,6 +2371,7 @@ void bSolverNode::deletedata(MString name)
 boingRBNode* bSolverNode::getboingRBNode(btCollisionObject* btColObj)
 {
 	boingRBNode** nodePtr = m_hashColObjectToRBNode.find((const void*)btColObj);
+    std::cout<<"*nodePtr :"<<*nodePtr<<" nodePtr : "<<nodePtr<<std::endl;
 	return *nodePtr;
 }
 
@@ -2479,7 +2487,7 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
         
 		// update m_hashColObjectToRBNode
 		m_hashColObjectToRBNode.clear();
-#pragma omp for
+//#pragma omp for
 		for(size_t i = 0; i < rbConnections.length(); ++i)
 		{
 			MObject node = rbConnections[i].node();
@@ -2567,8 +2575,9 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
                     
 					btCollisionWorld* pCollisionWorld = dynamicsWorld->getCollisionWorld();
 					int numManifolds = pCollisionWorld->getDispatcher()->getNumManifolds();
+                    
                     std::cout<<"numManifolds : "<<numManifolds<<std::endl;
-#pragma omp for
+//#pragma omp for
 					for ( int i=0;i<numManifolds;i++)
 					{
 						btPersistentManifold* contactManifold = pCollisionWorld->getDispatcher()->getManifoldByIndexInternal(i);
@@ -2576,21 +2585,25 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
 						btCollisionObject* obB = (btCollisionObject*)(contactManifold->getBody1());
                         
 						int numContacts = contactManifold->getNumContacts();
+                        std::cout<<"numContacts is : "<<numContacts<<std::endl;
                         
 						boingRBNode* rbNodeA = getboingRBNode(obA);
 						boingRBNode* rbNodeB = getboingRBNode(obB);
-                        
+                        std::cout<<"getboingRBNode is here"<<std::endl;
 						for (int j=0;j<numContacts;j++)
 						{
+                            std::cout<<"going contacts ... "<<j<<std::endl;
 							btManifoldPoint& pt = contactManifold->getContactPoint(j);
                             
 							btVector3 ptA = pt.getPositionWorldOnA();
 							btVector3 ptB = pt.getPositionWorldOnB();
+                            std::cout<<"got position worlds ... "<<j<<std::endl;
                             
 							if ( rbNodeA && rbNodeB )
 							{
 								rbNodeA->addContactInfo(rbNodeB->name(), MVector(ptA.getX(), ptA.getY(), ptA.getZ()));
 								rbNodeB->addContactInfo(rbNodeA->name(), MVector(ptB.getX(), ptB.getY(), ptB.getZ()));
+                                std::cout<<"added contact info! "<<j<<std::endl;
 							}
 						}
 					}

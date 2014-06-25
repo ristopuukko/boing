@@ -589,7 +589,7 @@ global proc string boingUI_createCallBacksTab()
         boingUI_createFrame("Edit callbacks", "", 0, 0);
             rowLayout -nc 2;
                 iconTextButton -st "iconAndTextVertical" -l "Create callback" -w 75 -i "boingHelp.xpm"
-                -c "createNode dCallBack" -ann "Create callback";
+                -c "createNode bCallBack" -ann "Create callback";
                 iconTextButton -st "iconAndTextVertical" -l "Delete callback" -w 75 -i "boingBulletWebsite.xpm"
                 -c "system(\"load http://bulletphysics.org\")" -ann "Visit bulletphysics.org";
             setParent ..;

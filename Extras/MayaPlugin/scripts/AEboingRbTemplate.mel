@@ -33,18 +33,20 @@ global proc AEboingRbTemplate( string $nodeName )
 	"textureFiles";
     editorTemplate -suppress "textureFiles";*/
 
-    editorTemplate -addControl inCollisionShape;
+    //editorTemplate -addControl inCollisionShape;
+    editorTemplate -suppress inCollisionShape;
+    editorTemplate -suppress outCollisionShape;
+    editorTemplate -beginLayout "Boing properties" -collapse 0;
+    editorTemplate -addControl inShape;
+    editorTemplate -addControl type;
+    editorTemplate -addControl drawBulletShape;
     editorTemplate -addControl active;
     editorTemplate -addControl mass;
     editorTemplate -addControl restitution;
     editorTemplate -addControl friction;
     editorTemplate -addControl linearDamping;
     editorTemplate -addControl angularDamping;
-
- 		editorTemplate -beginLayout "External Forces" -collapse 0;
-		editorTemplate -addControl externalForce;
-    editorTemplate -addControl externalTorque;
-		editorTemplate -endLayout;
+    editorTemplate -endLayout;
 
     editorTemplate -beginLayout "Initial configuration" -collapse 0;
     editorTemplate -addControl initialPosition;
@@ -57,8 +59,18 @@ global proc AEboingRbTemplate( string $nodeName )
     editorTemplate -addControl velocity;
     editorTemplate -addControl angularVelocity;
     editorTemplate -endLayout;
+    editorTemplate -beginLayout "Transformation configuration" -collapse 0;
+    editorTemplate -addControl position;
+    editorTemplate -addControl rotate;
+    editorTemplate -addControl scale;
+    editorTemplate -endLayout;
 
     editorTemplate -addControl solver;
+
+	editorTemplate -beginLayout "External Forces" -collapse 1;
+	editorTemplate -addControl externalForce;
+    editorTemplate -addControl externalTorque;
+	editorTemplate -endLayout;
 
     editorTemplate -beginLayout (uiRes("m_AElocatorTemplate.kLocatorAttributes")) -collapse 1;
     AElocatorCommon $nodeName;
@@ -83,7 +95,7 @@ global proc AEboingRbTemplate( string $nodeName )
 	editorTemplate -suppress "compInstObjGroups";
     }
 
-    AEshapeTemplate $nodeName;
+    //AEshapeTemplate $nodeName;
 
     editorTemplate -addExtraControls;
     editorTemplate -endScrollLayout;
