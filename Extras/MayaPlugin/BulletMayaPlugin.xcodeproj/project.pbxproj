@@ -924,6 +924,57 @@
 		F906D3381941031D0054663E /* bSolverCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bSolverCmd.cpp; sourceTree = "<group>"; };
 		F91E78DC18D8806900526A5C /* AEdCallBackTemplate.mel */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; name = AEdCallBackTemplate.mel; path = scripts/AEdCallBackTemplate.mel; sourceTree = "<group>"; };
 		F94A488718DDC5BC007CFA3F /* dynamicaRbCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = dynamicaRbCmd.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		F9795C02195B3FE90072D8D8 /* out_bCallBack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = out_bCallBack.png; sourceTree = "<group>"; };
+		F9795C03195B3FE90072D8D8 /* out_BoingRb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = out_BoingRb.png; sourceTree = "<group>"; };
+		F9795C04195B3FE90072D8D8 /* out_bSolver.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = out_bSolver.png; sourceTree = "<group>"; };
+		F9795C05195B3FE90072D8D8 /* pt_icon.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = pt_icon.psd; sourceTree = "<group>"; };
+		F9795C06195B401B0072D8D8 /* dynamicaRelink.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaRelink.xpm; sourceTree = "<group>"; };
+		F9795C07195B401B0072D8D8 /* dynamicaSoftMesh.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaSoftMesh.xpm; sourceTree = "<group>"; };
+		F9795C08195B401B0072D8D8 /* dynamicaActivateChain.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaActivateChain.xpm; sourceTree = "<group>"; };
+		F9795C09195B401B0072D8D8 /* dynamicaActivateRadial.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaActivateRadial.xpm; sourceTree = "<group>"; };
+		F9795C0A195B401B0072D8D8 /* dynamicaActivateRadialIn.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaActivateRadialIn.xpm; sourceTree = "<group>"; };
+		F9795C0B195B401B0072D8D8 /* dynamicaActivate-X.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "dynamicaActivate-X.xpm"; sourceTree = "<group>"; };
+		F9795C0C195B401B0072D8D8 /* dynamicaActivate-Y.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "dynamicaActivate-Y.xpm"; sourceTree = "<group>"; };
+		F9795C0D195B401B0072D8D8 /* dynamicaActivate-Z.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "dynamicaActivate-Z.xpm"; sourceTree = "<group>"; };
+		F9795C0E195B401B0072D8D8 /* dynamicaActivateX.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaActivateX.xpm; sourceTree = "<group>"; };
+		F9795C0F195B401B0072D8D8 /* dynamicaActivateY.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaActivateY.xpm; sourceTree = "<group>"; };
+		F9795C10195B401B0072D8D8 /* dynamicaActivateZ.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaActivateZ.xpm; sourceTree = "<group>"; };
+		F9795C11195B401B0072D8D8 /* dynamicaClearInitialState.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaClearInitialState.xpm; sourceTree = "<group>"; };
+		F9795C12195B401B0072D8D8 /* dynamicaCreateActiveHull.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreateActiveHull.xpm; sourceTree = "<group>"; };
+		F9795C13195B401B0072D8D8 /* dynamicaCreateActiveHullArray.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreateActiveHullArray.xpm; sourceTree = "<group>"; };
+		F9795C14195B401B0072D8D8 /* dynamicaCreateActiveMesh.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreateActiveMesh.xpm; sourceTree = "<group>"; };
+		F9795C15195B401B0072D8D8 /* dynamicaCreateActiveMeshArray.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreateActiveMeshArray.xpm; sourceTree = "<group>"; };
+		F9795C16195B401B0072D8D8 /* dynamicaCreatePassiveHull.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassiveHull.xpm; sourceTree = "<group>"; };
+		F9795C17195B401B0072D8D8 /* dynamicaCreatePassiveHullArray.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassiveHullArray.xpm; sourceTree = "<group>"; };
+		F9795C18195B401B0072D8D8 /* dynamicaCreatePassiveMesh.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassiveMesh.xpm; sourceTree = "<group>"; };
+		F9795C19195B401B0072D8D8 /* dynamicaCreatePassiveMeshArray.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassiveMeshArray.xpm; sourceTree = "<group>"; };
+		F9795C1A195B401B0072D8D8 /* dynamicaSetInitialState.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaSetInitialState.xpm; sourceTree = "<group>"; };
+		F9795C1B195B401B0072D8D8 /* dynamicaVoronoiShatter.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaVoronoiShatter.xpm; sourceTree = "<group>"; };
+		F9795C1C195B401B0072D8D8 /* dynamicaBulletWebsite.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaBulletWebsite.xpm; sourceTree = "<group>"; };
+		F9795C1D195B401B0072D8D8 /* dynamicaHelp.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaHelp.xpm; sourceTree = "<group>"; };
+		F9795C1E195B401B0072D8D8 /* dynamicaCreate6dofConstraint.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreate6dofConstraint.xpm; sourceTree = "<group>"; };
+		F9795C1F195B401B0072D8D8 /* dynamicaCreateActiveBox.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreateActiveBox.xpm; sourceTree = "<group>"; };
+		F9795C20195B401B0072D8D8 /* dynamicaCreateActiveBoxArray.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreateActiveBoxArray.xpm; sourceTree = "<group>"; };
+		F9795C21195B401B0072D8D8 /* dynamicaCreatePassiveBox.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassiveBox.xpm; sourceTree = "<group>"; };
+		F9795C22195B401B0072D8D8 /* dynamicaCreatePassiveBoxArray.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassiveBoxArray.xpm; sourceTree = "<group>"; };
+		F9795C23195B401B0072D8D8 /* dynamicaMakePassive.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaMakePassive.xpm; sourceTree = "<group>"; };
+		F9795C24195B401B0072D8D8 /* dynamicaTools.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaTools.xpm; sourceTree = "<group>"; };
+		F9795C25195B401B0072D8D8 /* dynamicaUnactivate.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaUnactivate.xpm; sourceTree = "<group>"; };
+		F9795C26195B401B0072D8D8 /* dynamicaWindow.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaWindow.xpm; sourceTree = "<group>"; };
+		F9795C27195B401B0072D8D8 /* dynamicaBakeAll.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaBakeAll.xpm; sourceTree = "<group>"; };
+		F9795C28195B401B0072D8D8 /* dynamicaBakeSelected.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaBakeSelected.xpm; sourceTree = "<group>"; };
+		F9795C29195B401B0072D8D8 /* dynamicaCreateActiveSphere.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreateActiveSphere.xpm; sourceTree = "<group>"; };
+		F9795C2A195B401B0072D8D8 /* dynamicaCreateActiveSphereArray.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreateActiveSphereArray.xpm; sourceTree = "<group>"; };
+		F9795C2B195B401B0072D8D8 /* dynamicaCreateHingeConstraint.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreateHingeConstraint.xpm; sourceTree = "<group>"; };
+		F9795C2C195B401B0072D8D8 /* dynamicaCreateNailConstraint.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreateNailConstraint.xpm; sourceTree = "<group>"; };
+		F9795C2D195B401B0072D8D8 /* dynamicaCreatePassiveBvhMesh.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassiveBvhMesh.xpm; sourceTree = "<group>"; };
+		F9795C2E195B401B0072D8D8 /* dynamicaCreatePassiveBvhMeshArray.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassiveBvhMeshArray.xpm; sourceTree = "<group>"; };
+		F9795C2F195B401B0072D8D8 /* dynamicaCreatePassivePlane.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassivePlane.xpm; sourceTree = "<group>"; };
+		F9795C30195B401B0072D8D8 /* dynamicaCreatePassivePlaneArray.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassivePlaneArray.xpm; sourceTree = "<group>"; };
+		F9795C31195B401B0072D8D8 /* dynamicaCreatePassiveSphere.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassiveSphere.xpm; sourceTree = "<group>"; };
+		F9795C32195B401B0072D8D8 /* dynamicaCreatePassiveSphereArray.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreatePassiveSphereArray.xpm; sourceTree = "<group>"; };
+		F9795C33195B401B0072D8D8 /* dynamicaCreateSliderConstraint.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaCreateSliderConstraint.xpm; sourceTree = "<group>"; };
+		F9795C34195B401B0072D8D8 /* dynamicaDeactivate.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dynamicaDeactivate.xpm; sourceTree = "<group>"; };
 		F986F647193F2A970040A399 /* boingRBNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = boingRBNode.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F986F648193F2A970040A399 /* boingRBNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boingRBNode.h; sourceTree = "<group>"; };
 		F986F64B193F2E080040A399 /* boingRBCmds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = boingRBCmds.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -963,6 +1014,7 @@
 		08FB7794FE84155DC02AAC07 /* BulletMayaPlugin */ = {
 			isa = PBXGroup;
 			children = (
+				F9795C01195B3FE90072D8D8 /* icons */,
 				BC433EAF1117F3C600C9C8D7 /* BulletSource */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				8A7F063208688F460064D097 /* Mel */,
@@ -1697,6 +1749,64 @@
 				BC43404C1117F3C600C9C8D7 /* cl_platform.h */,
 			);
 			path = MiniCL;
+			sourceTree = "<group>";
+		};
+		F9795C01195B3FE90072D8D8 /* icons */ = {
+			isa = PBXGroup;
+			children = (
+				F9795C06195B401B0072D8D8 /* dynamicaRelink.xpm */,
+				F9795C07195B401B0072D8D8 /* dynamicaSoftMesh.xpm */,
+				F9795C08195B401B0072D8D8 /* dynamicaActivateChain.xpm */,
+				F9795C09195B401B0072D8D8 /* dynamicaActivateRadial.xpm */,
+				F9795C0A195B401B0072D8D8 /* dynamicaActivateRadialIn.xpm */,
+				F9795C0B195B401B0072D8D8 /* dynamicaActivate-X.xpm */,
+				F9795C0C195B401B0072D8D8 /* dynamicaActivate-Y.xpm */,
+				F9795C0D195B401B0072D8D8 /* dynamicaActivate-Z.xpm */,
+				F9795C0E195B401B0072D8D8 /* dynamicaActivateX.xpm */,
+				F9795C0F195B401B0072D8D8 /* dynamicaActivateY.xpm */,
+				F9795C10195B401B0072D8D8 /* dynamicaActivateZ.xpm */,
+				F9795C11195B401B0072D8D8 /* dynamicaClearInitialState.xpm */,
+				F9795C12195B401B0072D8D8 /* dynamicaCreateActiveHull.xpm */,
+				F9795C13195B401B0072D8D8 /* dynamicaCreateActiveHullArray.xpm */,
+				F9795C14195B401B0072D8D8 /* dynamicaCreateActiveMesh.xpm */,
+				F9795C15195B401B0072D8D8 /* dynamicaCreateActiveMeshArray.xpm */,
+				F9795C16195B401B0072D8D8 /* dynamicaCreatePassiveHull.xpm */,
+				F9795C17195B401B0072D8D8 /* dynamicaCreatePassiveHullArray.xpm */,
+				F9795C18195B401B0072D8D8 /* dynamicaCreatePassiveMesh.xpm */,
+				F9795C19195B401B0072D8D8 /* dynamicaCreatePassiveMeshArray.xpm */,
+				F9795C1A195B401B0072D8D8 /* dynamicaSetInitialState.xpm */,
+				F9795C1B195B401B0072D8D8 /* dynamicaVoronoiShatter.xpm */,
+				F9795C1C195B401B0072D8D8 /* dynamicaBulletWebsite.xpm */,
+				F9795C1D195B401B0072D8D8 /* dynamicaHelp.xpm */,
+				F9795C1E195B401B0072D8D8 /* dynamicaCreate6dofConstraint.xpm */,
+				F9795C1F195B401B0072D8D8 /* dynamicaCreateActiveBox.xpm */,
+				F9795C20195B401B0072D8D8 /* dynamicaCreateActiveBoxArray.xpm */,
+				F9795C21195B401B0072D8D8 /* dynamicaCreatePassiveBox.xpm */,
+				F9795C22195B401B0072D8D8 /* dynamicaCreatePassiveBoxArray.xpm */,
+				F9795C23195B401B0072D8D8 /* dynamicaMakePassive.xpm */,
+				F9795C24195B401B0072D8D8 /* dynamicaTools.xpm */,
+				F9795C25195B401B0072D8D8 /* dynamicaUnactivate.xpm */,
+				F9795C26195B401B0072D8D8 /* dynamicaWindow.xpm */,
+				F9795C27195B401B0072D8D8 /* dynamicaBakeAll.xpm */,
+				F9795C28195B401B0072D8D8 /* dynamicaBakeSelected.xpm */,
+				F9795C29195B401B0072D8D8 /* dynamicaCreateActiveSphere.xpm */,
+				F9795C2A195B401B0072D8D8 /* dynamicaCreateActiveSphereArray.xpm */,
+				F9795C2B195B401B0072D8D8 /* dynamicaCreateHingeConstraint.xpm */,
+				F9795C2C195B401B0072D8D8 /* dynamicaCreateNailConstraint.xpm */,
+				F9795C2D195B401B0072D8D8 /* dynamicaCreatePassiveBvhMesh.xpm */,
+				F9795C2E195B401B0072D8D8 /* dynamicaCreatePassiveBvhMeshArray.xpm */,
+				F9795C2F195B401B0072D8D8 /* dynamicaCreatePassivePlane.xpm */,
+				F9795C30195B401B0072D8D8 /* dynamicaCreatePassivePlaneArray.xpm */,
+				F9795C31195B401B0072D8D8 /* dynamicaCreatePassiveSphere.xpm */,
+				F9795C32195B401B0072D8D8 /* dynamicaCreatePassiveSphereArray.xpm */,
+				F9795C33195B401B0072D8D8 /* dynamicaCreateSliderConstraint.xpm */,
+				F9795C34195B401B0072D8D8 /* dynamicaDeactivate.xpm */,
+				F9795C02195B3FE90072D8D8 /* out_bCallBack.png */,
+				F9795C03195B3FE90072D8D8 /* out_BoingRb.png */,
+				F9795C04195B3FE90072D8D8 /* out_bSolver.png */,
+				F9795C05195B3FE90072D8D8 /* pt_icon.psd */,
+			);
+			path = icons;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
