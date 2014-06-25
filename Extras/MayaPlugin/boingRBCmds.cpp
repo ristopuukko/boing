@@ -198,6 +198,7 @@ boingRbCmd::cmdSyntax()
     syntax.addFlag("-cr", "-create", MSyntax::kString);
     syntax.addFlag("-del", "-delete", MSyntax::kString);
     syntax.addFlag("-typ", "-type", MSyntax::kString);
+    syntax.addFlag("-ex", "-exists", MSyntax::kString);
     syntax.addFlag("-val", "-value", MSyntax::kDouble, MSyntax::kDouble, MSyntax::kDouble);
     
     return syntax;
@@ -247,6 +248,7 @@ MStatus boingRbCmd::redoIt()
     isGetAttr = argParser->isFlagSet("-getAttr");
     isAddAttr = argParser->isFlagSet("-addAttr");
     isType = argParser->isFlagSet("-type");
+    isExists = argParser->isFlagSet("-exists");
     isCreate = argParser->isFlagSet("-create");
     isDelete = argParser->isFlagSet("-delete");
     isValue = argParser->isFlagSet("-value");
@@ -307,9 +309,9 @@ MStatus boingRbCmd::redoIt()
         } else {
             MStringArray result;
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-            MStringArray names = b_solv->get_all_names();
-            std::cout<<"names : "<<names<<std::endl;
-            std::cout<<"b_solv->getdatalength() : "<<b_solv->getdatalength()<<std::endl;
+            MStringArray names = b_solv->get_all_keys();
+            //std::cout<<"names : "<<names<<std::endl;
+            //std::cout<<"b_solv->getdatalength() : "<<b_solv->getdatalength()<<std::endl;
             for(int i=0; i < names.length(); i++) {
                 bSolverNode::m_custom_data *data = b_solv->getdata(names[i]);
                 if ( NULL != data) {
@@ -396,6 +398,20 @@ MStatus boingRbCmd::redoIt()
         if (aArgument != "") {
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             b_solv->deletedata(aArgument);
+            MStatus stat = b_solv->delete_key(aArgument, -1);
+            if (stat != MS::kSuccess) {
+                std::cerr<<"error occurred deleting "<<aArgument<<" ."<<std::endl;
+                setResult(1);
+            }
+        }
+    } else if ( isExists ) {
+        MString exArg;
+        argParser->getFlagArgument("-exists", 0, exArg);
+        if (exArg != "") {
+            shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+            bSolverNode::m_custom_data *data = b_solv->getdata(exArg);
+            if ( NULL != data )
+                setResult ( data->name );
         }
     }
     
@@ -490,7 +506,7 @@ rigid_body_t::pointer boingRbCmd::getPointerFromName(MString &name)
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
     shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-    MStringArray names = b_solv->get_all_names();
+    MStringArray names = b_solv->get_all_keys();
     for( int i=0; i<names.length(); i++) {
         bSolverNode::m_custom_data * data = b_solv->getdata(names[i]);
         if (NULL != data) {
@@ -513,7 +529,7 @@ MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr)
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
     shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-    MStringArray names = b_solv->get_all_names();
+    MStringArray names = b_solv->get_all_keys();
     for( int i=0; i<names.length(); i++) {
         bSolverNode::m_custom_data * data = b_solv->getdata(names[i]);
         if (NULL != data) {

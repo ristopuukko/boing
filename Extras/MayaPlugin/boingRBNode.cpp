@@ -1218,7 +1218,8 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     d->m_rigid_body = m_rigid_body;
     d->m_rigid_body->impl()->body()->setUserPointer((void*) d);
     shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-    b_solv.get()->insertData(rbname, d);
+    b_solv->add_key(rbname);
+    b_solv->insertData(rbname, d);
 
 	data.outputValue(ca_rigidBody).set(true);
     

@@ -37,6 +37,7 @@ Modified by Dongsoo Han <dongsoo.han@amd.com>
 
 #include <maya/MString.h>
 #include <maya/MTypeId.h>
+#include <maya/MStatus.h>
 #include <maya/MPxLocatorNode.h>
 #include <maya/MItDependencyNodes.h>
 #include <maya/MTime.h>
@@ -48,6 +49,8 @@ Modified by Dongsoo Han <dongsoo.han@amd.com>
 #include "boingRBNode.h"
 //#include "boingRbCmd.h"
 #include "bCallBackNode.h"
+#include "LinearMath/btHashMap.h"
+
 //#include "boing.h"
 
 
@@ -228,19 +231,22 @@ public:
         rigid_body_t::pointer m_rigid_body ;
     };
     int getdatalength();
-    m_custom_data *getdata(MString &name);
+    m_custom_data *getdata(MString name);
     void insertData(MString n, m_custom_data *data);
     void deletedata(MString name);
     void deleteAllData();
-    MStringArray get_all_names();
-
+    MStringArray get_all_keys();
+    void add_key(MString &key);
+    MStatus delete_key(MString &key, int index);
+    void delete_all_keys();
     
     friend  class boingRBNode;
 
 protected:
+    MStringArray keyArray;
     MTime m_prevTime;
 	btHashMap<btHashPtr, boingRBNode*> m_hashColObjectToRBNode;
-	btHashMap<btHashPtr, m_custom_data*> m_hashNameToData;
+	btHashMap<btHashString, m_custom_data*> m_hashNameToData;
     static shared_ptr<bSolverNode> m_bsolvernode;
     
 //friend:

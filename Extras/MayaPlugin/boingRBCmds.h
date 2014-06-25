@@ -102,6 +102,7 @@ protected:
     bool    isDelete;
     bool    isValue;
     bool    isType;
+    bool    isExists;
     MArgParser *argParser;
 
 };

@@ -67,7 +67,7 @@
 #include <maya/MFnDependencyNode.h>
 #include <maya/MItDependencyGraph.h>
 #include <maya/MPlugArray.h>
-
+#include <maya/MStatus.h>
 
 #include <fstream>
 #include <sstream>
@@ -448,7 +448,6 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     
 
     m_custom_data *data = new m_custom_data;
-    
     data->node = inputShape;
     data->name = rbname;
     data->typeName = inTypeName;
@@ -463,6 +462,7 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     data->m_rigid_body = m_rigid_body;
     data->m_rigid_body->impl()->body()->setUserPointer((void*) data);
     //const void *n = (const void *)rbname.asChar();
+    add_key(rbname);
     insertData(rbname, data);
     //m_hashNameToData.insert(n, data);
 
@@ -579,7 +579,11 @@ void bSolverNode::updateRigidBodies() {
             rbNode->update();
         }
     }
-        MStringArray names = get_all_names();
+    
+    shared_ptr<bSolverNode> b_solv = get_bsolver_node();
+    MStringArray names = b_solv->get_all_keys();
+    std::cout<<"keys length() in bSolverNode::updateRigidBodies() : "<<names.length()<<std::endl;
+    
     for( int i=0 ; i<names.length(); i++ ) {
         m_custom_data* data = getdata(names[i]);
         MFnDependencyNode fnNode(data->node);
@@ -1778,6 +1782,7 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
     }
     
     deleteAllData();
+    delete_all_keys();
     solver_t::remove_all_rigid_bodies();
     
 }
@@ -2347,30 +2352,59 @@ void bSolverNode::applyFields(MPlugArray &rbConnections, float dt)
 
 void bSolverNode::deletedata(MString name)
 {
-    for ( int i=0; i<m_hashNameToData.size(); i++ ) {
-        m_custom_data** data = m_hashNameToData.getAtIndex(i);
-        if ((*data)->name == name) {
-            std::cout<<(*data)->name<<std::endl;
-            m_hashNameToData.remove(((const void*)(name.asChar())));
-            solver_t::remove_rigid_body((*data)->m_rigid_body);
-            return;
-        }
-    }
-    
-    /*
-    m_custom_data** data = m_hashNameToData.find((const void*)name.asChar());
-    if (NULL != (*data)) {
-        std::cout<<(*data)->name<<std::endl;
+    //for ( int i=0; i<m_hashNameToData.size(); i++ ) {
+    std::cout<<"deleting data : "<<name<<" and the length before is : "<<m_hashNameToData.size()<<std::endl;
+    m_custom_data** data = m_hashNameToData.find((const btHashString) name.asChar());
+    if ( NULL != *data) {
         solver_t::remove_rigid_body((*data)->m_rigid_body);
-        m_hashNameToData.remove((const void*)name.asChar());
     }
-    */
+    m_hashNameToData.remove((const btHashString) name.asChar());
+    std::cout<<"deleting data : "<<name<<" and the length after is : "<<m_hashNameToData.size()<<std::endl;
 }
 
 boingRBNode* bSolverNode::getboingRBNode(btCollisionObject* btColObj)
 {
 	boingRBNode** nodePtr = m_hashColObjectToRBNode.find((const void*)btColObj);
 	return *nodePtr;
+}
+
+void bSolverNode::add_key(MString &key)
+{
+    keyArray.append(key);
+}
+
+MStatus bSolverNode::delete_key(MString &key, int index)
+{
+    MStatus status = MS::kFailure;
+    
+    if (-1 != index) {
+        //btHashMap<btHashPtr, m_custom_data*> tempdata = m_hashNameToData;
+        std::cout<<"deleting key : "<<keyArray[index]<<std::endl;
+        std::cout<<"keyArray size before : "<<keyArray.length()<<std::endl;
+        keyArray.remove(index);
+        std::cout<<"keyArray size after : "<<keyArray.length()<<std::endl;
+        status = MS::kSuccess;
+    } else {
+        for(int i=0; i<keyArray.length(); ++i) {
+            if (keyArray[i] == key) {
+                keyArray.remove(i);
+                status = MS::kSuccess;
+                break;
+            }
+        }
+    }
+    
+    return status;
+    
+}
+    
+void bSolverNode::delete_all_keys()
+{
+    keyArray.clear();
+}
+
+MStringArray bSolverNode::get_all_keys() {
+    return keyArray;
 }
 
 int bSolverNode::getdatalength()
@@ -2385,27 +2419,19 @@ void bSolverNode::deleteAllData()
 
 void bSolverNode::insertData(MString n, m_custom_data *data)
 {
-    m_hashNameToData.insert((const void *)n.asChar(), data);
+    m_hashNameToData.insert((const btHashString)n.asChar(), data);
+    //m_hashNameToData.insert(n.asChar(), data);
 }
 
-MStringArray bSolverNode::get_all_names() {
-    MStringArray result;
-    //btHashMap<btHashPtr, m_custom_data*>::getAtIndex(<#int index#>)
-    for ( int i=0; i<m_hashNameToData.size(); i++ ) {
-        m_custom_data** data = m_hashNameToData.getAtIndex(i);
-        result.append((*data)->name);
-    }
-    //custom_data** data = m_hashNameToData.find((const void*)name.asChar());
-    //std::cout<<result<<std::endl;
-    return result;
-}
-
-
-bSolverNode::m_custom_data* bSolverNode::getdata(MString &name)
+bSolverNode::m_custom_data* bSolverNode::getdata(MString name)
 {
     //std::cout<<"m_hashNameToData.size() : "<<m_hashNameToData.size()<<std::endl;
-    m_custom_data** data = m_hashNameToData.find((const void*)name.asChar());
-    return *data;
+    m_custom_data** data = m_hashNameToData.find((const btHashString)name.asChar());
+    if (NULL != data && NULL != (*data)) {
+        return *data;
+    } else {
+        return NULL;
+    }
 }
 
 /*
