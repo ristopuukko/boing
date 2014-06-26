@@ -379,8 +379,11 @@ MStatus boingRbCmd::redoIt()
                     result.append(data->name);
                 }
             }
-
             setResult(result);
+        } else if ( attr == "" ) {
+            MString errorMsg = "ERROR ! boing -getAttr must provide an attribute name to query!";
+            displayWarning(errorMsg, true);
+            return MS::kFailure;
         }
         
     } else if ( isCreate  ) {
