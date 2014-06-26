@@ -44,6 +44,10 @@ Modified by Dongsoo Han <dongsoo.han@amd.com>
 #include <maya/MObjectArray.h>
 #include <maya/MStringArray.h>
 #include <maya/MPointArray.h>
+#include <maya/MVectorArray.h>
+#include <maya/MFloatArray.h>
+#include <maya/MIntArray.h>
+#include <maya/MVector.h>
 #include <vector>
 #include "mathUtils.h"
 #include "shared_ptr.h"
@@ -229,12 +233,16 @@ public:
         int m_contact_count;
         MStringArray m_contact_objects;
         MPointArray m_contact_positions;
-        MStringArray m_attr_array;
-        MStringArray m_data_array;
+        MStringArray m_attr_data;
+        MIntArray m_int_data;
+        MFloatArray m_float_data;
+        MVectorArray m_vector_data;
+        MStringArray m_string_data;
         collision_shape_t::pointer m_collision_shape ;
         rigid_body_t::pointer m_rigid_body ;
     };
     int getdatalength();
+    void addContactInfo(m_custom_data*  contactDataContainer, const MString& contactObjectName, const MVector& point);
     m_custom_data *getdata(MString name);
     void insertData(MString n, m_custom_data *data);
     void deletedata(MString name);
@@ -251,6 +259,10 @@ protected:
     MTime m_prevTime;
 	btHashMap<btHashPtr, boingRBNode*> m_hashColObjectToRBNode;
 	btHashMap<btHashString, m_custom_data*> m_hashNameToData;
+	btHashMap<btHashString, MString> m_hashNameToStringData;
+	btHashMap<btHashString, float> m_hashNameToFloatData;
+	btHashMap<btHashString, MVector> m_hashNameToVectorData;
+	btHashMap<btHashString, int> m_hashNameToIntData;
     static shared_ptr<bSolverNode> m_bsolvernode;
     
 //friend:

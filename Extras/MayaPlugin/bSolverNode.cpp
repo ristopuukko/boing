@@ -456,8 +456,11 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     data->m_initial_rotation = rot;
     data->m_initial_angularvelocity = av;
     data->m_mass = mass;
-    data->m_attr_array = MStringArray();
-    data->m_data_array = MStringArray();
+    data->m_attr_data = MStringArray();
+    data->m_int_data = MIntArray();
+    data->m_string_data = MStringArray();
+    data->m_vector_data = MVectorArray();
+    data->m_float_data = MFloatArray();
     data->m_contact_objects = MStringArray();
     data->m_contact_positions = MPointArray();
     data->m_contact_count = 0;
@@ -1190,11 +1193,13 @@ MStatus bSolverNode::initialize()
 	MCHECKSTATUS(status, "creating ia_DBG_DrawAabb attribute")
 	status = addAttribute(ia_DBG_DrawAabb);
     MCHECKSTATUS(status, "adding ia_DBG_DrawAabb attribute")
-    //	ia_DBG_DrawFeaturesText = fnNumericAttr.create("drawFeaturesText", "dft", MFnNumericData::kBoolean, false, &status);
-    //	MCHECKSTATUS(status, "creating ia_DBG_DrawFeaturesText attribute")
-    //	status = addAttribute(ia_DBG_DrawFeaturesText);
-    //    MCHECKSTATUS(status, "adding ia_DBG_DrawFeaturesText attribute")
-	ia_DBG_DrawContactPoints = fnNumericAttr.create("drawContactPoints", "dcp", MFnNumericData::kBoolean, false, &status);
+    
+    ia_DBG_DrawFeaturesText = fnNumericAttr.create("drawFeaturesText", "dft", MFnNumericData::kBoolean, false, &status);
+    MCHECKSTATUS(status, "creating ia_DBG_DrawFeaturesText attribute")
+    status = addAttribute(ia_DBG_DrawFeaturesText);
+    MCHECKSTATUS(status, "adding ia_DBG_DrawFeaturesText attribute")
+	
+    ia_DBG_DrawContactPoints = fnNumericAttr.create("drawContactPoints", "dcp", MFnNumericData::kBoolean, false, &status);
 	MCHECKSTATUS(status, "creating ia_DBG_DrawContactPoints attribute")
 	status = addAttribute(ia_DBG_DrawContactPoints);
     MCHECKSTATUS(status, "adding ia_DBG_DrawContactPoints attribute")
@@ -2495,7 +2500,7 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
         
 		// update m_hashColObjectToRBNode
 		m_hashColObjectToRBNode.clear();
-//#pragma omp for
+        #pragma omp for
 		for(size_t i = 0; i < rbConnections.length(); ++i)
 		{
 			MObject node = rbConnections[i].node();
@@ -2584,35 +2589,49 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
 					btCollisionWorld* pCollisionWorld = dynamicsWorld->getCollisionWorld();
 					int numManifolds = pCollisionWorld->getDispatcher()->getNumManifolds();
                     
-                    std::cout<<"numManifolds : "<<numManifolds<<std::endl;
-//#pragma omp for
+                    //std::cout<<"numManifolds : "<<numManifolds<<std::endl;
+                    #pragma omp for
 					for ( int i=0;i<numManifolds;i++)
 					{
 						btPersistentManifold* contactManifold = pCollisionWorld->getDispatcher()->getManifoldByIndexInternal(i);
 						btCollisionObject* obA = (btCollisionObject*)(contactManifold->getBody0());
 						btCollisionObject* obB = (btCollisionObject*)(contactManifold->getBody1());
                         
-						int numContacts = contactManifold->getNumContacts();
-                        std::cout<<"numContacts is : "<<numContacts<<std::endl;
+                        //collision_shape_t::pointer
                         
-						boingRBNode* rbNodeA = getboingRBNode(obA);
-						boingRBNode* rbNodeB = getboingRBNode(obB);
-                        std::cout<<"getboingRBNode is here"<<std::endl;
+						int numContacts = contactManifold->getNumContacts();
+                        //std::cout<<"numContacts is : "<<numContacts<<std::endl;
+                        
+                        m_custom_data *dataA =  static_cast<m_custom_data*>(obA->getUserPointer());
+                        m_custom_data *dataB =  static_cast<m_custom_data*>(obB->getUserPointer());
+                        
+                        
+						//boingRBNode* rbNodeA = getboingRBNode(obA);
+						//boingRBNode* rbNodeB = getboingRBNode(obB);
+                        //std::cout<<"getboingRBNode is here"<<std::endl;
 						for (int j=0;j<numContacts;j++)
 						{
-                            std::cout<<"going contacts ... "<<j<<std::endl;
+                            //std::cout<<"going contacts ... "<<j<<std::endl;
 							btManifoldPoint& pt = contactManifold->getContactPoint(j);
                             
 							btVector3 ptA = pt.getPositionWorldOnA();
 							btVector3 ptB = pt.getPositionWorldOnB();
-                            std::cout<<"got position worlds ... "<<j<<std::endl;
+                            //std::cout<<"got position worlds ... "<<j<<std::endl;
                             
-							if ( rbNodeA && rbNodeB )
+							if ( dataA && dataB )
+                            {
+                            addContactInfo(dataA, dataB->name, MVector(ptA.getX(), ptA.getY(), ptA.getZ()));
+                            addContactInfo(dataB, dataA->name, MVector(ptB.getX(), ptB.getY(), ptB.getZ()));
+                            
+                            }
+                            
+							/*if ( rbNodeA && rbNodeB )
 							{
 								rbNodeA->addContactInfo(rbNodeB->name(), MVector(ptA.getX(), ptA.getY(), ptA.getZ()));
 								rbNodeB->addContactInfo(rbNodeA->name(), MVector(ptB.getX(), ptB.getY(), ptB.getZ()));
                                 std::cout<<"added contact info! "<<j<<std::endl;
-							}
+							}*/
+                            
 						}
 					}
 				}
@@ -2632,6 +2651,23 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
     data.outputValue(oa_rigidBodies).set(true);
     data.setClean(plug);
 }
+
+void bSolverNode::addContactInfo(m_custom_data*  contactDataContainer, const MString& contactObjectName, const MVector& point)
+{
+    
+    contactDataContainer->m_contact_count++;
+	
+	// contactName
+    contactDataContainer->m_contact_objects.append(contactObjectName);
+    
+	// contactPosition
+	contactDataContainer->m_contact_positions.append(point);
+    
+    
+    //std::cout<<"added contact info! "<<" rb : "<<contactDataContainer->name<<" contactCout : "<<contactDataContainer->m_contact_count<<" objects : "<<contactDataContainer->m_contact_objects<<" positions : "<<contactDataContainer->m_contact_positions<<std::endl;
+
+}
+
 
 void tokenize(const std::string& str,
               std::vector<std::string>& tokens,
@@ -2776,5 +2812,8 @@ void bSolverNode::clearContactRelatedAttributes(MPlugArray &rbConnections)
 				rbNode->clearContactInfo();		
 		}
 	}
+    
+    
+    
 }
 

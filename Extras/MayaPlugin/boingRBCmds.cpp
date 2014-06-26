@@ -193,6 +193,7 @@ boingRbCmd::cmdSyntax()
     syntax.enableQuery(false);
     syntax.enableEdit(false);
     
+    syntax.addFlag("-h", "-help");
     syntax.addFlag("-set", "-setAttr", MSyntax::kString);
     syntax.addFlag("-get", "-getAttr", MSyntax::kString);
     syntax.addFlag("-add", "-addAttr", MSyntax::kString);
@@ -239,12 +240,43 @@ MStatus boingRbCmd::redoIt()
 {
     //MGlobal::getActiveSelectionList(m_undoSelectionList)
     
-    /*
-     if (argData->isFlagSet("help"))
-     {
-     MGlobal::displayInfo(MString("Tässä olisi helppi-teksti"));
-     return MS::kSuccess;
-     }*/
+    
+    if (argParser->isFlagSet("help") || argParser->isFlagSet("h"))
+    {
+        MString helpMsg = "boingRB - command : Boing - bullet plugin by Risto Puukko\n";
+        helpMsg += "---------------------------------------------------------\n";
+        helpMsg += "boingRB [flag] [args] \n";
+        helpMsg += "\n";
+        helpMsg += "flags :\n";
+        helpMsg += "  -getAttr [name.attr]\n";
+        helpMsg += "     example : boingRb -getAttr (\"boingRb1.velocity\");\n" ;
+        helpMsg += "\n";
+        helpMsg += "  -getAttr [*.attr]\n";
+        helpMsg += "     example : boingRb -getAttr (\"*.name\");\n" ;
+        helpMsg += "\n";
+        helpMsg += "  -setAttr [name.attr] -value [float float float ]\n";
+        helpMsg += "     example : boingRb -setAttr (\"boingRb1.velocity\") -value 0 4 3 ;\n" ;
+        helpMsg += "\n";
+        helpMsg += "  -addAttr [name.attr] -type [int/float/string/vector]\n";
+        helpMsg += "     example : boingRb -addAttr \"sampleRb.IntAttribute\" -type \"int\";\n" ;
+        helpMsg += "     example : boingRb -addAttr \"sampleRb.VectorAttribute\" -type \"vector\";\n" ;
+        helpMsg += "\n";
+        helpMsg += "  -create [ ( \"name=string;geo=string;velocity/vel=float,float,float;position/pos=float,float,float\" )]\n";
+        helpMsg += "     example : boingRb -create (\"name=sampleRb;geo=pCubeShape1;pos=0,4,0\");\n";
+        helpMsg += "\n";
+        helpMsg += "  -exists [name]\n";
+        helpMsg += "     example : boingRb -exists \"sampleRb\";\n" ;
+        helpMsg += "\n";
+        helpMsg += "  -delete [name]\n";
+        helpMsg += "     example : boingRb -delete \"sampleRb\";\n";
+        helpMsg += "\n";
+        helpMsg += "---------------------------------------------------------\n";
+
+        
+        MGlobal::displayInfo(helpMsg);
+        return MS::kSuccess;
+    }
+    
     isSetAttr = argParser->isFlagSet("-setAttr");
     isGetAttr = argParser->isFlagSet("-getAttr");
     isAddAttr = argParser->isFlagSet("-addAttr");
@@ -571,8 +603,8 @@ rigid_body_t::pointer boingRbCmd::getPointerFromName(MString &name)
 
 MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr)
 {
-
     MString result = "";
+    /*
     
     shared_ptr<solver_impl_t> solv = solver_t::get_solver();
     std::set<rigid_body_t::pointer> rbds = solver_t::get_rigid_bodies();
@@ -582,7 +614,7 @@ MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr)
         bSolverNode::m_custom_data * data = b_solv->getdata(names[i]);
         if (NULL != data) {
             if (name == data->name) {
-                for (int j=0; j<data->m_attr_array.length(); i++) {
+                for (int j=0; j<data->m_attr_data.length(); i++) {
                     if ( data->m_attr_array[i] == attr ) {
                         result = data->m_data_array[i];
                         return result;
@@ -591,7 +623,7 @@ MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr)
             }
         }
     }
-
+     */
     return result;
 }
 

@@ -60,7 +60,6 @@ public:
     //    userPtr = impl()->getBulletCollisionShape()->getUserPointer();
     //}
     
-    
     //
     
     

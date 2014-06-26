@@ -28,10 +28,10 @@ global proc AErevertScriptEditorbCallBackScript( string $nodeName ) {
 
 global proc AESaveEditorScriptbCallBackScript( string $nodeName ) {
     
-    print("AESaveEditorScriptbCallBackScript : " + $nodeName + "\n");
+    //print("AESaveEditorScriptbCallBackScript : " + $nodeName + "\n");
     global string $bCallBackTemplateTextField;
     string $script = `cmdScrollFieldExecuter -q -t "boingScriptEditorUI"`;
-    print($script);
+    //print($script);
     //scrollField -e -tx $script $bCallBackTemplateTextField;
     text -e -l $script $bCallBackTemplateTextField;
     setAttr -type "string" $nodeName $script;
@@ -140,7 +140,7 @@ global proc AEbCallBackTemplateNew( string $nodeName ) {
 	text -e -bgc .2 .2 .2 -en false -al "left" -l $callbackscript $bCallBackTemplateTextField;
     AESaveScriptbCallBackScript($nodeName);
     setParent ..;
-    print( $bCallBackTemplateTextField + "\n");
+    //print( $bCallBackTemplateTextField + "\n");
 	// connect the control
 	connectControl $bCallBackTemplateTextField $nodeName;
     
