@@ -429,7 +429,10 @@ void boingRBNode::nodeRemoved(MObject& node, void *clientData)
 {
     std::cout << "boingRBNode::nodeRemoved" << std::endl;
     MFnDependencyNode fnNode(node);
+    shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+    b_solv->deletedata(fnNode.name());
     solver_t::remove_rigid_body(static_cast<boingRBNode*>(fnNode.userNode())->m_rigid_body);
+    
 }
 
 void* boingRBNode::creator()
@@ -1212,8 +1215,11 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     d->m_initial_rotation = rot;
     d->m_initial_angularvelocity = initAngVel;
     d->m_mass = mass;
-    d->attrArray = MStringArray();
-    d->dataArray = MStringArray();
+    d->m_attr_array = MStringArray();
+    d->m_data_array = MStringArray();
+    d->m_contact_objects = MStringArray();
+    d->m_contact_positions = MPointArray();
+    d->m_contact_count = 0;
     d->m_collision_shape = m_collision_shape;
     d->m_rigid_body = m_rigid_body;
     d->m_rigid_body->impl()->body()->setUserPointer((void*) d);
@@ -1469,11 +1475,18 @@ void boingRBNode::clearContactInfo()
 {
 	MObject thisObject(thisMObject());
 
+    shared_ptr<bSolverNode> b_Solv = bSolverNode::get_bsolver_node();
+    bSolverNode::m_custom_data *data = b_Solv->getdata(MFnDependencyNode(thisObject).name());
+	data->m_contact_count = 0;
+    data->m_contact_objects.clear();
+    data->m_contact_positions.clear();
+    
 	// contactCount
 	m_contactCount = 0;
 	MPlug plugContactCount(thisObject, boingRBNode::oa_contactCount);
 	plugContactCount.setValue(m_contactCount);
-	
+
+    
 	// contactName
 	MStringArray stringArray;
 	stringArray.clear();
@@ -1485,6 +1498,7 @@ void boingRBNode::clearContactInfo()
 	if ( !plugContactName.isNull() )
 		plugContactName.setValue(strArrObject);
 
+    
 	// contactPosition
 	MPlug plugContactPosition(thisObject, boingRBNode::oa_contactPosition);
 	//bool isArray = plugContactPosition.isArray();
@@ -1505,6 +1519,13 @@ void boingRBNode::addContactInfo(const MString& contactObjectName, const MVector
 
 	// contactCount
 	m_contactCount++;
+    
+    // get the base data struct
+    shared_ptr<bSolverNode> b_Solv = bSolverNode::get_bsolver_node();
+    bSolverNode::m_custom_data *data = b_Solv->getdata(MFnDependencyNode(thisObject).name());
+    
+    data->m_contact_count = m_contactCount;
+    
 	MPlug plugContactCount(thisObject, boingRBNode::oa_contactCount);
 	plugContactCount.setValue(m_contactCount);
 	
@@ -1523,7 +1544,9 @@ void boingRBNode::addContactInfo(const MString& contactObjectName, const MVector
 
 		MFnStringArrayData newStringArrayData;
 		MObject newStrArrObject = newStringArrayData.create(stringArray);
-	
+        
+        data->m_contact_objects.append(contactObjectName);
+        
 		plugContactName.setValue(newStrArrObject);
 	}
 
@@ -1542,6 +1565,8 @@ void boingRBNode::addContactInfo(const MString& contactObjectName, const MVector
 	
 		MFnVectorArrayData newVectorArrayData;
 		MObject newArrObject = newVectorArrayData.create(vectorArray);	
+
+        data->m_contact_positions.append(point);
 	
 		plugContactPosition.setValue(newArrObject);
 	}

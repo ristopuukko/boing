@@ -456,8 +456,11 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     data->m_initial_rotation = rot;
     data->m_initial_angularvelocity = av;
     data->m_mass = mass;
-    data->attrArray = MStringArray();
-    data->dataArray = MStringArray();
+    data->m_attr_array = MStringArray();
+    data->m_data_array = MStringArray();
+    data->m_contact_objects = MStringArray();
+    data->m_contact_positions = MPointArray();
+    data->m_contact_count = 0;
     data->m_collision_shape = collision_shape;
     data->m_rigid_body = m_rigid_body;
     data->m_rigid_body->impl()->body()->setUserPointer((void*) data);
@@ -2368,6 +2371,8 @@ void bSolverNode::deletedata(MString name)
     //std::cout<<"deleting data : "<<name<<" and the length after is : "<<m_hashNameToData.size()<<std::endl;
 }
 
+
+
 boingRBNode* bSolverNode::getboingRBNode(btCollisionObject* btColObj)
 {
 	boingRBNode** nodePtr = m_hashColObjectToRBNode.find((const void*)btColObj);
@@ -2393,7 +2398,10 @@ MStatus bSolverNode::delete_key(MString &key, int index)
     } else {
         for(int i=0; i<keyArray.length(); ++i) {
             if (keyArray[i] == key) {
+                //std::cout<<"deleting key : "<<keyArray[i]<<" index : "<<i<<std::endl;
+                //std::cout<<"keyArray size before : "<<keyArray.length()<<std::endl;
                 keyArray.remove(i);
+                //std::cout<<"keyArray size after : "<<keyArray.length()<<std::endl;
                 status = MS::kSuccess;
                 break;
             }

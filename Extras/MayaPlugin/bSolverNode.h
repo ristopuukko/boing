@@ -43,6 +43,7 @@ Modified by Dongsoo Han <dongsoo.han@amd.com>
 #include <maya/MTime.h>
 #include <maya/MObjectArray.h>
 #include <maya/MStringArray.h>
+#include <maya/MPointArray.h>
 #include <vector>
 #include "mathUtils.h"
 #include "shared_ptr.h"
@@ -225,8 +226,11 @@ public:
         MVector m_rot;
         MVector m_av;
         float m_mass;
-        MStringArray attrArray;
-        MStringArray dataArray;
+        int m_contact_count;
+        MStringArray m_contact_objects;
+        MPointArray m_contact_positions;
+        MStringArray m_attr_array;
+        MStringArray m_data_array;
         collision_shape_t::pointer m_collision_shape ;
         rigid_body_t::pointer m_rigid_body ;
     };

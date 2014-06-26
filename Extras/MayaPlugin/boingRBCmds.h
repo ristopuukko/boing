@@ -89,7 +89,7 @@ public:
     MString checkCustomAttribute(MString &name, MString &attr);
     MStringArray parseArguments(MString arg, MString token);
     MStatus setBulletVectorAttribute(MString &name, MString &attr, MVector &vec);
-    MVector getBulletVectorAttribute(MString &name, MString &attr);
+    MDoubleArray getBulletVectorAttribute(MString &name, MString &attr);
 
 //private:
     

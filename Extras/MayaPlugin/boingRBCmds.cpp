@@ -34,6 +34,7 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 #include <maya/MPlugArray.h>
 #include <maya/MDoubleArray.h>
 #include <maya/MStringArray.h>
+#include <maya/MPointArray.h>
 
 #include <iostream>
 #include "bt_solver.h"
@@ -281,9 +282,14 @@ MStatus boingRbCmd::redoIt()
         argParser->getFlagArgument("addAttr", 0, aAttr);
         MStringArray jobArgsArray = parseArguments(aAttr, ".");
         cout<<jobArgsArray<<endl;
+        MString rbname = jobArgsArray[0];
+        MString attrAdded = jobArgsArray[1];
         MString attrtype;
         argParser->getFlagArgument("-type", 0, attrtype);
         cout<<attrtype<<endl;
+        //shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+        //bSolverNode::m_custom_data *data = b_solv->getdata(rbname);
+        //data->m_attr_array.append(MString(attrtype+","+attrAdded));
         
         //rigid_body_t::pointer rb = getPointerFromName(jobArgsArray[0]);
         //boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
@@ -292,23 +298,44 @@ MStatus boingRbCmd::redoIt()
         
     } else if ( isGetAttr) {
         MString gAttr;
+        shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
         argParser->getFlagArgument("getAttr", 0, gAttr);
         
         //cout<<gAttr<<endl;
         MStringArray jobArgsArray = parseArguments(gAttr, ".");
-        
+        MString rbname = jobArgsArray[0];
+        //std::cout<<"name : "<<rbname<<std::endl;
+        if ( rbname == "" ) {
+            MString errorMsg = "ERROR ! boing -getAttr must provide a rigid body name!";
+            displayWarning(errorMsg, true);
+            return MS::kFailure;
+        }
         MString attr = checkAttribute(jobArgsArray[1]);
         //cout<<"attr = "<<attr<<endl;
-        if (attr!="name") {
-            MVector result = getBulletVectorAttribute(jobArgsArray[0], attr);
-            MDoubleArray dResult;
-            dResult.append(result.x);
-            dResult.append(result.y);
-            dResult.append(result.z);
+        if ( attr=="velocity" || attr=="position" || attr=="angularVelocity" ) {
+            //MVector result =
+            MDoubleArray dResult = getBulletVectorAttribute(rbname, attr);
             setResult(dResult);
-        } else {
+        } else if (attr == "contactPositions") {
+            bSolverNode::m_custom_data *data = b_solv->getdata(rbname);
+            MPointArray points = data->m_contact_positions;
+            MDoubleArray d_points;
+            for(int i=0; i<points.length();i++) {
+                d_points.append(points[i].x);
+                d_points.append(points[i].y);
+                d_points.append(points[i].z);
+            }
+            setResult(d_points);
+        } else if (attr == "contactGeos") {
+            bSolverNode::m_custom_data *data = b_solv->getdata(rbname);
+            MStringArray contact_objects = data->m_contact_objects;
+            setResult(contact_objects);
+        } else if (attr == "contactCount") {
+            bSolverNode::m_custom_data *data = b_solv->getdata(rbname);
+            int contact_count = data->m_contact_count;
+            setResult(contact_count);
+        } else if (attr == "name") {
             MStringArray result;
-            shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             MStringArray names = b_solv->get_all_keys();
             //std::cout<<"names : "<<names<<std::endl;
             //std::cout<<"b_solv->getdatalength() : "<<b_solv->getdatalength()<<std::endl;
@@ -462,39 +489,60 @@ MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVect
     
 }
 
-MVector boingRbCmd::getBulletVectorAttribute(MString &name, MString &attr) {
+MDoubleArray boingRbCmd::getBulletVectorAttribute(MString &name, MString &attr) {
     
     MVector vec;
+    MDoubleArray result;
     
-    rigid_body_t::pointer rb = getPointerFromName(name);
+    shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+    MStringArray nodes;
+    if (name == "*") {
+        nodes = b_solv->get_all_keys();
+    } else {
+        nodes.append(name);
+    }
+    //std::cout<<"nodes : "<<nodes<<std::endl;
+    //std::cout<<"nodes.length() : "<<nodes.length()<<std::endl;
     
-    if (rb != 0) {
-        float mass = rb->get_mass();
-        bool active = (mass>0.f);
-        if(active) {
-            if (attr=="velocity") {
-                vec3f vel;
-                rb->get_linear_velocity(vel);
-                vec = MVector((double)vel[0], (double)vel[1], (double)vel[2]);
-            } else if (attr=="position") {
-                vec3f pos;
-                quatf rot;
-                rb->get_transform(pos, rot);
-                vec = MVector((double)pos[0], (double)pos[1], (double)pos[2]);
-            } else if (attr=="angularVelocity") {
-                vec3f av;
-                rb->get_angular_velocity(av);
-                vec = MVector((double)av[0], (double)av[1], (double)av[2]);
-            } /*else {
-                boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-                MString vecStr = b->get_data(attr);
-                MStringArray vecArray = parseArguments(vecStr, ",");
-                vec = MVector(vecArray[0].asDouble(), vecArray[1].asDouble(), vecArray[2].asDouble());
-            }*/
+    for (int i=0; i<nodes.length(); i++) {
+        
+        //std::cout<<"trying to get rb...."<<std::endl;
+        rigid_body_t::pointer rb = b_solv->getdata(nodes[i])->m_rigid_body;
+        //std::cout<<"got rb : "<<rb<<std::endl;
+        
+        //rigid_body_t::pointer rb = getPointerFromName(name);
+        
+        if (rb != 0) {
+            float mass = rb->get_mass();
+            bool active = (mass>0.f);
+            if(active) {
+                if (attr=="velocity") {
+                    vec3f vel;
+                    rb->get_linear_velocity(vel);
+                    vec = MVector((double)vel[0], (double)vel[1], (double)vel[2]);
+                } else if (attr=="position") {
+                    vec3f pos;
+                    quatf rot;
+                    rb->get_transform(pos, rot);
+                    vec = MVector((double)pos[0], (double)pos[1], (double)pos[2]);
+                } else if (attr=="angularVelocity") {
+                    vec3f av;
+                    rb->get_angular_velocity(av);
+                    vec = MVector((double)av[0], (double)av[1], (double)av[2]);
+                } /*else {
+                    boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
+                    MString vecStr = b->get_data(attr);
+                    MStringArray vecArray = parseArguments(vecStr, ",");
+                    vec = MVector(vecArray[0].asDouble(), vecArray[1].asDouble(), vecArray[2].asDouble());
+                }*/
+            }
+        }
+        for (int j=0; j<3; j++) {
+            result.append(vec[i]);
         }
     }
     
-    return vec;
+    return result;
     
 }
 
@@ -534,9 +582,9 @@ MString boingRbCmd::checkCustomAttribute(MString &name, MString &attr)
         bSolverNode::m_custom_data * data = b_solv->getdata(names[i]);
         if (NULL != data) {
             if (name == data->name) {
-                for (int j=0; j<data->attrArray.length(); i++) {
-                    if ( data->attrArray[i] == attr ) {
-                        result = data->dataArray[i];
+                for (int j=0; j<data->m_attr_array.length(); i++) {
+                    if ( data->m_attr_array[i] == attr ) {
+                        result = data->m_data_array[i];
                         return result;
                     }
                 }
@@ -581,6 +629,12 @@ MString boingRbCmd::checkAttribute(MString &attr) {
         result = "angularVelocity";
     } else if ( attr=="n" || attr=="name") {
         result = "name";
+    } else if ( attr=="ctcps" || attr=="contactPositions") {
+        result = "contactPositions";
+    } else if ( attr=="ctcgs" || attr=="contactGeos") {
+        result = "contactGeos";
+    } else if ( attr=="ctccnt" || attr=="contactCount") {
+        result = "contactCount";
     }
     //cout<<"checkAttribute : "<<result<<endl;
     return result;
