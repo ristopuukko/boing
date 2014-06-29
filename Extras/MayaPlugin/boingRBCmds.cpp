@@ -350,17 +350,22 @@ MStatus boingRbCmd::redoIt()
             setResult(dResult);
         } else if (attr == "contactPositions") {
             bSolverNode::m_custom_data *data = b_solv->getdata(rbname);
-            MPointArray points = data->m_contact_positions;
-            MDoubleArray d_points;
-            for(int i=0; i<points.length();i++) {
-                d_points.append(points[i].x);
-                d_points.append(points[i].y);
-                d_points.append(points[i].z);
+            MDoubleArray d_points = MDoubleArray();
+            if ( data->m_contact_count > 0 ) {
+                MPointArray points = data->m_contact_positions;
+                for (int i=0; i<points.length();i++) {
+                    d_points.append(points[i].x);
+                    d_points.append(points[i].y);
+                    d_points.append(points[i].z);
+                }
             }
             setResult(d_points);
         } else if (attr == "contactGeos") {
+            MStringArray contact_objects = MStringArray();
             bSolverNode::m_custom_data *data = b_solv->getdata(rbname);
-            MStringArray contact_objects = data->m_contact_objects;
+            if ( data->m_contact_count > 0 ) {
+                MStringArray contact_objects = data->m_contact_objects;
+            }
             setResult(contact_objects);
         } else if (attr == "contactCount") {
             bSolverNode::m_custom_data *data = b_solv->getdata(rbname);

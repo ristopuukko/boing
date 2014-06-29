@@ -73,6 +73,7 @@
 #include <sstream>
 #include <iostream>
 #include <iterator>
+#include <algorithm>
 
 #include "mayaUtils.h"
 #include "bSolverNode.h"
@@ -772,13 +773,33 @@ void bSolverNode::getRigidBodies(MObject &node, MStringArray& rbds, std::set<boi
 
 void bSolverNode::runCallBacks(MObjectArray callBackNodes) {
     
-    for(int i=0; i<callBackNodes.length(); ++i) {
+    //set order by priority - attribute
+    int size = callBackNodes.length();
+    int intArray[size];
+    
+    //int *intArray = new int[size];
+    
+    for(int i=0; i != size; ++i) {
         MFnDependencyNode fNode(callBackNodes[i]);
-        MObject attribute = fNode.attribute("callbackscript");
-        MPlug plug(callBackNodes[i], attribute);
+        MPlug priplug(callBackNodes[i], fNode.attribute("priority") );
+        int priority;
+        priplug.getValue(priority);
+        intArray[i] = priority;
+    }
+    //Now we call the sort function
+    std::sort(intArray, intArray + size);
+    
+    //lauch callBacks in priority order
+    
+    for (int j = 0; j != size; ++j) {
+        //cout << intArray[i] << " ";
+        int idx = intArray[j];
+        MObject node = callBackNodes[idx];
+        MFnDependencyNode fNode(node);
+        MPlug plug(node, fNode.attribute("callbackscript"));
         MString callBackString;
         plug.getValue(callBackString);
-        //cout<<"Node "<<fNode.name()<<" has callback string: "<<callBackString<<endl;
+        //cout<<"calling callBackNode "<<fNode.name()<<endl;
         MGlobal::executeCommand(callBackString);
     }
 }
@@ -2524,7 +2545,7 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
 			}
 		}
         
-		clearContactRelatedAttributes(rbConnections);
+		clearContactRelatedAttributes();//rbConnections);
         
 		m_reInitialize = true;
         solver_t::set_split_impulse(splitImpulseEnabled);
@@ -2581,7 +2602,8 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
 				// update contactCount, contactName and contactPosition attributes
 				if ( bContactData )
 				{
-					clearContactRelatedAttributes(rbConnections);
+					//clearContactRelatedAttributes(rbConnections);
+                    clearContactRelatedAttributes();
                     
 					shared_ptr<solver_impl_t> solv = solver_t::get_solver();
 					btSoftRigidDynamicsWorld* dynamicsWorld = ((bt_solver_t*)solv.get())->dynamicsWorld();
@@ -2654,7 +2676,7 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
 
 void bSolverNode::addContactInfo(m_custom_data*  contactDataContainer, const MString& contactObjectName, const MVector& point)
 {
-    
+   
     contactDataContainer->m_contact_count++;
 	
 	// contactName
@@ -2797,8 +2819,20 @@ void bSolverNode::dumpRigidBodyArray(MObject &node)
 }
 */
 
-void bSolverNode::clearContactRelatedAttributes(MPlugArray &rbConnections)
+void bSolverNode::clearContactRelatedAttributes()//MPlugArray &rbConnections)
 {
+    shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+    MStringArray rbs = b_solv->get_all_keys();
+    
+    for (int i=0; i !=rbs.length(); ++i) {
+        m_custom_data *data = b_solv->getdata(rbs[i]);
+        data->m_contact_count = 0;
+        data->m_contact_objects.clear();
+        data->m_contact_positions.clear();
+    }
+
+    /*
+    
     for(size_t i = 0; i < rbConnections.length(); ++i) {
         
 		MObject node = rbConnections[i].node();
@@ -2813,7 +2847,7 @@ void bSolverNode::clearContactRelatedAttributes(MPlugArray &rbConnections)
 		}
 	}
     
-    
+    */
     
 }
 

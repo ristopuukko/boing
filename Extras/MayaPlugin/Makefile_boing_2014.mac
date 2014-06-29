@@ -362,6 +362,7 @@ $(OBJECTS): $(HEADERS)
 $(LIBRARY): $(OBJECTS) 
 	 $(CPP) $(FLAGS_32_OR_64BITS) $(OBJECTS) $(LDFLAGS) $(LIB_FLAGS) -o $@
 
+
 install: $(LIBRARY)
 	cp -f $(LIBRARY) $(MAYA_PLUG_IN_PATH)/plug-ins
 	cp -f scripts/*.mel $(MAYA_PLUG_IN_PATH)/scripts

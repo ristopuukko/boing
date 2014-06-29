@@ -211,7 +211,7 @@ protected:
 	void updateActiveSoftBodies(MPlugArray &sbConnections);
     void applyFields(MPlugArray &rbConnections, float dt);
 	void updateConstraint(MObject& bodyNode);
-	void clearContactRelatedAttributes(MPlugArray &rbConnections);
+	void clearContactRelatedAttributes();//MPlugArray &rbConnections);
 
 	boingRBNode* getboingRBNode(btCollisionObject* btColObj);
 

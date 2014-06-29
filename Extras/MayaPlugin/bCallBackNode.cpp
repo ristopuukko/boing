@@ -21,6 +21,8 @@ MTypeId bCallBackNode::typeId(0x100329);
 MString bCallBackNode::typeName("bCallBack");
 
 MObject bCallBackNode::ia_enabled;
+MObject bCallBackNode::ia_priority;
+
 MObject bCallBackNode::ia_script;
 MObject bCallBackNode::ia_callbacktype;
 
@@ -59,6 +61,15 @@ MStatus bCallBackNode::initialize()
 
 //	MCallbackId connCBId = MDGMessage::addConnectionCallback(connCB, NULL, NULL );
 
+    ia_priority = fnNumericAttr.create("priority", "pri", MFnNumericData::kInt);
+    MCHECKSTATUS(status, "creating ia_priority attribute")
+    fnNumericAttr.setDefault(0);
+    fnNumericAttr.setStorable(true);
+    fnNumericAttr.setKeyable(false);
+    
+    status = addAttribute(ia_priority);
+    MCHECKSTATUS(status, "adding ia_priority attribute")
+    
     
     ia_callbacktype = fnEnumAttr.create( "callbacktype", "cbt", 0, &status );
     MCHECKSTATUS(status, "creating ia_callbacktype attribute")

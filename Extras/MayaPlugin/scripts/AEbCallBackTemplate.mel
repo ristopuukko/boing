@@ -10,9 +10,6 @@ global proc AESaveScriptbCallBackScript( string $nodeName ) {
     
     global string $bCallBackTemplateTextField;
 
-    //print("AESaveScriptbCallBackScript : " + $nodeName + "\n");
-    
-    //string $script = `scrollField -q -tx $bCallBackTemplateTextField`;
     string $script = `text -q -l $bCallBackTemplateTextField`;
     setAttr -type "string" $nodeName $script;
 }
@@ -28,11 +25,9 @@ global proc AErevertScriptEditorbCallBackScript( string $nodeName ) {
 
 global proc AESaveEditorScriptbCallBackScript( string $nodeName ) {
     
-    //print("AESaveEditorScriptbCallBackScript : " + $nodeName + "\n");
     global string $bCallBackTemplateTextField;
     string $script = `cmdScrollFieldExecuter -q -t "boingScriptEditorUI"`;
-    //print($script);
-    //scrollField -e -tx $script $bCallBackTemplateTextField;
+
     text -e -l $script $bCallBackTemplateTextField;
     setAttr -type "string" $nodeName $script;
 }
@@ -42,7 +37,6 @@ global proc AECloseScriptEditorbCallBackScript() {
     if (`window -exists "boingEditorUI"`)
     {
         deleteUI boingEditorUI;
-        //windowPref -remove "boingEditorUI";
     }
 
 }
@@ -53,47 +47,69 @@ global proc AEOpenScriptEditorbCallBackScript( string $nodeName ) {
 
     AECloseScriptEditorbCallBackScript();
     
-    //window -bgc 0.7 0.7 0.7 -retain -rtf true -w 100 -h 100 -title "Boing callback script Editor" -menuBar false boingEditorUI;
     window -rtf true -w 400 -h 600 -title "Boing callback script Editor" -menuBar false "boingEditorUI";
     
-    columnLayout -columnAttach "both" 5 -adj true -p "boingEditorUI" -rowSpacing 10 -columnWidth 250 "boingScriptEditorUIFirstColumn";
-        cmdScrollFieldExecuter -st "mel" -cco true -sth false -sln true -w 500 -h 400 "boingScriptEditorUI";
-        rowColumnLayout
-        -numberOfColumns 4
-        -columnWidth 1 98
-        -columnAlign 1 "center"
-        -columnAttach 1 "both" 0
-        -rowAttach 1 "bottom" 2;
-
-            button
-                -label "Revert"
-                -annotation "Restore current saved script."
-                -width 98
-                -command ("AErevertScriptEditorbCallBackScript(\"" + $nodeName + "\");")
-                "boingEditorUIRevertButton";
-        
-            button
-                -label "Reset/clear"
-                -annotation "Clear the boing callback editor."
-                -width 98
-                -command ("AEclearScriptEditorbCallBackScript(\"" + $nodeName + "\");")
-                "boingEditorUIClearButton";
-        
-            button
-                -label "Save script"
-                -annotation "Save the script to the node."
-                -width 98
-                -command ("AESaveEditorScriptbCallBackScript(\"" + $nodeName + "\");")
-                "boingEditorUISaveButton";
-    
-            button
-                -label "Close"
-                -annotation "Closes the window."
-                -width 98
-                -command ("AECloseScriptEditorbCallBackScript();")
-                "boingEditorUICloseButton";
-    
+    string $boingform = `formLayout -numberOfDivisions 100`;
+    //string $scriptEd = `cmdScrollFieldExecuter -st "mel" -cco true -sth false -sln true `;//-w 500 -h 400 "boingScriptEditorUI"`;
+    cmdScrollFieldExecuter -st "mel" -cco true -sth false -sln true "boingScriptEditorUI" ;
     cmdScrollFieldExecuter -e -t $script "boingScriptEditorUI";
+
+    string $b1 = `button
+        -label "Revert"
+        -annotation "Restore current saved script."
+        -width 98
+        -command ("AErevertScriptEditorbCallBackScript(\"" + $nodeName + "\");")`;
+
+    
+    string $b2 = `button
+        -label "Reset/clear"
+        -annotation "Clear the boing callback editor."
+        -width 98
+        -command ("AEclearScriptEditorbCallBackScript(\"" + $nodeName + "\");")`;
+
+    
+    string $b3 = `button
+        -label "Save script"
+        -annotation "Save the script to the node."
+        -width 98
+        -command ("AESaveEditorScriptbCallBackScript(\"" + $nodeName + "\");")`;
+
+    
+   string $b4 = ` button
+        -label "Close"
+        -annotation "Closes the window."
+        -width 98
+        -command ("AECloseScriptEditorbCallBackScript();")`;
+
+    
+    string $boingMsgFrame = `frameLayout -labelVisible false`;
+    string $boingMsgLine = `messageLine`;
+    
+    formLayout -edit
+    
+    -attachForm "boingScriptEditorUI" "top" 1
+    -attachForm "boingScriptEditorUI" "left" 1
+    -attachForm "boingScriptEditorUI" "bottom" 60
+    -attachForm "boingScriptEditorUI" "right" 1
+
+    -attachForm $b1 "bottom" 30
+    -attachForm $b1 "left" 2
+
+    -attachForm $b2 "bottom" 30
+    -attachForm $b2 "left" 102
+
+    -attachForm $b3 "bottom" 30
+    -attachForm $b3 "left" 206
+
+    -attachForm $b4 "bottom" 30
+    -attachForm $b4 "left" 310
+
+    -attachNone $boingMsgFrame  "top"
+    -attachForm $boingMsgFrame  "left"   0
+    -attachForm $boingMsgFrame  "bottom" 0
+    -attachForm $boingMsgFrame  "right"  0
+    
+    $boingform;
     
     showWindow;
 }
@@ -111,14 +127,7 @@ global proc AESaveScriptButtonNew( string $nodeName ) {
         -columnAlign 1 "center"
         -columnAttach 1 "both" 0
         -rowAttach 1 "top" 2;
-        /*
-        button
-            -label "Save script"
-            -command ("AESaveScriptbCallBackScript(\"" + $nodeName + "\");")
-            -annotation "Save the script to the node."
-            -width 98
-            "AEbCallBackSaveScriptButton";
-         */
+
         button
             -label "Edit script"
             -command ("AEOpenScriptEditorbCallBackScript(\"" + $nodeName + "\");")
@@ -131,11 +140,7 @@ global proc AESaveScriptButtonNew( string $nodeName ) {
 }
 
 global proc AESaveScriptButtonRefresh( string $nodeName ) {
-    //print("AESaveScriptButtonRefresh : " + $nodeName + "\n");
-    /*button
-        -e -command ("AESaveScriptbCallBackScript(\"" + $nodeName + "\");")
-        "AEbCallBackSaveScriptButton";
-    */
+
     button
     -e -command ("AEOpenScriptEditorbCallBackScript(\"" + $nodeName + "\");")
     "AEbCallBackOpenScriptEditorUIButton";
@@ -145,20 +150,17 @@ global proc AESaveScriptButtonRefresh( string $nodeName ) {
 
 global proc AEbCallBackTemplateNew( string $nodeName ) {
 
-    //print("AEbCallBackTemplateNew : " + $nodeName + "\n");
 
     global string $bCallBackTemplateTextField;
     
-	//$bCallBackTemplateTextField = `scrollField -ed false -en false -w 220 -h 200`;// -l "Callback script"`;
-	$bCallBackTemplateTextField = `text -w 220 -h 200`;// -l "Callback script"`;
+    $bCallBackTemplateTextField = `text -w 220 -h 200`;// -l "Callback script"`;
     string $callbackscript = getAttr($nodeName);
     if ($callbackscript == "") $callbackscript = "//Your script here!";
-	//scrollField -e -ann $nodeName -tx $callbackscript $bCallBackTemplateTextField;
+
 	text -e -bgc .2 .2 .2 -en false -al "left" -l $callbackscript $bCallBackTemplateTextField;
     AESaveScriptbCallBackScript($nodeName);
     setParent ..;
-    //print( $bCallBackTemplateTextField + "\n");
-	// connect the control
+
 	connectControl $bCallBackTemplateTextField $nodeName;
     
 }
@@ -166,30 +168,26 @@ global proc AEbCallBackTemplateNew( string $nodeName ) {
 
 global proc AEbCallBackTemplateRefresh(string $nodeName) {
 
-    //print("AEbCallBackTemplateRefresh : " + $nodeName + "\n");
     global string $bCallBackTemplateTextField;
     string $callbackscript = getAttr($nodeName);
-	//scrollField -e -tx $callbackscript $bCallBackTemplateTextField ;
-	//scrollField -e -ann $nodeName $bCallBackTemplateTextField ;
-	//textField -e -tx $callbackscript $bCallBackTemplateTextField ;
+
 	text -e -bgc .2 .2 .2 -en false -al "left" -l $callbackscript $bCallBackTemplateTextField;
-	//textField -e -ann $nodeName $bCallBackTemplateTextField ;
+
     setParent ..;
-    //print( $bCallBackTemplateTextField + "\n");
-	// connect the control
+
 	connectControl $bCallBackTemplateTextField $nodeName;
 }
 
 
 global proc AEbCallBackTemplate(string $nodeName ) {
     
-    //print($nodeName + "\n");
-    
+
     editorTemplate -beginScrollLayout;
     
         editorTemplate -collapse false -beginLayout "CallBack basic attributes";
             editorTemplate -addControl Enable;
             editorTemplate -addControl callbacktype;
+            editorTemplate -addControl priority;
             editorTemplate -as;
         editorTemplate -endLayout;
         editorTemplate -collapse false -beginLayout "CallBack script";

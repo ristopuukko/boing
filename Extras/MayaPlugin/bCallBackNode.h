@@ -39,6 +39,7 @@ public:
     //virtual MStatus     compute( const MPlug& plug, MDataBlock& data );
 
 	static  MObject     ia_enabled;
+    static  MObject     ia_priority;
     static  MObject     ia_script;
     static  MObject     ia_callbacktype;
     static  MString     typeName;
