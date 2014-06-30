@@ -458,10 +458,11 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     data->m_initial_angularvelocity = av;
     data->m_mass = mass;
     data->m_attr_data = MStringArray();
+    data->m_attr_type = MStringArray();
     data->m_int_data = MIntArray();
     data->m_string_data = MStringArray();
     data->m_vector_data = MVectorArray();
-    data->m_float_data = MFloatArray();
+    data->m_double_data = MDoubleArray();
     data->m_contact_objects = MStringArray();
     data->m_contact_positions = MPointArray();
     data->m_contact_count = 0;
@@ -1819,6 +1820,7 @@ void bSolverNode::deleteRigidBodies(const MPlug& plug, MPlugArray &rbConnections
     
     deleteAllData();
     delete_all_keys();
+    
     solver_t::remove_all_rigid_bodies();
     
 }
@@ -2455,6 +2457,8 @@ int bSolverNode::getdatalength()
 void bSolverNode::deleteAllData()
 {
     m_hashNameToData.clear();
+    m_hashNameToAttrType.clear();
+    m_hashNameToAttrData.clear();
 }
 
 void bSolverNode::insertData(MString n, m_custom_data *data)
@@ -2472,6 +2476,45 @@ bSolverNode::m_custom_data* bSolverNode::getdata(MString name)
     } else {
         return NULL;
     }
+}
+
+void bSolverNode::set_custom_data(MString &attr, void * value) {
+    m_hashNameToAttrData.insert((const btHashString)attr.asChar(), value);
+}
+
+void * bSolverNode::get_custom_data(MString &attr) {
+    
+    void **data = m_hashNameToAttrData.find((const btHashString)attr.asChar());
+    
+    if (NULL != data && NULL != (*data)) {
+        return *data;
+    } else {
+        return NULL;
+    }
+}
+
+void bSolverNode::delete_all_custom_data()
+{
+    m_hashNameToAttrData.clear();
+}
+
+void bSolverNode::saveAttrType(MString &attr, MString &type) {
+    m_hashNameToAttrType.insert((const btHashString)attr.asChar(), type);
+}
+
+MString bSolverNode::getAttrType(MString &attr) {
+    
+    const char * attribute = attr.asChar();
+    
+    MString *result = m_hashNameToAttrType.find((const btHashString)attribute);
+    
+    return *result;
+    /*
+    if (NULL != data && NULL != (*data)) {
+        return *data;
+    } else {
+        return NULL;
+    }*/
 }
 
 /*

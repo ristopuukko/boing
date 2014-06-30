@@ -45,7 +45,7 @@ Modified by Dongsoo Han <dongsoo.han@amd.com>
 #include <maya/MStringArray.h>
 #include <maya/MPointArray.h>
 #include <maya/MVectorArray.h>
-#include <maya/MFloatArray.h>
+#include <maya/MDoubleArray.h>
 #include <maya/MIntArray.h>
 #include <maya/MVector.h>
 #include <vector>
@@ -233,11 +233,20 @@ public:
         int m_contact_count;
         MStringArray m_contact_objects;
         MPointArray m_contact_positions;
+        //custom attr name array
         MStringArray m_attr_data;
+        //custom attribute type array
+        MStringArray m_attr_type;
+        
+        //custom int attr array
         MIntArray m_int_data;
-        MFloatArray m_float_data;
+        //custom double attr array
+        MDoubleArray m_double_data;
+        //custom vector attr array
         MVectorArray m_vector_data;
+        //custom string attr array
         MStringArray m_string_data;
+        
         collision_shape_t::pointer m_collision_shape ;
         rigid_body_t::pointer m_rigid_body ;
     };
@@ -251,6 +260,24 @@ public:
     void add_key(MString &key);
     MStatus delete_key(MString &key, int index);
     void delete_all_keys();
+    // functions to handle custom attributes ( int / float / vector / string )
+    //set
+    void set_custom_data(MString &attr, void * value);
+    //void set_custom_float(MString &attr, float &value);
+    //void set_custom_vector(MString &attr, MVector &value);
+    //void set_custom_string(MString &attr, MString &value);
+    // get
+    void * get_custom_data(MString &attr);
+    
+    void saveAttrType(MString &attr, MString &type);
+    //delete
+    void delete_all_custom_data();
+
+    MString getAttrType(MString &attr);
+    //float get_custom_float(MString &attr, float &value);
+    //MVector get_custom_vector(MString &attr, MVector &value);
+    //MString get_custom_string(MString &attr, MString &value);
+    // delete
     
     friend  class boingRBNode;
 
@@ -258,11 +285,16 @@ protected:
     MStringArray keyArray;
     MTime m_prevTime;
 	btHashMap<btHashPtr, boingRBNode*> m_hashColObjectToRBNode;
+    
 	btHashMap<btHashString, m_custom_data*> m_hashNameToData;
-	btHashMap<btHashString, MString> m_hashNameToStringData;
-	btHashMap<btHashString, float> m_hashNameToFloatData;
-	btHashMap<btHashString, MVector> m_hashNameToVectorData;
-	btHashMap<btHashString, int> m_hashNameToIntData;
+	btHashMap<btHashString, void*> m_hashNameToAttrData;
+	btHashMap<btHashString, MString> m_hashNameToAttrType;
+    
+	//btHashMap<btHashString, MString> m_hashNameToStringData;
+	//btHashMap<btHashString, float> m_hashNameToFloatData;
+	//btHashMap<btHashString, MVector> m_hashNameToVectorData;
+	//btHashMap<btHashString, int> m_hashNameToIntData;
+    
     static shared_ptr<bSolverNode> m_bsolvernode;
     
 //friend:

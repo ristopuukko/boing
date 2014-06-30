@@ -201,7 +201,13 @@ boingRbCmd::cmdSyntax()
     syntax.addFlag("-del", "-delete", MSyntax::kString);
     syntax.addFlag("-typ", "-type", MSyntax::kString);
     syntax.addFlag("-ex", "-exists", MSyntax::kString);
-    syntax.addFlag("-val", "-value", MSyntax::kDouble, MSyntax::kDouble, MSyntax::kDouble);
+    syntax.addFlag("-val", "-value");
+    syntax.addArg(MSyntax::kDouble);
+    syntax.addArg(MSyntax::kDouble);
+    syntax.addArg(MSyntax::kDouble);
+    syntax.addArg(MSyntax::kString);
+    syntax.addArg(MSyntax::kLong);
+    //, MSyntax::kDouble, MSyntax::kDouble, MSyntax::kDouble);
     
     return syntax;
 }
@@ -257,7 +263,7 @@ MStatus boingRbCmd::redoIt()
         helpMsg += "  -setAttr [name.attr] -value [float float float ]\n";
         helpMsg += "     example : boingRb -setAttr (\"boingRb1.velocity\") -value 0 4 3 ;\n" ;
         helpMsg += "\n";
-        helpMsg += "  -addAttr [name.attr] -type [int/float/string/vector]\n";
+        helpMsg += "  -addAttr [name.attr] -type [int/double/string/vector]\n";
         helpMsg += "     example : boingRb -addAttr \"sampleRb.IntAttribute\" -type \"int\";\n" ;
         helpMsg += "     example : boingRb -addAttr \"sampleRb.VectorAttribute\" -type \"vector\";\n" ;
         helpMsg += "\n";
@@ -295,16 +301,53 @@ MStatus boingRbCmd::redoIt()
         //cout<<sAttr<<endl;
         
         MStringArray jobArgsArray = parseArguments(sAttr, ".");
-        MVector value;
-        argParser->getFlagArgument("-value", 0, value.x);
-        argParser->getFlagArgument("-value", 1, value.y);
-        argParser->getFlagArgument("-value", 2, value.z);
         //cout<<"jobArgsArray[1] : "<<jobArgsArray[1]<<endl;
         MString attr = checkAttribute(jobArgsArray[1]);
-        if (attr.length()<1) {
-            attr = checkCustomAttribute(jobArgsArray[0], jobArgsArray[1]);
+        if ( attr == "custom" ) {
+            MString customAttr = jobArgsArray[1];
+            shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+            bSolverNode::m_custom_data *data = b_solv->getdata(customAttr);
+            MString type = b_solv->getAttrType(attr);
+            if (type == "string") {
+                MString value;
+                argParser->getFlagArgument("-value", 0, value);
+                data->m_string_data.append(value);
+                char * chars = (char *)value.asChar();
+                void * char_ptr = (void*)chars;
+                b_solv->set_custom_data(customAttr, char_ptr);
+            } else if (type == "double") {
+                double value;
+                argParser->getFlagArgument("-value", 0, value);
+                data->m_double_data.append(value);
+                b_solv->set_custom_data(customAttr, static_cast<void*>(&value));
+            } else if (type == "int") {
+                int value;
+                argParser->getFlagArgument("-value", 0, value);
+                data->m_int_data.append(value);
+                b_solv->set_custom_data(customAttr, static_cast<void*>(&value));
+            } else if (type == "vector") {
+                MVector value;
+                argParser->getFlagArgument("-value", 0, value.x);
+                argParser->getFlagArgument("-value", 1, value.y);
+                argParser->getFlagArgument("-value", 2, value.z);
+                data->m_vector_data.append(value);
+                MVector *MVecPtr = &value;
+                void * vec_ptr = MVecPtr;
+                
+                b_solv->set_custom_data(customAttr, vec_ptr);
+            }
+            
+        } else {
+            MVector value;
+            argParser->getFlagArgument("-value", 0, value.x);
+            argParser->getFlagArgument("-value", 1, value.y);
+            argParser->getFlagArgument("-value", 2, value.z);
+            argParser->getFlagArgument("-value", 2, value.z);
+            argParser->getFlagArgument("-value", 2, value.z);
+            
+            std::cout<<"getting arguments sAttr : "<<sAttr<<" , attr : "<<attr<<" , value : "<<value<<std::endl;
+            setBulletVectorAttribute(sAttr, attr, value);
         }
-        setBulletVectorAttribute(jobArgsArray[0], attr, value);
         
         //cout<<value<<endl;
         setResult(MS::kSuccess);
@@ -316,17 +359,15 @@ MStatus boingRbCmd::redoIt()
         cout<<jobArgsArray<<endl;
         MString rbname = jobArgsArray[0];
         MString attrAdded = jobArgsArray[1];
-        MString attrtype;
-        argParser->getFlagArgument("-type", 0, attrtype);
-        cout<<attrtype<<endl;
-        //shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-        //bSolverNode::m_custom_data *data = b_solv->getdata(rbname);
-        //data->m_attr_array.append(MString(attrtype+","+attrAdded));
+        MString attrType;
+        argParser->getFlagArgument("-type", 0, attrType);
+        cout<<attrType<<endl;
+        shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+        bSolverNode::m_custom_data *data = b_solv->getdata(rbname);
+        b_solv->saveAttrType(attrAdded, attrType);
+        data->m_attr_data.append(attrAdded);
+        data->m_attr_type.append(attrType);
         
-        //rigid_body_t::pointer rb = getPointerFromName(jobArgsArray[0]);
-        //boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-        //b->add_data(jobArgsArray[0], jobArgsArray[1]);
-        //b->boing::customAttributes.insert(boing::customAttributes.end(),atr);
         
     } else if ( isGetAttr) {
         MString gAttr;
@@ -389,6 +430,27 @@ MStatus boingRbCmd::redoIt()
             MString errorMsg = "ERROR ! boing -getAttr must provide an attribute name to query!";
             displayWarning(errorMsg, true);
             return MS::kFailure;
+        } else { // here we handle user attributes
+            MString type = b_solv->getAttrType(attr);
+            if (type == "string") {
+                char * result = (char*)b_solv->get_custom_data(attr);
+                MString value(result);
+                setResult(value);
+            } else if (type == "double") {
+                double *value = static_cast<double*>(b_solv->get_custom_data(attr));
+                setResult(&value);
+            } else if (type == "int") {
+                int *value = static_cast<int*>(b_solv->get_custom_data(attr));
+                setResult(&value);
+            } else if (type == "vector") {
+                void * result = b_solv->get_custom_data(attr);
+                MVector *vec_res = (MVector*)result;
+                MDoubleArray value;
+                value.append(vec_res->x);
+                value.append(vec_res->y);
+                value.append(vec_res->z);
+                setResult(value);
+            }
         }
         
     } else if ( isCreate  ) {
@@ -487,7 +549,7 @@ MStatus boingRbCmd::redoIt()
 
 MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVector &vec) {
     
-    cout<<"setting attribute : "<<attr<<" for rb "<<name<<endl;
+    cout<<"setting attribute "<<attr<<" for rb "<<name<<" to value "<<vec<<endl;
     
     rigid_body_t::pointer rb = getPointerFromName(name);
     
@@ -675,11 +737,13 @@ MString boingRbCmd::checkAttribute(MString &attr) {
         result = "contactGeos";
     } else if ( attr=="ctccnt" || attr=="contactCount") {
         result = "contactCount";
+    } else {
+        result = "custom";
     }
+    
     //cout<<"checkAttribute : "<<result<<endl;
     return result;
 }
-
 
 
 

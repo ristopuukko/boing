@@ -2344,7 +2344,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = BUNDLE;
 				MACH_O_TYPE = mh_bundle;
-				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2014;
 				PREBINDING = NO;
 				PRODUCT_NAME = boing;
 				ZERO_LINK = YES;
@@ -2367,7 +2367,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = BUNDLE;
 				MACH_O_TYPE = mh_bundle;
-				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2014;
 				PREBINDING = NO;
 				PRODUCT_NAME = boing;
 				ZERO_LINK = NO;
@@ -2388,7 +2388,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = BUNDLE;
 				MACH_O_TYPE = mh_bundle;
-				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2014;
 				PREBINDING = NO;
 				PRODUCT_NAME = boing;
 			};
@@ -2410,7 +2410,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
 				LIBRARY_STYLE = BUNDLE;
-				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2014;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lOpenMaya",
@@ -2441,7 +2441,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
 				LIBRARY_STYLE = BUNDLE;
-				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2014;
 				OTHER_LDFLAGS = (
 					"-lOpenMaya",
 					"-lFoundation",
@@ -2470,7 +2470,7 @@
 					"$(MAYA_DIRECTORY)/devkit/include/",
 				);
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
-				MAYA_DIRECTORY = /Applications/Autodesk/maya2013;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2014;
 				OTHER_LDFLAGS = (
 					"-lOpenMaya",
 					"-lFoundation",
