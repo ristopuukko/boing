@@ -37,6 +37,7 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 #include <maya/MDagPath.h>
 #include <maya/MEulerRotation.h>
 #include <maya/MQuaternion.h>
+#include <maya/MArgList.h>
 
 #include "bSolverNode.h"
 #include "collision_shape.h"
@@ -104,6 +105,8 @@ protected:
     bool    isType;
     bool    isExists;
     MArgParser *argParser;
+    static MArgList argsList;
+    
 
 };
 

@@ -35,7 +35,6 @@ Written by: Nicola Candussi <nicola@fluidinteractive.com>
 #include <maya/MDoubleArray.h>
 #include <maya/MStringArray.h>
 #include <maya/MPointArray.h>
-
 #include <iostream>
 #include "bt_solver.h"
 #include "shared_ptr.h"
@@ -163,6 +162,8 @@ createBoingRBCmd::redoIt()
 
 MString boingRbCmd::typeName("boingRb");
 
+MArgList boingRbCmd::argsList;
+
 boingRbCmd::boingRbCmd()
 : argParser(0)
 {}
@@ -224,6 +225,11 @@ boingRbCmd::doIt(const MArgList &args)
         cerr<<"failed to read argData"<<endl;
         return stat;
     }
+    
+    argsList = args;
+    
+    std::cout<<"argsList.length() : "<<argsList.length()<<std::endl;
+    
     return redoIt();
 }
 
@@ -244,9 +250,6 @@ boingRbCmd::doIt(const MArgList &args)
 
 MStatus boingRbCmd::redoIt()
 {
-    //MGlobal::getActiveSelectionList(m_undoSelectionList)
-    
-    
     if (argParser->isFlagSet("help") || argParser->isFlagSet("h"))
     {
         MString helpMsg = "boingRB - command : Boing - bullet plugin by Risto Puukko\n";
@@ -292,22 +295,24 @@ MStatus boingRbCmd::redoIt()
     isDelete = argParser->isFlagSet("-delete");
     isValue = argParser->isFlagSet("-value");
     
+    //std::cout<<"argsList : "<<argsList<<std::endl;
     
     if (isSetAttr && isValue) {
         
         MString sAttr;
         //MArgList argList;
         argParser->getFlagArgument("setAttr", 0, sAttr);
-        //cout<<sAttr<<endl;
+        //std::cout<<sAttr<<std::endl;
         
         MStringArray jobArgsArray = parseArguments(sAttr, ".");
-        //cout<<"jobArgsArray[1] : "<<jobArgsArray[1]<<endl;
+        //std::cout<<"jobArgsArray[1] : "<<jobArgsArray[1]<<std::endl;
         MString attr = checkAttribute(jobArgsArray[1]);
         if ( attr == "custom" ) {
             MString customAttr = jobArgsArray[1];
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             bSolverNode::m_custom_data *data = b_solv->getdata(customAttr);
             MString type = b_solv->getAttrType(attr);
+            //std::cout<<"attrype : "<<type<<std::endl;
             if (type == "string") {
                 MString value;
                 argParser->getFlagArgument("-value", 0, value);
@@ -339,13 +344,27 @@ MStatus boingRbCmd::redoIt()
             
         } else {
             MVector value;
+            double iValue;
+            MString sValue;
+            MString argStr;
+            
+            unsigned last = argsList.length();
+            for ( unsigned i = 0; i != last; ++i ) {
+                argsList.get( i, argStr );
+                std::cout<<"argsList["<<i<<"] : "<<argStr<<std::endl;
+            }
+            
+            
+            
+            
+            
             argParser->getFlagArgument("-value", 0, value.x);
             argParser->getFlagArgument("-value", 1, value.y);
             argParser->getFlagArgument("-value", 2, value.z);
-            argParser->getFlagArgument("-value", 2, value.z);
-            argParser->getFlagArgument("-value", 2, value.z);
+            argParser->getFlagArgument("-value", 3, sValue);
+            argParser->getFlagArgument("-value", 4, iValue);
             
-            std::cout<<"getting arguments sAttr : "<<sAttr<<" , attr : "<<attr<<" , value : "<<value<<std::endl;
+            std::cout<<"getting arguments sAttr : "<<sAttr<<" , attr : "<<attr<<" , value : "<<value<<" sValue : "<<sValue<<" iValue : "<<iValue<<std::endl;
             setBulletVectorAttribute(sAttr, attr, value);
         }
         
@@ -438,10 +457,10 @@ MStatus boingRbCmd::redoIt()
                 setResult(value);
             } else if (type == "double") {
                 double *value = static_cast<double*>(b_solv->get_custom_data(attr));
-                setResult(&value);
+                setResult(value);
             } else if (type == "int") {
                 int *value = static_cast<int*>(b_solv->get_custom_data(attr));
-                setResult(&value);
+                setResult(value);
             } else if (type == "vector") {
                 void * result = b_solv->get_custom_data(attr);
                 MVector *vec_res = (MVector*)result;
