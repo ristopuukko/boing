@@ -104,8 +104,9 @@ protected:
     bool    isValue;
     bool    isType;
     bool    isExists;
-    MArgParser *argParser;
-    static MArgList argsList;
+    //MArgParser *argParser;
+    MArgDatabase *argParser;
+    MArgList *argsList;
     
 
 };
