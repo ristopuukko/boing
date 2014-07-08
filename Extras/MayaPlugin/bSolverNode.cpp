@@ -2471,7 +2471,7 @@ void bSolverNode::insertData(MString n, m_custom_data *data)
 
 bSolverNode::m_custom_data* bSolverNode::getdata(MString name)
 {
-    std::cout<<"m_hashNameToData.size() : "<<m_hashNameToData.size()<<std::endl;
+    //std::cout<<"m_hashNameToData.size() : "<<m_hashNameToData.size()<<std::endl;
     const char * str = name.asChar();
     const btHashString hashStr = static_cast<const btHashString>(str);
     m_custom_data** data = m_hashNameToData.find(hashStr);
@@ -2483,19 +2483,39 @@ bSolverNode::m_custom_data* bSolverNode::getdata(MString name)
 }
 
 void bSolverNode::set_custom_data(MString &attr, void * value) {
+
+    //std::cout<<"m_hashNameToAttrData.size() before set_custom_data : "<<m_hashNameToAttrData.size()<<std::endl;
     m_hashNameToAttrData.insert((const btHashString)attr.asChar(), value);
+    //std::cout<<"m_hashNameToAttrData.size() after set_custom_data : "<<m_hashNameToAttrData.size()<<std::endl;
 }
 
 void * bSolverNode::get_custom_data(MString &attr) {
-    
-    void **data = m_hashNameToAttrData.find((const btHashString)attr.asChar());
-    
+    //std::cout<<"bSolverNode::get_custom_data -> attr : "<<attr<<std::endl;
+    const char * attribute = attr.asChar();
+    void **data = m_hashNameToAttrData.find((const btHashString)attribute);
+    //std::cout<<"*data : "<<(*data)<<" "<<data<<std::endl;
     if (NULL != data && NULL != (*data)) {
         return *data;
     } else {
         return NULL;
     }
 }
+
+bool bSolverNode::attribute_exists(MString &attr) {
+    
+    bool result=false;
+    const char * constStr = attr.asChar();
+    void *str = (void*)constStr;
+    for ( unsigned i=0; i!=m_hashNameToAttrData.size(); ++i) {
+        void **data = m_hashNameToAttrData.getAtIndex(i);
+        if ( (*data) == str) {
+            result = true;
+            break;
+        }
+    }
+    return result;
+}
+
 
 void bSolverNode::delete_all_custom_data()
 {
@@ -2511,7 +2531,7 @@ MString bSolverNode::getAttrType(MString &attr) {
     const char * attribute = attr.asChar();
     
     MString *result = m_hashNameToAttrType.find((const btHashString)attribute);
-    
+    //std::cout<<"bSolverNode::getAttrType result = "<<*result<<std::endl;
     return *result;
     /*
     if (NULL != data && NULL != (*data)) {

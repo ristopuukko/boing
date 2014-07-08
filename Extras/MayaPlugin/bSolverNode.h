@@ -272,7 +272,7 @@ public:
     void saveAttrType(MString &attr, MString &type);
     //delete
     void delete_all_custom_data();
-
+    bool attribute_exists(MString &attr);
     MString getAttrType(MString &attr);
     //float get_custom_float(MString &attr, float &value);
     //MVector get_custom_vector(MString &attr, MVector &value);

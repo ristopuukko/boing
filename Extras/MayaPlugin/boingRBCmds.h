@@ -104,6 +104,7 @@ protected:
     bool    isValue;
     bool    isType;
     bool    isExists;
+    bool    isAttributeExist;
     //MArgParser *argParser;
     MArgDatabase *argParser;
     MArgList *argsList;

@@ -206,12 +206,13 @@ boingRbCmd::cmdSyntax()
     syntax.addFlag("-del", "-delete", MSyntax::kString);
     syntax.addFlag("-typ", "-type", MSyntax::kString);
     syntax.addFlag("-ex", "-exists", MSyntax::kString);
+    syntax.addFlag("-ae", "-attributeExist", MSyntax::kString);
     syntax.addFlag("-val", "-value");//, MSyntax::kDouble, MSyntax::kDouble, MSyntax::kDouble, MSyntax::kString, MSyntax::kLong );
     //syntax.addFlag("-val", "-value", MSyntax::kString);
     //syntax.addFlag("-val", "-value", MSyntax::kLong);
-    syntax.addArg(MSyntax::kString);
-    syntax.addArg(MSyntax::kLong);
-    syntax.addArg(MSyntax::kDouble);
+    //syntax.addArg(MSyntax::kString);
+    //syntax.addArg(MSyntax::kLong);
+    //syntax.addArg(MSyntax::kDouble);
     
     return syntax;
 }
@@ -232,7 +233,7 @@ boingRbCmd::doIt(const MArgList &args)
     
     argsList = new MArgList( args );
     
-    std::cout<<"argsList.length() : "<<argsList->length()<<std::endl;
+    //std::cout<<"argsList : "<<*argsList<<std::endl;
     
     return redoIt();
 }
@@ -295,68 +296,83 @@ MStatus boingRbCmd::redoIt()
     isAddAttr = argParser->isFlagSet("-addAttr");
     isType = argParser->isFlagSet("-type");
     isExists = argParser->isFlagSet("-exists");
+    isAttributeExist = argParser->isFlagSet("-attributeExist");
     isCreate = argParser->isFlagSet("-create");
     isDelete = argParser->isFlagSet("-delete");
     isValue = argParser->isFlagSet("-value");
     
     //std::cout<<"argsList : "<<argsList<<std::endl;
+    unsigned i;
+    MStatus stat;
+    MVector res;
+    // Parse the arguments.
+    /*
+    for (i = 0; i <argsList->length (); i++) {
+        if (MString ("-setAttr") == argsList->asString (i, &stat) && MS::kSuccess == stat) {
+            for (unsigned j=3; j!=6; ++j)
+                res[j-3 ] = argsList->asDouble (j, &stat);
+        } /*else if (MString ("-addAttr") == argsList->asString (i, &stat) && MS::kSuccess == stat) {
+            double tmp = argsList->asDouble (+ + i, & stat);
+            if (MS::kSuccess == stat)
+                RADIUS = tmp;*/
+    /*}
     
-    
+    std::cout<<"res : "<<res<<std::endl;
+    */
+    /*
     for (int i=0; i!=argsList->length(); ++i) {
         std::cout<<"argsList["<<i<<"] : "<<argsList->asString(i)<<std::endl;
     }
-    
+    */
     if (isSetAttr && isValue) {
         
         MString sAttr;
         argParser->getFlagArgument("setAttr", 0, sAttr);
-        std::cout<<sAttr<<std::endl;
+        //std::cout<<sAttr<<std::endl;
         MStringArray jobArgsArray = parseArguments(sAttr, ".");
         MString rbName = jobArgsArray[0];
         MString attr = checkAttribute(jobArgsArray[1]);
-        std::cout<<"attr : "<<attr<<std::endl;
+        //std::cout<<"attr : "<<attr<<std::endl;
         
         if ( attr == "custom" ) {
             MString customAttr = jobArgsArray[1];
             std::cout<<"customAttr : "<<customAttr<<std::endl;
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
-            bSolverNode::m_custom_data *data = b_solv->getdata(customAttr);
-            std::cout<<"data : "<<data<<std::endl;
+            bSolverNode::m_custom_data *data = b_solv->getdata(rbName);
+            //std::cout<<"data : "<<data<<std::endl;
             if (!data) return MS::kFailure;
-            std::cout<<"data->m_int_data : "<<data->m_int_data<<std::endl;
+            //std::cout<<"data->m_int_data : "<<data->m_int_data<<std::endl;
             MString type = b_solv->getAttrType(customAttr);
             std::cout<<"attrype : "<<type<<std::endl;
             if (type == "string") {
-                std::cout<<"checking out custom string : "<<attr<<std::endl;
+                std::cout<<"saving custom string : "<<customAttr<<std::endl;
                 MString value;
-                argsList->get(3, value);
+                value = argsList->asString(3);
                 data->m_string_data.append(value);
                 char * chars = (char *)value.asChar();
                 void * char_ptr = (void*)chars;
                 b_solv->set_custom_data(customAttr, char_ptr);
             } else if (type == "double") {
-                std::cout<<"checking out custom double : "<<attr<<std::endl;
+                std::cout<<"saving custom double : "<<customAttr<<std::endl;
                 double value;
-                argsList->get(3, value);
+                value = argsList->asDouble(3);
                 data->m_double_data.append(value);
                 b_solv->set_custom_data(customAttr, static_cast<void*>(&value));
             } else if (type == "int") {
-                std::cout<<"checking out custom int : "<<attr<<std::endl;
+                std::cout<<"saving custom int : "<<customAttr<<std::endl;
                 int value;
-                argsList->get(3, value);
+                value = argsList->asInt(3);
                 std::cout<<"argsList->get(3, value) -> value : "<<value<<std::endl;
-                std::cout<<"data->m_int_data : "<<data->m_int_data<<std::endl;
                 data->m_int_data.append(value);
                 std::cout<<"data->m_int_data : "<<data->m_int_data<<std::endl;
                 b_solv->set_custom_data(customAttr, static_cast<void*>(&value));
                 std::cout<<"b_solv->set_custom_data,static_cast<void*>(&value)) DONE!!!"<<std::endl;
-                
             } else if (type == "vector") {
-                std::cout<<"checking out custom vector : "<<attr<<std::endl;
-                MVector value;
-                argsList->get(3, value.x);
-                argsList->get(4, value.y);
-                argsList->get(5, value.z);
+                std::cout<<"saving custom vector : "<<customAttr<<std::endl;
+                MVector value = MVector();
+                value.x = argsList->asDouble(3);
+                value.y = argsList->asDouble(4);
+                value.z = argsList->asDouble(5);
                 data->m_vector_data.append(value);
                 MVector *MVecPtr = &value;
                 void * vec_ptr = static_cast<void*>(MVecPtr);
@@ -370,9 +386,9 @@ MStatus boingRbCmd::redoIt()
                 attr == "angularVelocity")
             {
                 MVector value;
-                argsList->get(3, value.x);
-                argsList->get(4, value.y);
-                argsList->get(5, value.z);
+                value.x = argsList->asDouble(3);
+                value.y = argsList->asDouble(4);
+                value.z = argsList->asDouble(5);
                 //std::cout<<"vector argument : "<<value<<std::endl;
                 setBulletVectorAttribute(rbName, attr, value);
             }
@@ -394,42 +410,62 @@ MStatus boingRbCmd::redoIt()
         //cout<<value<<endl;
         setResult(MS::kSuccess);
         
+    } else if ( isAttributeExist ) {
+        MString exAttr;
+        bool result = false;
+        argParser->getFlagArgument("attributeExist", 0, exAttr);
+        //std::cout<<"exAttr : "<<exAttr<<std::endl;
+        MStringArray jobArgsArray = parseArguments(exAttr, ".");
+        MString rbname = jobArgsArray[0];
+        //std::cout<<"rbname : "<<rbname<<std::endl;
+        MString attrToQuery = jobArgsArray[1];
+        //std::cout<<"attrToQuery : "<<attrToQuery<<std::endl;
+        MString attr = checkAttribute(attrToQuery);
+        //std::cout<<"attr : "<<attr<<std::endl;
+        if ( attr == "custom" ){ // here we check if user attribute by the name attrToQuery exists
+            shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
+            if (b_solv->attribute_exists(attrToQuery))
+                result =  true;
+            std::cout<<result<<std::endl;;
+            setResult(result);
+        }
+
     } else if ( isAddAttr && isType ) {
         MString aAttr;
         argParser->getFlagArgument("addAttr", 0, aAttr);
-        std::cout<<"aAttr : "<<aAttr<<std::endl;
+        //std::cout<<"aAttr : "<<aAttr<<std::endl;
         MStringArray jobArgsArray = parseArguments(aAttr, ".");
-        std::cout<<"jobArgsArray : "<<jobArgsArray<<std::endl;
+        //std::cout<<"jobArgsArray : "<<jobArgsArray<<std::endl;
         MString rbname = jobArgsArray[0];
         MString attrAdded = jobArgsArray[1];
         MString attrType;
         argParser->getFlagArgument("-type", 0, attrType);
-        std::cout<<"attrType : "<<attrType<<std::endl;
+        //std::cout<<"attrType : "<<attrType<<std::endl;
         shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
         bSolverNode::m_custom_data *data = b_solv->getdata(rbname);
         b_solv->saveAttrType(attrAdded, attrType);
         data->m_attr_data.append(attrAdded);
         data->m_attr_type.append(attrType);
-        std::cout<<"attr "<<aAttr<<" added"<<std::endl;
-        std::cout<<"data->m_attr_type : "<<data->m_attr_type<<std::endl;
-        std::cout<<"data->m_attr_data : "<<data->m_attr_data<<std::endl;
+        //std::cout<<"attr "<<aAttr<<" added"<<std::endl;
+        //std::cout<<"data->m_attr_type : "<<data->m_attr_type<<std::endl;
+        //std::cout<<"data->m_attr_data : "<<data->m_attr_data<<std::endl;
         
     } else if ( isGetAttr) {
         MString gAttr;
         shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
         argParser->getFlagArgument("getAttr", 0, gAttr);
         
-        //cout<<gAttr<<endl;
+        std::cout<<gAttr<<std::endl;
         MStringArray jobArgsArray = parseArguments(gAttr, ".");
         MString rbname = jobArgsArray[0];
-        //std::cout<<"name : "<<rbname<<std::endl;
+        std::cout<<"name : "<<rbname<<std::endl;
         if ( rbname == "" ) {
             MString errorMsg = "ERROR ! boing -getAttr must provide a rigid body name!";
             displayWarning(errorMsg, true);
             return MS::kFailure;
         }
         MString attr = checkAttribute(jobArgsArray[1]);
-        //cout<<"attr = "<<attr<<endl;
+        std::cout<<"attr = "<<attr<<std::endl;
         if ( attr=="velocity" || attr=="position" || attr=="angularVelocity" ) {
             //MVector result =
             MDoubleArray dResult = getBulletVectorAttribute(rbname, attr);
@@ -475,20 +511,29 @@ MStatus boingRbCmd::redoIt()
             MString errorMsg = "ERROR ! boing -getAttr must provide an attribute name to query!";
             displayWarning(errorMsg, true);
             return MS::kFailure;
-        } else { // here we handle user attributes
-            MString type = b_solv->getAttrType(attr);
+        } else if ( attr == "custom" ){ // here we handle user attributes
+            MString customAttr = jobArgsArray[1];
+            //std::cout<<"customAttr :  "<<customAttr<<std::endl;
+            
+            MString type = b_solv->getAttrType(customAttr);
+            //std::cout<<" type :  "<<type<<std::endl;
             if (type == "string") {
-                char * result = (char*)b_solv->get_custom_data(attr);
-                MString value(result);
-                setResult(value);
+                char * result = static_cast<char*>(b_solv->get_custom_data(customAttr));
+                if (result != NULL) {
+                    //std::cout<<"result : "<<result<<std::endl;
+                    MString value(result);
+                    setResult(value);
+                } else {
+                    displayError(MString("Error getting b_solv->get_custom_data(\"" + customAttr + "\")"));
+                }
             } else if (type == "double") {
-                double *value = static_cast<double*>(b_solv->get_custom_data(attr));
+                double *value = static_cast<double*>(b_solv->get_custom_data(customAttr));
                 setResult(value);
             } else if (type == "int") {
-                int *value = static_cast<int*>(b_solv->get_custom_data(attr));
+                int *value = static_cast<int*>(b_solv->get_custom_data(customAttr));
                 setResult(value);
             } else if (type == "vector") {
-                void * result = b_solv->get_custom_data(attr);
+                void * result = b_solv->get_custom_data(customAttr);
                 MVector *vec_res = (MVector*)result;
                 MDoubleArray value;
                 value.append(vec_res->x);
@@ -519,7 +564,7 @@ MStatus boingRbCmd::redoIt()
             } else if (singleArg[0] == "geo") {
                 //geo
                 inputShape = singleArg[1];
-                std::cout<<"geo = "<<inputShape<<std::endl;
+                //std::cout<<"geo = "<<inputShape<<std::endl;
             } else if (singleArg[0] == "vel") {
                 //initialvelocity
                 MStringArray velArray = parseArguments(singleArg[1], ",");
@@ -584,6 +629,7 @@ MStatus boingRbCmd::redoIt()
     } else if ( isExists ) {
         MString exArg;
         argParser->getFlagArgument("-exists", 0, exArg);
+        std::cout<<"exArg : "<<exArg<<std::endl;
         if (exArg != "") {
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             bSolverNode::m_custom_data *data = b_solv->getdata(exArg);
@@ -597,7 +643,7 @@ MStatus boingRbCmd::redoIt()
 
 MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVector &vec) {
     
-    cout<<"setting attribute "<<attr<<" for rb "<<name<<" to value "<<vec<<endl;
+    //cout<<"setting attribute "<<attr<<" for rb "<<name<<" to value "<<vec<<endl;
     
     rigid_body_t::pointer rb = getPointerFromName(name);
     
