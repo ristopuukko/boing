@@ -206,12 +206,12 @@ boingRbCmd::cmdSyntax()
     syntax.addFlag("-del", "-delete", MSyntax::kString);
     syntax.addFlag("-typ", "-type", MSyntax::kString);
     syntax.addFlag("-ex", "-exists", MSyntax::kString);
-    syntax.addFlag("-val", "-value", MSyntax::kDouble, MSyntax::kDouble, MSyntax::kDouble);
-    syntax.addFlag("-val", "-value", MSyntax::kString);
-    syntax.addFlag("-val", "-value", MSyntax::kLong);
-    //syntax.addArg(MSyntax::kString);
-    //syntax.addArg(MSyntax::kLong);
-    //, MSyntax::kDouble, MSyntax::kDouble, MSyntax::kDouble);
+    syntax.addFlag("-val", "-value");//, MSyntax::kDouble, MSyntax::kDouble, MSyntax::kDouble, MSyntax::kString, MSyntax::kLong );
+    //syntax.addFlag("-val", "-value", MSyntax::kString);
+    //syntax.addFlag("-val", "-value", MSyntax::kLong);
+    syntax.addArg(MSyntax::kString);
+    syntax.addArg(MSyntax::kLong);
+    syntax.addArg(MSyntax::kDouble);
     
     return syntax;
 }
@@ -230,9 +230,9 @@ boingRbCmd::doIt(const MArgList &args)
         return stat;
     }
     
-    //argsList = new MArgList( args );
+    argsList = new MArgList( args );
     
-    //std::cout<<"argsList.length() : "<<argsList->length()<<std::endl;
+    std::cout<<"argsList.length() : "<<argsList->length()<<std::endl;
     
     return redoIt();
 }
@@ -301,11 +301,16 @@ MStatus boingRbCmd::redoIt()
     
     //std::cout<<"argsList : "<<argsList<<std::endl;
     
+    
+    for (int i=0; i!=argsList->length(); ++i) {
+        std::cout<<"argsList["<<i<<"] : "<<argsList->asString(i)<<std::endl;
+    }
+    
     if (isSetAttr && isValue) {
         
         MString sAttr;
         argParser->getFlagArgument("setAttr", 0, sAttr);
-        //std::cout<<sAttr<<std::endl;
+        std::cout<<sAttr<<std::endl;
         MStringArray jobArgsArray = parseArguments(sAttr, ".");
         MString rbName = jobArgsArray[0];
         MString attr = checkAttribute(jobArgsArray[1]);
@@ -313,36 +318,48 @@ MStatus boingRbCmd::redoIt()
         
         if ( attr == "custom" ) {
             MString customAttr = jobArgsArray[1];
+            std::cout<<"customAttr : "<<customAttr<<std::endl;
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             bSolverNode::m_custom_data *data = b_solv->getdata(customAttr);
-            MString type = b_solv->getAttrType(attr);
-            //std::cout<<"attrype : "<<type<<std::endl;
+            std::cout<<"data : "<<data<<std::endl;
+            if (!data) return MS::kFailure;
+            std::cout<<"data->m_int_data : "<<data->m_int_data<<std::endl;
+            MString type = b_solv->getAttrType(customAttr);
+            std::cout<<"attrype : "<<type<<std::endl;
             if (type == "string") {
+                std::cout<<"checking out custom string : "<<attr<<std::endl;
                 MString value;
-                argParser->getFlagArgument("-value", 0, value);
+                argsList->get(3, value);
                 data->m_string_data.append(value);
                 char * chars = (char *)value.asChar();
                 void * char_ptr = (void*)chars;
                 b_solv->set_custom_data(customAttr, char_ptr);
             } else if (type == "double") {
+                std::cout<<"checking out custom double : "<<attr<<std::endl;
                 double value;
-                argParser->getFlagArgument("-value", 0, value);
+                argsList->get(3, value);
                 data->m_double_data.append(value);
                 b_solv->set_custom_data(customAttr, static_cast<void*>(&value));
             } else if (type == "int") {
+                std::cout<<"checking out custom int : "<<attr<<std::endl;
                 int value;
-                argParser->getFlagArgument("-value", 0, value);
+                argsList->get(3, value);
+                std::cout<<"argsList->get(3, value) -> value : "<<value<<std::endl;
+                std::cout<<"data->m_int_data : "<<data->m_int_data<<std::endl;
                 data->m_int_data.append(value);
+                std::cout<<"data->m_int_data : "<<data->m_int_data<<std::endl;
                 b_solv->set_custom_data(customAttr, static_cast<void*>(&value));
+                std::cout<<"b_solv->set_custom_data,static_cast<void*>(&value)) DONE!!!"<<std::endl;
+                
             } else if (type == "vector") {
+                std::cout<<"checking out custom vector : "<<attr<<std::endl;
                 MVector value;
-                argParser->getFlagArgument("-value", 0, value.x);
-                argParser->getFlagArgument("-value", 1, value.y);
-                argParser->getFlagArgument("-value", 2, value.z);
+                argsList->get(3, value.x);
+                argsList->get(4, value.y);
+                argsList->get(5, value.z);
                 data->m_vector_data.append(value);
                 MVector *MVecPtr = &value;
-                void * vec_ptr = MVecPtr;
-                
+                void * vec_ptr = static_cast<void*>(MVecPtr);
                 b_solv->set_custom_data(customAttr, vec_ptr);
             }
             
@@ -353,12 +370,13 @@ MStatus boingRbCmd::redoIt()
                 attr == "angularVelocity")
             {
                 MVector value;
-                argParser->getFlagArgument("-value", 0, value.x);
-                argParser->getFlagArgument("-value", 1, value.y);
-                argParser->getFlagArgument("-value", 2, value.z);
+                argsList->get(3, value.x);
+                argsList->get(4, value.y);
+                argsList->get(5, value.z);
+                //std::cout<<"vector argument : "<<value<<std::endl;
                 setBulletVectorAttribute(rbName, attr, value);
             }
-            argParser->
+            
             /*
             MVector value;
             double iValue;
@@ -392,7 +410,9 @@ MStatus boingRbCmd::redoIt()
         b_solv->saveAttrType(attrAdded, attrType);
         data->m_attr_data.append(attrAdded);
         data->m_attr_type.append(attrType);
-        std::cout<<"attr added"<<std::endl;
+        std::cout<<"attr "<<aAttr<<" added"<<std::endl;
+        std::cout<<"data->m_attr_type : "<<data->m_attr_type<<std::endl;
+        std::cout<<"data->m_attr_data : "<<data->m_attr_data<<std::endl;
         
     } else if ( isGetAttr) {
         MString gAttr;
@@ -493,19 +513,16 @@ MStatus boingRbCmd::redoIt()
         
         for (int i=0; i!=size; ++i) {
             MStringArray singleArg = parseArguments(createArgs[i],"=");
-            std::cout<<"singleArg : "<<singleArg<<std::endl;
+            //std::cout<<"singleArg : "<<singleArg<<std::endl;
             if (singleArg[0] == "name") {
                 rbname = singleArg[1];
             } else if (singleArg[0] == "geo") {
                 //geo
                 inputShape = singleArg[1];
-                //std::cout<<"geo = "<<inputShape<<std::endl;
+                std::cout<<"geo = "<<inputShape<<std::endl;
             } else if (singleArg[0] == "vel") {
                 //initialvelocity
                 MStringArray velArray = parseArguments(singleArg[1], ",");
-                //std::cout<<"velArray[0] : "<<velArray[0]<<std::endl;
-                //std::cout<<"velArray[1] : "<<velArray[1]<<std::endl;
-                //std::cout<<"velArray[2] : "<<velArray[2]<<std::endl;
                 vel = MVector(velArray[0].asDouble(),
                               velArray[1].asDouble(),
                               velArray[2].asDouble()
@@ -515,10 +532,6 @@ MStatus boingRbCmd::redoIt()
             } else if (singleArg[0] == "pos") {
                 //initialposition
                 MStringArray posArray = parseArguments(singleArg[1], ",");
-                //std::cout<<"posArray[0] : "<<posArray[0]<<std::endl;
-                //std::cout<<"posArray[1] : "<<posArray[1]<<std::endl;
-                //std::cout<<"posArray[2] : "<<posArray[2]<<std::endl;
-                
                 pos = MVector(posArray[0].asDouble(),
                               posArray[1].asDouble(),
                               posArray[2].asDouble()
@@ -528,9 +541,6 @@ MStatus boingRbCmd::redoIt()
             } else if (singleArg[0] == "rot") {
                 //initialrotation
                 MStringArray rotArray = parseArguments(singleArg[1], ",");
-                //std::cout<<"rotArray[0] : "<<rotArray[0]<<std::endl;
-                //std::cout<<"rotArray[1] : "<<rotArray[1]<<std::endl;
-                //std::cout<<"rotArray[2] : "<<rotArray[2]<<std::endl;
                 rot = MVector(rotArray[0].asDouble(),
                               rotArray[1].asDouble(),
                               rotArray[2].asDouble()
@@ -540,9 +550,6 @@ MStatus boingRbCmd::redoIt()
             } else if (singleArg[0] == "av") {
                 //initialAngularVelocity
                 MStringArray avArray = parseArguments(singleArg[1], ",");
-                //std::cout<<"avArray[0] : "<<avArray[0]<<std::endl;
-                //std::cout<<"avArray[1] : "<<avArray[1]<<std::endl;
-                //std::cout<<"avArray[2] : "<<avArray[2]<<std::endl;
                 av = MVector(avArray[0].asDouble(),
                              avArray[1].asDouble(),
                              avArray[2].asDouble()
@@ -559,6 +566,7 @@ MStatus boingRbCmd::redoIt()
         float mass = 1.0f;
         MString tname = "boing";
         b_solv->createNode(node, rbname, tname, pos, vel, rot, av, mass);
+        setResult(MString("Created boingRigidBody " + rbname));
         
     } else if ( isDelete  ) {
         MString aArgument;

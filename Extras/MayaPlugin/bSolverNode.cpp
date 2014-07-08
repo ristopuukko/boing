@@ -448,6 +448,7 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     m_rigid_body->set_angular_damping(angDamp);
     
 
+    //std::cout<<"Filling new node custom data struct."<<std::endl;
     m_custom_data *data = new m_custom_data;
     data->node = inputShape;
     data->name = rbname;
@@ -472,6 +473,7 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     //const void *n = (const void *)rbname.asChar();
     add_key(rbname);
     insertData(rbname, data);
+    //std::cout<<"Inserting data."<<std::endl;
     //m_hashNameToData.insert(n, data);
 
     return MS::kSuccess;
@@ -2469,8 +2471,10 @@ void bSolverNode::insertData(MString n, m_custom_data *data)
 
 bSolverNode::m_custom_data* bSolverNode::getdata(MString name)
 {
-    //std::cout<<"m_hashNameToData.size() : "<<m_hashNameToData.size()<<std::endl;
-    m_custom_data** data = m_hashNameToData.find((const btHashString)name.asChar());
+    std::cout<<"m_hashNameToData.size() : "<<m_hashNameToData.size()<<std::endl;
+    const char * str = name.asChar();
+    const btHashString hashStr = static_cast<const btHashString>(str);
+    m_custom_data** data = m_hashNameToData.find(hashStr);
     if (NULL != data && NULL != (*data)) {
         return *data;
     } else {
