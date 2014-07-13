@@ -63,7 +63,7 @@ public:
 protected:
     MArgDatabase *m_argDatabase;
     MDGModifier *m_dgModifier;
-    MDagModifier *m_dagModifier;
+    //MDagModifier *m_dagModifier;
     MSelectionList m_undoSelectionList;
 };
 
@@ -92,9 +92,9 @@ public:
     MStatus setBulletVectorAttribute(MString &name, MString &attr, MVector &vec);
     MDoubleArray getBulletVectorAttribute(MString &name, MString &attr);
 
-//private:
+private:
     
-protected:
+//protected:
     static rigid_body_t::pointer getPointerFromName(MString &name);
     bool    isSetAttr;
     bool    isGetAttr;
@@ -105,7 +105,6 @@ protected:
     bool    isType;
     bool    isExists;
     bool    isAttributeExist;
-    //MArgParser *argParser;
     MArgDatabase *argParser;
     MArgList *argsList;
     

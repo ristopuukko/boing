@@ -49,8 +49,8 @@ MString createBoingRBCmd::typeName("createBoingRb");
 
 createBoingRBCmd::createBoingRBCmd()
   : m_argDatabase(0),
-    m_dgModifier(0),
-    m_dagModifier(0)
+    m_dgModifier(0)/*,
+    m_dagModifier(0)*/
 
 {
 }
@@ -65,9 +65,10 @@ createBoingRBCmd::~createBoingRBCmd()
   if (m_dgModifier) {
     delete m_dgModifier;
   }
+    /*
   if (m_dagModifier) {
     delete m_dagModifier;
-  }
+  }*/
 }
 
 
@@ -116,11 +117,12 @@ createBoingRBCmd::undoIt()
       delete m_dgModifier;
       m_dgModifier = 0;
   }
+   /*
   if (m_dagModifier) {
       m_dagModifier->undoIt();
       delete m_dagModifier;
       m_dagModifier = 0;
-  }
+  }*/
 
   return MS::kSuccess;
 }
@@ -165,7 +167,8 @@ MString boingRbCmd::typeName("boingRb");
 //MArgList boingRbCmd::argsList;
 
 boingRbCmd::boingRbCmd()
-: argParser(0)
+: argParser(0),
+  argsList(0)
 {}
 
 
@@ -178,10 +181,6 @@ boingRbCmd::~boingRbCmd()
     if (argsList) {
         delete argsList;
     }
-    
-    //if (m_dgModifier) {
-    //  delete m_dgModifier;
-    //}
 }
 
 
@@ -200,19 +199,27 @@ boingRbCmd::cmdSyntax()
     
     syntax.addFlag("-h", "-help");
     syntax.addFlag("-set", "-setAttr", MSyntax::kString);
+    syntax.addArg(MSyntax::kString);
     syntax.addFlag("-get", "-getAttr", MSyntax::kString);
+    syntax.addArg(MSyntax::kString);
     syntax.addFlag("-add", "-addAttr", MSyntax::kString);
+    syntax.addArg(MSyntax::kString);
     syntax.addFlag("-cr", "-create", MSyntax::kString);
+    syntax.addArg(MSyntax::kString);
     syntax.addFlag("-del", "-delete", MSyntax::kString);
+    syntax.addArg(MSyntax::kString);
     syntax.addFlag("-typ", "-type", MSyntax::kString);
+    syntax.addArg(MSyntax::kString);
     syntax.addFlag("-ex", "-exists", MSyntax::kString);
+    syntax.addArg(MSyntax::kString);
     syntax.addFlag("-ae", "-attributeExist", MSyntax::kString);
+    syntax.addArg(MSyntax::kString);
     syntax.addFlag("-val", "-value");//, MSyntax::kDouble, MSyntax::kDouble, MSyntax::kDouble, MSyntax::kString, MSyntax::kLong );
     //syntax.addFlag("-val", "-value", MSyntax::kString);
     //syntax.addFlag("-val", "-value", MSyntax::kLong);
-    //syntax.addArg(MSyntax::kString);
-    //syntax.addArg(MSyntax::kLong);
-    //syntax.addArg(MSyntax::kDouble);
+    syntax.addArg(MSyntax::kString);
+    syntax.addArg(MSyntax::kLong);
+    syntax.addArg(MSyntax::kDouble);
     
     return syntax;
 }
@@ -301,28 +308,26 @@ MStatus boingRbCmd::redoIt()
     isDelete = argParser->isFlagSet("-delete");
     isValue = argParser->isFlagSet("-value");
     
-    //std::cout<<"argsList : "<<argsList<<std::endl;
-    unsigned i;
-    MStatus stat;
-    MVector res;
+    //std::cout<<"argsList : "<<*argsList<<std::endl;
+    //unsigned i;
+    //MStatus stat;
+    //MVector res;
     // Parse the arguments.
     /*
     for (i = 0; i <argsList->length (); i++) {
-        if (MString ("-setAttr") == argsList->asString (i, &stat) && MS::kSuccess == stat) {
+        //MString arg = argsList->asString(i, &stat);
+        //if (MS::kSuccess == stat) std::cout<<"arg["<<i<<"] : "<<arg<<std::endl;
+        if (
+            MString ("-setAttr") == argsList->asString(i, &stat) &&
+            MString ("-value") == argsList->asString(i+2, &stat) &&
+            MS::kSuccess == stat
+            ) {
             for (unsigned j=3; j!=6; ++j)
                 res[j-3 ] = argsList->asDouble (j, &stat);
-        } /*else if (MString ("-addAttr") == argsList->asString (i, &stat) && MS::kSuccess == stat) {
-            double tmp = argsList->asDouble (+ + i, & stat);
-            if (MS::kSuccess == stat)
-                RADIUS = tmp;*/
-    /*}
+        }
+    }
     
     std::cout<<"res : "<<res<<std::endl;
-    */
-    /*
-    for (int i=0; i!=argsList->length(); ++i) {
-        std::cout<<"argsList["<<i<<"] : "<<argsList->asString(i)<<std::endl;
-    }
     */
     if (isSetAttr && isValue) {
         
@@ -336,7 +341,7 @@ MStatus boingRbCmd::redoIt()
         
         if ( attr == "custom" ) {
             MString customAttr = jobArgsArray[1];
-            std::cout<<"customAttr : "<<customAttr<<std::endl;
+            //std::cout<<"customAttr : "<<customAttr<<std::endl;
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             bSolverNode::m_custom_data *data = b_solv->getdata(rbName);
             //std::cout<<"data : "<<data<<std::endl;
@@ -393,18 +398,6 @@ MStatus boingRbCmd::redoIt()
                 setBulletVectorAttribute(rbName, attr, value);
             }
             
-            /*
-            MVector value;
-            double iValue;
-            MString sValue;
-            MString argStr;
-            
-            unsigned last = argsList->length();
-            for ( unsigned i = 0; i != last; ++i ) {
-                argsList->get( i, argStr );
-                std::cout<<"argsList["<<i<<"] : "<<argStr<<std::endl;
-            }*/
-            
         }
         
         //cout<<value<<endl;
@@ -414,14 +407,14 @@ MStatus boingRbCmd::redoIt()
         MString exAttr;
         bool result = false;
         argParser->getFlagArgument("attributeExist", 0, exAttr);
-        //std::cout<<"exAttr : "<<exAttr<<std::endl;
+        std::cout<<"exAttr : "<<exAttr<<std::endl;
         MStringArray jobArgsArray = parseArguments(exAttr, ".");
         MString rbname = jobArgsArray[0];
-        //std::cout<<"rbname : "<<rbname<<std::endl;
+        std::cout<<"rbname : "<<rbname<<std::endl;
         MString attrToQuery = jobArgsArray[1];
-        //std::cout<<"attrToQuery : "<<attrToQuery<<std::endl;
+        std::cout<<"attrToQuery : "<<attrToQuery<<std::endl;
         MString attr = checkAttribute(attrToQuery);
-        //std::cout<<"attr : "<<attr<<std::endl;
+        std::cout<<"attr : "<<attr<<std::endl;
         if ( attr == "custom" ){ // here we check if user attribute by the name attrToQuery exists
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             if (b_solv->attribute_exists(attrToQuery))
@@ -610,8 +603,12 @@ MStatus boingRbCmd::redoIt()
         MObject node = nameToNode(inputShape);
         float mass = 1.0f;
         MString tname = "boing";
-        b_solv->createNode(node, rbname, tname, pos, vel, rot, av, mass);
-        setResult(MString("Created boingRigidBody " + rbname));
+        MStatus stat = b_solv->createNode(node, rbname, tname, pos, vel, rot, av, mass);
+        if (MS::kSuccess == stat) {
+            setResult(rbname);
+        } else {
+            MGlobal::displayError(MString("Something went wrong when trying to create rigidbody : " + rbname + " ."));
+        }
         
     } else if ( isDelete  ) {
         MString aArgument;
