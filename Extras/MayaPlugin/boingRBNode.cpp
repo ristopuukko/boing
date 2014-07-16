@@ -1215,7 +1215,7 @@ void boingRBNode::computeRigidBody(const MPlug& plug, MDataBlock& data)
     d->m_initial_rotation = rot;
     d->m_initial_angularvelocity = initAngVel;
     d->m_mass = mass;
-    d->m_attr_data = MStringArray();
+    d->m_attr_name = MStringArray();
     d->m_attr_type = MStringArray();
     d->m_int_data = MIntArray();
     d->m_string_data = MStringArray();

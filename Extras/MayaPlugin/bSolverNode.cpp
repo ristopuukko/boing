@@ -458,7 +458,7 @@ MStatus bSolverNode::createNode(MObject inputShape, MString rbname, MString inTy
     data->m_initial_rotation = rot;
     data->m_initial_angularvelocity = av;
     data->m_mass = mass;
-    data->m_attr_data = MStringArray();
+    data->m_attr_name = MStringArray();
     data->m_attr_type = MStringArray();
     data->m_int_data = MIntArray();
     data->m_string_data = MStringArray();
@@ -1125,6 +1125,7 @@ MStatus bSolverNode::initialize()
     MFnNumericAttribute     fnNumericAttr;
     
 	MCallbackId updateSceneCBId = MDGMessage::addForceUpdateCallback(updateSceneCB, NULL, NULL );
+    
 	MCallbackId sceneLoadedCBId = MSceneMessage::addCallback(MSceneMessage::kAfterOpen, sceneLoadedCB, NULL, NULL);
     //	MCallbackId connCBId = MDGMessage::addConnectionCallback(connCB, NULL, NULL );
     
@@ -2459,8 +2460,12 @@ int bSolverNode::getdatalength()
 void bSolverNode::deleteAllData()
 {
     m_hashNameToData.clear();
-    m_hashNameToAttrType.clear();
-    m_hashNameToAttrData.clear();
+    /*m_attrNameToAttrType.clear();
+    m_attrNameToDouble.clear();
+    m_attrNameToInt.clear();
+    m_attrNameToString.clear();
+    m_attrNameToVector.clear();*/
+    //m_hashStringToAttrData.clear();
 }
 
 void bSolverNode::insertData(MString n, m_custom_data *data)
@@ -2482,33 +2487,92 @@ bSolverNode::m_custom_data* bSolverNode::getdata(MString name)
     }
 }
 
+/*
 void bSolverNode::set_custom_data(MString &attr, void * value) {
 
-    //std::cout<<"m_hashNameToAttrData.size() before set_custom_data : "<<m_hashNameToAttrData.size()<<std::endl;
-    m_hashNameToAttrData.insert((const btHashString)attr.asChar(), value);
-    //std::cout<<"m_hashNameToAttrData.size() after set_custom_data : "<<m_hashNameToAttrData.size()<<std::endl;
+    std::cout<<"m_attrNameToAttrType.size() before set_custom_data : "<<m_attrNameToAttrType.size()<<std::endl;
+    const btHashString h_str = static_cast<const btHashString>(attr.asChar());
+    m_attrNameToAttrType.insert(h_str, value);
+    std::cout<<"m_attrNameToAttrType.size() after set_custom_data : "<<m_attrNameToAttrType.size()<<std::endl;
 }
+*/
 
-void * bSolverNode::get_custom_data(MString &attr) {
-    //std::cout<<"bSolverNode::get_custom_data -> attr : "<<attr<<std::endl;
-    const char * attribute = attr.asChar();
-    void **data = m_hashNameToAttrData.find((const btHashString)attribute);
-    //std::cout<<"*data : "<<(*data)<<" "<<data<<std::endl;
-    if (NULL != data && NULL != (*data)) {
-        return *data;
-    } else {
-        return NULL;
+void bSolverNode::set_custom_data_string(m_custom_data *data, MString &attr, MString &value) {
+    const btHashString h_str = static_cast<const btHashString>(attr.asChar());
+    for (unsigned i=0; i!=data->m_attr_name.length(); ++i) {
+        if (attr == data->m_attr_name[i]) {
+            data->m_attrNameToString.insert((const btHashString)(data->m_attr_name[i].asChar()), value);
+        }
     }
 }
 
-bool bSolverNode::attribute_exists(MString &attr) {
+void bSolverNode::set_custom_data_int(m_custom_data *data, MString &attr, int &value) {
+    for (unsigned i=0; i!=data->m_attr_name.length(); ++i) {
+        if (attr == data->m_attr_name[i]) {
+            data->m_attrNameToInt.insert((const btHashString)(data->m_attr_name[i].asChar()), value);
+        }
+    }
+}
+
+void bSolverNode::set_custom_data_double(m_custom_data *data, MString &attr, double &value) {
+    for (unsigned i=0; i!=data->m_attr_name.length(); ++i) {
+        if (attr == data->m_attr_name[i]) {
+            data->m_attrNameToDouble.insert((const btHashString)(data->m_attr_name[i].asChar()), value);
+        }
+    }
+}
+
+void bSolverNode::set_custom_data_vector(m_custom_data *data, MString &attr, MVector &value) {
+    for (unsigned i=0; i!=data->m_attr_name.length(); ++i) {
+        if (attr == data->m_attr_name[i]) {
+            data->m_attrNameToVector.insert((const btHashString)(data->m_attr_name[i].asChar()), value);
+        }
+    }
+}
+
+MString  bSolverNode::get_custom_data_string(m_custom_data *data, MString &attr) {
     
+    const btHashString h_str = static_cast<const btHashString>(attr.asChar());
+    MString *result = data->m_attrNameToString.find(h_str);
+    //std::cout<<"*result : "<<*result<<" and result : "<<result<<endl;
+    return *result;
+}
+
+double  bSolverNode::get_custom_data_double(m_custom_data *data, MString &attr) {
+    const btHashString h_str = static_cast<const btHashString>(attr.asChar());
+    double *result = data->m_attrNameToDouble.find(h_str);
+    //std::cout<<"*result : "<<*result<<" and result : "<<result<<endl;
+    return *result;
+}
+
+int bSolverNode::get_custom_data_int(m_custom_data *data, MString &attr) {
+    std::cout<<"m_attrNameToInt.size() before get_custom_data : "<<data->m_attrNameToInt.size()<<std::endl;
+    for ( unsigned i=0; i!=data->m_attrNameToInt.size(); ++i) {
+        int *idx = data->m_attrNameToInt.getAtIndex(i);
+        //std::cout<<"m_attrNameToInt.getAtIndex("<<i<<") : "<<*idx<<std::endl;
+    }
+    const char * str = attr.asChar();
+    const btHashString h_str = static_cast<const btHashString>(str);
+    int *result = data->m_attrNameToInt.find(h_str);
+    return *result;
+}
+
+MVector bSolverNode::get_custom_data_vector(m_custom_data *data, MString &attr) {
+    const btHashString h_str = static_cast<const btHashString>(attr.asChar());
+    MVector *result = data->m_attrNameToVector.find(h_str);
+    //std::cout<<"*result : "<<*result<<" and result : "<<result<<endl;
+    return *result;
+}
+
+
+bool bSolverNode::attribute_exists(m_custom_data *data, MString &attr) {
+
     bool result=false;
     const char * constStr = attr.asChar();
     void *str = (void*)constStr;
-    for ( unsigned i=0; i!=m_hashNameToAttrData.size(); ++i) {
-        void **data = m_hashNameToAttrData.getAtIndex(i);
-        if ( (*data) == str) {
+    for ( unsigned i=0; i!=data->m_attrNameToAttrType.size(); ++i) {
+        MString *strdata = data->m_attrNameToAttrType.getAtIndex(i);
+        if ( (strdata) == str) {
             result = true;
             break;
         }
@@ -2516,29 +2580,40 @@ bool bSolverNode::attribute_exists(MString &attr) {
     return result;
 }
 
-
+/*
 void bSolverNode::delete_all_custom_data()
 {
-    m_hashNameToAttrData.clear();
+    m_attrNameToAttrType.clear();
+}
+*/
+
+void bSolverNode::saveAttrType(m_custom_data *data, MString &attr, MString &type) {
+    const char * str = attr.asChar();
+    const btHashString hashStr = static_cast<const btHashString>(str);
+
+    data->m_attrNameToAttrType.insert(hashStr, type);
+    //std::cout<<"bSolverNode::saveAttrType attr = "<<attr<<" type : "<<type<<std::endl;
+    //std::cout<<"bSolverNode::saveAttrType data->m_attrNameToAttrType.size()= "<<data->m_attrNameToAttrType.size()<<std::endl;
+    
 }
 
-void bSolverNode::saveAttrType(MString &attr, MString &type) {
-    m_hashNameToAttrType.insert((const btHashString)attr.asChar(), type);
-}
 
-MString bSolverNode::getAttrType(MString &attr) {
-    
-    const char * attribute = attr.asChar();
-    
-    MString *result = m_hashNameToAttrType.find((const btHashString)attribute);
-    //std::cout<<"bSolverNode::getAttrType result = "<<*result<<std::endl;
-    return *result;
-    /*
-    if (NULL != data && NULL != (*data)) {
-        return *data;
+
+MString bSolverNode::getAttrType(m_custom_data *data, MString &attr) {
+
+    //std::cout<<"bSolverNode::getAttrType char *attr = "<<attr<<std::endl;
+    const btHashString hashStr = static_cast<const btHashString>(attr.asChar()) ;
+    MString *result = data->m_attrNameToAttrType.find(hashStr);
+    //if (NULL != result) &&
+    if ( NULL != result ) {
+        //std::cout<<"bSolverNode::getAttrType *result = "<<(*result)<<std::endl;
+        //std::cout<<"bSolverNode::getAttrType result = "<<(result)<<std::endl;
+        return *result;
     } else {
-        return NULL;
-    }*/
+        return MString("");
+    }
+    return *result;
+    
 }
 
 /*

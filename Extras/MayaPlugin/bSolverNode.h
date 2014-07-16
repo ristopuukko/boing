@@ -216,6 +216,7 @@ protected:
 	boingRBNode* getboingRBNode(btCollisionObject* btColObj);
 
 public:
+    
     struct m_custom_data {
         MString name;
         MString typeName;
@@ -233,11 +234,11 @@ public:
         int m_contact_count;
         MStringArray m_contact_objects;
         MPointArray m_contact_positions;
+        /* custom data */
         //custom attr name array
-        MStringArray m_attr_data;
+        MStringArray m_attr_name;
         //custom attribute type array
         MStringArray m_attr_type;
-        
         //custom int attr array
         MIntArray m_int_data;
         //custom double attr array
@@ -246,10 +247,16 @@ public:
         MVectorArray m_vector_data;
         //custom string attr array
         MStringArray m_string_data;
-        
+        /* end custom data */
         collision_shape_t::pointer m_collision_shape ;
         rigid_body_t::pointer m_rigid_body ;
+        btHashMap<btHashString, MString> m_attrNameToAttrType;
+        btHashMap<btHashString, MString> m_attrNameToString;
+        btHashMap<btHashString, MVector> m_attrNameToVector;
+        btHashMap<btHashString, double> m_attrNameToDouble;
+        btHashMap<btHashString, int> m_attrNameToInt;
     };
+    
     int getdatalength();
     void addContactInfo(m_custom_data*  contactDataContainer, const MString& contactObjectName, const MVector& point);
     m_custom_data *getdata(MString name);
@@ -261,45 +268,36 @@ public:
     MStatus delete_key(MString &key, int index);
     void delete_all_keys();
     // functions to handle custom attributes ( int / float / vector / string )
-    //set
-    void set_custom_data(MString &attr, void * value);
-    //void set_custom_float(MString &attr, float &value);
-    //void set_custom_vector(MString &attr, MVector &value);
-    //void set_custom_string(MString &attr, MString &value);
-    // get
-    void * get_custom_data(MString &attr);
+    //void set_custom_data(MString &attr, void * value);
+    void set_custom_data_string(m_custom_data *data, MString &attr, MString &value);
+    void set_custom_data_int(m_custom_data *data, MString &attr, int &value);
+    void set_custom_data_double(m_custom_data *data, MString &attr, double &value);
+    void set_custom_data_vector(m_custom_data *data, MString &attr, MVector &value);
     
-    void saveAttrType(MString &attr, MString &type);
-    //delete
-    void delete_all_custom_data();
-    bool attribute_exists(MString &attr);
-    MString getAttrType(MString &attr);
-    //float get_custom_float(MString &attr, float &value);
-    //MVector get_custom_vector(MString &attr, MVector &value);
-    //MString get_custom_string(MString &attr, MString &value);
-    // delete
+    MString get_custom_data_string(m_custom_data *data, MString &attr);
+    int get_custom_data_int(m_custom_data *data, MString &attr);
+    double get_custom_data_double(m_custom_data *data, MString &attr);
+    MVector get_custom_data_vector(m_custom_data *data, MString &attr);
     
-    friend  class boingRBNode;
+    void saveAttrType(m_custom_data *data, MString & attr, MString &type);
+    /*void delete_all_custom_data();*/
+    bool attribute_exists(m_custom_data *data, MString &attr);
+    MString getAttrType(m_custom_data *data, MString &attr);
+
 
 protected:
     MStringArray keyArray;
     MTime m_prevTime;
 	btHashMap<btHashPtr, boingRBNode*> m_hashColObjectToRBNode;
-    
 	btHashMap<btHashString, m_custom_data*> m_hashNameToData;
-	btHashMap<btHashString, void*> m_hashNameToAttrData;
-	btHashMap<btHashString, MString> m_hashNameToAttrType;
-    
-	//btHashMap<btHashString, MString> m_hashNameToStringData;
-	//btHashMap<btHashString, float> m_hashNameToFloatData;
-	//btHashMap<btHashString, MVector> m_hashNameToVectorData;
-	//btHashMap<btHashString, int> m_hashNameToIntData;
-    
+	//btHashMap<btHashString, void *>m_hashStringToAttrData;
     static shared_ptr<bSolverNode> m_bsolvernode;
+    
     
 //friend:
 //    bCallBack;
-    
+    friend  class boingRBNode;
+
 };
 
 
