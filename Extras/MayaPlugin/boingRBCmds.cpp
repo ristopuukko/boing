@@ -647,7 +647,7 @@ MStatus boingRbCmd::redoIt()
     } else if ( isExists ) {
         MString exArg;
         argParser->getFlagArgument("-exists", 0, exArg);
-        std::cout<<"exArg : "<<exArg<<std::endl;
+        //std::cout<<"exArg : "<<exArg<<std::endl;
         if (exArg != "") {
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             bSolverNode::m_custom_data *data = b_solv->getdata(exArg);

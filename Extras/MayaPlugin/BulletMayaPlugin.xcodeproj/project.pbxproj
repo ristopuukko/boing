@@ -2407,6 +2407,7 @@
 				HEADER_SEARCH_PATHS = (
 					"/opt/local/lib/gcc48/gcc/x86_64-apple-darwin12/4.8.1/include",
 					"$(MAYA_DIRECTORY)/devkit/include/",
+					"/opt/local/lib/apple-gcc42/gcc/i686-apple-darwin13/4.2.1/include",
 				);
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
 				LIBRARY_STYLE = BUNDLE;
@@ -2438,6 +2439,7 @@
 				HEADER_SEARCH_PATHS = (
 					"/opt/local/lib/gcc48/gcc/x86_64-apple-darwin12/4.8.1/include",
 					"$(MAYA_DIRECTORY)/devkit/include/",
+					"/opt/local/lib/apple-gcc42/gcc/i686-apple-darwin13/4.2.1/include",
 				);
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
 				LIBRARY_STYLE = BUNDLE;
@@ -2468,6 +2470,7 @@
 				HEADER_SEARCH_PATHS = (
 					"/opt/local/lib/gcc48/gcc/x86_64-apple-darwin12/4.8.1/include",
 					"$(MAYA_DIRECTORY)/devkit/include/",
+					"/opt/local/lib/apple-gcc42/gcc/i686-apple-darwin13/4.2.1/include",
 				);
 				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
 				MAYA_DIRECTORY = /Applications/Autodesk/maya2014;
