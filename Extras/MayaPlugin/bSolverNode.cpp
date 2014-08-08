@@ -2784,9 +2784,8 @@ void bSolverNode::computeRigidBodies(const MPlug& plug, MDataBlock& data)
                             
 							if ( dataA && dataB )
                             {
-                            addContactInfo(dataA, dataB->name, MVector(ptA.getX(), ptA.getY(), ptA.getZ()));
-                            addContactInfo(dataB, dataA->name, MVector(ptB.getX(), ptB.getY(), ptB.getZ()));
-                            
+                                addContactInfo(dataA, dataB->name, MVector(ptA.getX(), ptA.getY(), ptA.getZ()));
+                                addContactInfo(dataB, dataA->name, MVector(ptB.getX(), ptB.getY(), ptB.getZ()));
                             }
                             
 							/*if ( rbNodeA && rbNodeB )
