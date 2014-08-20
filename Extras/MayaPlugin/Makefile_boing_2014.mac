@@ -46,11 +46,14 @@ OSX_HEADERS=-I$(OSX_SDK)/usr/include
 
 GL_HEADERS=-I$(OSX_SDK)/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers
 
+QT_HEADERS=-I$(MAYA_SDK)/include/qt
+
 BULLET_INCLUDE=-I$(BULLET)/src -I.
 HACD_INCLUDE=-I$(HACD)
 
 
 GL_LIB=-framework OpenGL
+QT_LIB=-F$(MAYA_LOCATION)/Maya.app/Contents/MacOS -framework QtCore -framework QtWidget -framework QtGui
 
 MAYA_INCLUDE=-I$(MAYA_SDK)/include
 MAYA_LIB=-L$(MAYA_LOCATION)/Maya.app/Contents/MacOS -lOpenMaya -lFoundation -Wl,-executable_path,$(MAYA_LOCATION)/Maya.app/Contents/MacOS  -lOpenMayaUI -lOpenMayaFX -lOpenMaya -lFoundation
@@ -347,8 +350,12 @@ HEADERS = box_shape.h             bt_sphere_shape.h         bSolverNode.h       
 	$(BULLET)/src/BulletDynamics/Vehicle/btRaycastVehicle.h \
 	$(BULLET)/src/BulletDynamics/Vehicle/btWheelInfo.h 
 	
-INCLUDE_FLAGS= $(GL_INCLUDE) $(BULLET_INCLUDE) $(GL_HEADERS) $(OSX_HEADERS) $(MAYA_INCLUDE) $(HACD_INCLUDE)
-LIB_FLAGS= $(MAYA_LIB) $(GL_LIB)
+INCLUDE_FLAGS=$(GL_INCLUDE) $(BULLET_INCLUDE) $(GL_HEADERS) $(MAYA_INCLUDE) $(HACD_INCLUDE)
+#$(OSX_HEADERS)
+#$(QT_HEADERS)
+
+LIB_FLAGS=$(MAYA_LIB) $(GL_LIB)
+#$(QT_LIB)
 
 OBJECTS=$(SOURCES:.cpp=.o)
 

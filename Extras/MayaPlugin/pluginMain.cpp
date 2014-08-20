@@ -35,6 +35,8 @@ Nov 2011 - Dec 2011 : Added logic for soft bodies
 #include <maya/MDGMessage.h>
 #include <maya/MSceneMessage.h>
 #include <maya/MPxTransformationMatrix.h>
+#include <maya/MQtUtil.h>
+#include <qt/QtGui/QWidget>
 
 #include "mayaUtils.h"
 #include "boingRBNode.h"
@@ -67,13 +69,13 @@ const char *const colladaDefaultOptions =    "groups=1;"    "ptgroups=1;"    "ma
 ///we need to register a scene exit callback, otherwise the btRigidBody destructor might assert in debug mode
 ///if some constraints are still attached to it
 MCallbackId fMayaExitingCB=0;
+MCallbackId fMayaStartingCB=0;
+
 void releaseCallback(void* clientData)
 {
 	solver_t::destroyWorld();
     solver_t::cleanup();
 }
-
-
 
 MStatus initializePlugin( MObject obj )
 {
@@ -273,10 +275,17 @@ MStatus initializePlugin( MObject obj )
 
 	MGlobal::executeCommand( "source boingUI.mel" );
     MGlobal::executeCommand( "boingUI_initialize" );
+
+    //get main window
+    //QWidget* mainWnd = MQtUtil::mainWindow();
+    //MString mainWndName = MQtUtil::fullName(mainWnd);
+    //std::cout<<mainWndName<<std::endl;
+    //plugin.addMenuItem	("testBoingMenu", "MayaWindow", "print(\"BLAH!\");", "", false, NULL);
+	//MCHECKSTATUS(status, "going for maya menu")
+
+	fMayaExitingCB	= MSceneMessage::addCallback( MSceneMessage::kMayaExiting, releaseCallback, 0);
+
     
-
-	fMayaExitingCB				= MSceneMessage::addCallback( MSceneMessage::kMayaExiting,				releaseCallback, 0);
-
     return status;
 }
 
