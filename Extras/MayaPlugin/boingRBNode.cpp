@@ -202,11 +202,14 @@ MStatus boingRBNode::initialize()
     status = addAttribute(ia_position);
     MCHECKSTATUS(status, "adding position attribute")
     
-    
     ia_rotationX = fnUnitAttr.create("rotateX", "rotx", MFnUnitAttribute::kAngle, 0.0, &status);
+    fnUnitAttr.setStorable(false);
     ia_rotationY = fnUnitAttr.create("rotateY", "roty", MFnUnitAttribute::kAngle, 0.0, &status);
+    fnUnitAttr.setStorable(false);
     ia_rotationZ = fnUnitAttr.create("rotateZ", "rotz", MFnUnitAttribute::kAngle, 0.0, &status);
+    fnUnitAttr.setStorable(false);
     ia_rotation = fnNumericAttr.create("rotate", "rot", ia_rotationX, ia_rotationY, ia_rotationZ, &status);
+    fnNumericAttr.setStorable(false);
 
     MCHECKSTATUS(status, "creating rotation attribute")
     status = addAttribute(ia_rotation);

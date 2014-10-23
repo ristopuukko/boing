@@ -35,8 +35,8 @@ Nov 2011 - Dec 2011 : Added logic for soft bodies
 #include <maya/MDGMessage.h>
 #include <maya/MSceneMessage.h>
 #include <maya/MPxTransformationMatrix.h>
-#include <maya/MQtUtil.h>
-#include <qt/QtGui/QWidget>
+//#include <maya/MQtUtil.h>
+//#include <qt/QtGui/QWidget>
 
 #include "mayaUtils.h"
 #include "boingRBNode.h"
