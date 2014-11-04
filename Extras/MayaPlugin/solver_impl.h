@@ -60,7 +60,7 @@ public:
 
     virtual collision_shape_impl_t* create_dynamic_mesh_shape(vec3f const* vertices, size_t num_vertices,
                                                              vec3f const* normals,
-                                                             unsigned int const *indices, size_t num_indices) = 0; 
+                                                             unsigned int const *indices, size_t num_indices, bool usepivot, vec3f center) = 0;
 
 	virtual collision_shape_impl_t* create_static_mesh_shape(vec3f const* vertices, size_t num_vertices,
                                                              vec3f const* normals,

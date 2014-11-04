@@ -14,7 +14,7 @@
 		<string>https://github.com/ristopuukko/boing.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Extras/MayaPlugin/BulletMayaPlugin.xcodeproj/project.xcworkspace</string>
+	<string>Extras/MayaPlugin/BulletMayaPlugin.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>0E4C9724EF97E9B41E659D3C9DA834D255D34E73</key>

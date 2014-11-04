@@ -38,6 +38,7 @@ global proc AEboingRbTemplate( string $nodeName )
     editorTemplate -suppress outCollisionShape;
     editorTemplate -beginLayout "Boing properties" -collapse 0;
     editorTemplate -addControl inShape;
+    editorTemplate -addControl usePivot;
     editorTemplate -addControl type;
     editorTemplate -addControl drawBulletShape;
     editorTemplate -addControl active;

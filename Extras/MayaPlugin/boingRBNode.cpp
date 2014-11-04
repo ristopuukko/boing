@@ -109,6 +109,9 @@ MObject		boingRBNode::oa_contactPosition;
 MObject     boingRBNode::ia_draw;
 MObject     boingRBNode::ia_shape;
 MObject     boingRBNode::ia_type;
+// <rp 102014
+MObject     boingRBNode::ia_usepivot;
+// />
 MObject     boingRBNode::ia_scale;
 MObject     boingRBNode::ca_collisionShape;
 MObject     boingRBNode::ca_collisionShapeParam;
@@ -306,7 +309,15 @@ MStatus boingRBNode::initialize()
     
     status = addAttribute(ia_type);
     MCHECKSTATUS(status, "adding type attribute")
-
+    
+    // <RP 102014
+    ia_usepivot = fnNumericAttr.create("usePivot", "upv", MFnNumericData::kBoolean, 0, &status);
+    MCHECKSTATUS(status, "creating ia_usepivot attribute")
+    fnNumericAttr.setKeyable(false);
+    status = addAttribute(ia_usepivot);
+    MCHECKSTATUS(status, "adding ia_usepivot attribute")
+    // />
+    
     ia_scale = fnNumericAttr.createPoint("scale", "sc", &status);
     MCHECKSTATUS(status, "creating ia_scale attribute")
     fnNumericAttr.setDefault(1.0, 1.0, 1.0);
@@ -520,6 +531,21 @@ collision_shape_t::pointer boingRBNode::createCollisionShape(const MObject& node
 	MPlug plgType(thisObject, ia_type);
 	int type;
 	plgType.getValue(type);
+    MPlug plgPivotAsCenter(thisObject, ia_usepivot);
+    bool usepivot;
+    plgPivotAsCenter.getValue(usepivot);
+    vec3f center(0.0,0.0,0.0);
+    
+    
+    if(node.hasFn(MFn::kMesh)) {
+        MDagPath dagPath;
+        MDagPath::getAPathTo(node, dagPath);
+        MFnMesh fnMesh(dagPath);
+        MObject fnParent = fnMesh.parent(0);
+        MFnTransform trMesh(fnParent);
+        MVector pivot = trMesh.rotatePivotTranslation(MSpace::kWorld);
+        center = vec3f( pivot.x, pivot.y, pivot.z );
+    }
     
 	switch(type) {
         case 0:
@@ -621,7 +647,7 @@ collision_shape_t::pointer boingRBNode::createCollisionShape(const MObject& node
 					}
 					bool dynamicMesh = true;
 					collision_shape = solver_t::create_mesh_shape(&(vertices[0]), vertices.size(), &(normals[0]),
-                                                                  &(indices[0]), indices.size(),dynamicMesh);
+                                                                  &(indices[0]), indices.size(),dynamicMesh, usepivot, center);
 				}
 			}
 		}
@@ -662,7 +688,7 @@ collision_shape_t::pointer boingRBNode::createCollisionShape(const MObject& node
                 }
                 bool dynamicMesh = false;
                 collision_shape = solver_t::create_mesh_shape(&(vertices[0]), vertices.size(), &(normals[0]),
-                                                              &(indices[0]), indices.size(),dynamicMesh);
+                                                              &(indices[0]), indices.size(),dynamicMesh,usepivot, center);
 			}
 		}
             break;
@@ -696,7 +722,7 @@ collision_shape_t::pointer boingRBNode::createCollisionShape(const MObject& node
 					}
 					bool dynamicMesh = false;
 					collision_shape = solver_t::create_hacd_shape(&(vertices[0]), vertices.size(), &(normals[0]),
-                                                                  &(indices[0]), indices.size(),dynamicMesh);
+                                                                  &(indices[0]), indices.size(),dynamicMesh );
 				}
 			}
 		}

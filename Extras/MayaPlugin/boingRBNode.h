@@ -123,6 +123,9 @@ public:
     static  MObject     ia_draw;
     static  MObject     ia_shape;
     static  MObject     ia_type;
+    // <rp 102014
+    static  MObject     ia_usepivot;
+    // />
     static  MObject     ia_scale;
     static  MObject     ca_collisionShape;
     static  MObject     ca_collisionShapeParam;

@@ -108,10 +108,10 @@ public:
 
     virtual collision_shape_impl_t* create_dynamic_mesh_shape(vec3f const* vertices, size_t num_vertices,
                                                       vec3f const* normals,
-                                                      unsigned int const *indices, size_t num_indices)
+                                                      unsigned int const *indices, size_t num_indices, bool usepivot, vec3f center)
     {
 		bool dynamicMesh = true;
-        return new bt_mesh_shape_t(vertices, num_vertices, normals, indices, num_indices, dynamicMesh);
+        return new bt_mesh_shape_t(vertices, num_vertices, normals, indices, num_indices, dynamicMesh, usepivot, center);
     }
 
 	
@@ -146,7 +146,7 @@ public:
                                                       unsigned int const *indices, size_t num_indices)
     {
 		bool dynamicMesh = false;
-        return new bt_mesh_shape_t(vertices, num_vertices, normals, indices, num_indices, dynamicMesh);
+        return new bt_mesh_shape_t(vertices, num_vertices, normals, indices, num_indices, dynamicMesh, false, vec3f(0,0,0));
     }
 
 

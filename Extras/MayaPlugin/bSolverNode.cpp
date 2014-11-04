@@ -271,7 +271,7 @@ collision_shape_t::pointer bSolverNode::createCollisionShape(const MObject& node
                     }
                     bool dynamicMesh = true;
                     collision_shape = solver_t::create_mesh_shape(&(vertices[0]), vertices.size(), &(normals[0]),
-                                                                  &(indices[0]), indices.size(),dynamicMesh);
+                                                                  &(indices[0]), indices.size(),dynamicMesh, true, vec3f(0,0,0));
                 }
             }
         }
@@ -312,7 +312,7 @@ collision_shape_t::pointer bSolverNode::createCollisionShape(const MObject& node
                 }
                 bool dynamicMesh = false;
                 collision_shape = solver_t::create_mesh_shape(&(vertices[0]), vertices.size(), &(normals[0]),
-                                                              &(indices[0]), indices.size(),dynamicMesh);
+                                                              &(indices[0]), indices.size(),dynamicMesh, true, vec3f(0,0,0));
             }
         }
             break;

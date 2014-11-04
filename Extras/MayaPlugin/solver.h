@@ -73,7 +73,7 @@ public:
 
     static mesh_shape_t::pointer create_mesh_shape(vec3f const* vertices, size_t num_vertices,
                                                    vec3f const* normals,
-                                                   unsigned int const *indices, size_t num_indices, bool dynamicMesh); 
+                                                   unsigned int const *indices, size_t num_indices, bool dynamicMesh, bool usepivot, vec3f center);
 	static hacd_shape_t::pointer create_hacd_shape(vec3f const* vertices, size_t num_vertices,
                                                    vec3f const* normals,
                                                    unsigned int const *indices, size_t num_indices, bool dynamicMesh); 

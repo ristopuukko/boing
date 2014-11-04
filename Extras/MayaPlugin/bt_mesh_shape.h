@@ -92,16 +92,25 @@ public:
                     vec3f const* normals,
                     unsigned int const *indices, 
 					size_t num_indices,
-					bool dynamicMesh):
+					bool dynamicMesh,
+                    bool usepivot,
+                    vec3f rottranscenter):
 						bt_collision_shape_t(),
 						m_normals(normals, normals + num_vertices),
 						m_indices(indices, indices + num_indices),
-						m_dynamicMesh(dynamicMesh)
-    { 
+						m_dynamicMesh(dynamicMesh),
+                        m_usepivot(usepivot),
+                        m_center(rottranscenter)
+    
+    {
 		if (m_dynamicMesh)
 		{
 			m_volume = ::volume(vertices, (int*)indices, num_indices);
-			m_center = center_of_mass(vertices, (int*)indices, num_indices);
+            
+            if (!m_usepivot) {
+                m_center = center_of_mass(vertices, (int*)indices, num_indices);
+            }
+            
 			mat3x3f I = inertia(vertices, (int*)indices, num_indices, m_center);
 			m_rotation = diagonalizer(I);
 
@@ -194,6 +203,7 @@ private:
     std::vector<vec3f>                      m_normals;
     std::vector<unsigned int>               m_indices; 
 	bool									m_dynamicMesh;
+    bool                                    m_usepivot;
     shared_ptr<btTriangleIndexVertexArray>  m_tiva;
 
     float m_volume;

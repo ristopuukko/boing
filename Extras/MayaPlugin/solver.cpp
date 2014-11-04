@@ -117,13 +117,13 @@ composite_shape_t::pointer solver_t::create_composite_shape(
 
 mesh_shape_t::pointer solver_t::create_mesh_shape(vec3f const* vertices, size_t num_vertices,
                                                   vec3f const* normals,
-                                                  unsigned int const *indices, size_t num_indices, bool dynamicMesh)
+                                                  unsigned int const *indices, size_t num_indices, bool dynamicMesh, bool usepivot, vec3f center)
 {
 	if (dynamicMesh)
 	{
 	    return mesh_shape_t::pointer(new mesh_shape_t(m_impl->create_dynamic_mesh_shape(vertices, num_vertices,
                                                                             normals,
-                                                                            indices, num_indices)));
+                                                                            indices, num_indices, usepivot, center)));
 	} else
 	{
 	    return mesh_shape_t::pointer(new mesh_shape_t(m_impl->create_static_mesh_shape(vertices, num_vertices,
