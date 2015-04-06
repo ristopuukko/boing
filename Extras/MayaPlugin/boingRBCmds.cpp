@@ -651,8 +651,12 @@ MStatus boingRbCmd::redoIt()
         if (exArg != "") {
             shared_ptr<bSolverNode> b_solv = bSolverNode::get_bsolver_node();
             bSolverNode::m_custom_data *data = b_solv->getdata(exArg);
-            if ( NULL != data )
-                setResult ( data->name );
+            int result = false;
+            if ( NULL != data ) {
+                //setResult ( data->name );
+                result = true;
+            }
+            setResult(result);
         }
     }
     
@@ -662,6 +666,8 @@ MStatus boingRbCmd::redoIt()
 MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVector &vec) {
     
     //cout<<"setting attribute "<<attr<<" for rb "<<name<<" to value "<<vec<<endl;
+    
+    MStatus status = MS::kFailure;
     
     rigid_body_t::pointer rb = getPointerFromName(name);
     
@@ -674,16 +680,19 @@ MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVect
                 vec3f vel;
                 vel = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
                 rb->set_linear_velocity(vel);
+                status = MS::kSuccess;
             } else if (attr=="position") {
                 vec3f pos;
                 quatf rot;
                 rb->get_transform(pos, rot);
                 pos = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
                 rb->set_transform(pos, rot);
+                status = MS::kSuccess;
             } else if (attr=="angularVelocity") {
                 vec3f av;
                 av = vec3f((float)vec.x,(float)vec.y,(float)vec.z);
                 rb->set_angular_velocity(av);
+                status = MS::kSuccess;
             } /*else { // set a custom attribute
                 boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
                 MString vecStr = "";
@@ -699,7 +708,7 @@ MStatus boingRbCmd::setBulletVectorAttribute(MString &name, MString &attr, MVect
         
     }
     
-    return MS::kSuccess;
+    return status;
     
 }
 
@@ -715,14 +724,15 @@ MDoubleArray boingRbCmd::getBulletVectorAttribute(MString &name, MString &attr) 
     } else {
         nodes.append(name);
     }
+    
     //std::cout<<"nodes : "<<nodes<<std::endl;
     //std::cout<<"nodes.length() : "<<nodes.length()<<std::endl;
     
     for (int i=0; i<nodes.length(); i++) {
         
-        //std::cout<<"trying to get rb...."<<std::endl;
+        std::cout<<"trying to get rb...."<<std::endl;
         rigid_body_t::pointer rb = b_solv->getdata(nodes[i])->m_rigid_body;
-        //std::cout<<"got rb : "<<rb<<std::endl;
+        std::cout<<"got rb : "<<b_solv->getdata(nodes[i])->name<<std::endl;
         
         //rigid_body_t::pointer rb = getPointerFromName(name);
         
@@ -744,18 +754,18 @@ MDoubleArray boingRbCmd::getBulletVectorAttribute(MString &name, MString &attr) 
                     rb->get_angular_velocity(av);
                     vec = MVector((double)av[0], (double)av[1], (double)av[2]);
                 } /*else {
-                    boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
-                    MString vecStr = b->get_data(attr);
-                    MStringArray vecArray = parseArguments(vecStr, ",");
-                    vec = MVector(vecArray[0].asDouble(), vecArray[1].asDouble(), vecArray[2].asDouble());
-                }*/
+                   boing *b = static_cast<boing*>( rb->impl()->body()->getUserPointer() );
+                   MString vecStr = b->get_data(attr);
+                   MStringArray vecArray = parseArguments(vecStr, ",");
+                   vec = MVector(vecArray[0].asDouble(), vecArray[1].asDouble(), vecArray[2].asDouble());
+                   }*/
             }
         }
         for (int j=0; j<3; j++) {
-            result.append(vec[i]);
+            //std::cout<<"vec["<<j<<"] : "<<vec[j]<<std::endl;
+            result.append(vec[j]);
         }
     }
-    
     return result;
     
 }
@@ -833,26 +843,27 @@ MStringArray boingRbCmd::parseArguments(MString arg, MString token) {
 }
 
 MString boingRbCmd::checkAttribute(MString &attr) {
-    MString result;
+    MString result="";
     
-    if (attr=="vel" || attr=="velocity") {
-        result = "velocity";
-    } else if (attr=="pos" || attr=="position") {
-        result = "position";
-    } else if ( attr=="av" || attr=="angularVelocity") {
-        result = "angularVelocity";
-    } else if ( attr=="n" || attr=="name") {
-        result = "name";
-    } else if ( attr=="ctcps" || attr=="contactPositions") {
-        result = "contactPositions";
-    } else if ( attr=="ctcgs" || attr=="contactGeos") {
-        result = "contactGeos";
-    } else if ( attr=="ctccnt" || attr=="contactCount") {
-        result = "contactCount";
-    } else {
-        result = "custom";
+    if ( attr.length() > 0 ) {
+        if (attr=="vel" || attr=="velocity") {
+            result = "velocity";
+        } else if (attr=="pos" || attr=="position") {
+            result = "position";
+        } else if ( attr=="av" || attr=="angularVelocity") {
+            result = "angularVelocity";
+        } else if ( attr=="n" || attr=="name") {
+            result = "name";
+        } else if ( attr=="ctcps" || attr=="contactPositions") {
+            result = "contactPositions";
+        } else if ( attr=="ctcgs" || attr=="contactGeos") {
+            result = "contactGeos";
+        } else if ( attr=="ctccnt" || attr=="contactCount") {
+            result = "contactCount";
+        } else {
+            result = "custom";
+        }
     }
-    
     //cout<<"checkAttribute : "<<result<<endl;
     return result;
 }
